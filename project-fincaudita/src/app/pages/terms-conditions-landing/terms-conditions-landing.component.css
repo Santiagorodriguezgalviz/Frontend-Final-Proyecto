@@ -1,0 +1,107 @@
+.background-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cubre el área del contenedor sin distorsionar la imagen */
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1; /* Envía la imagen detrás del modal */
+  }
+
+.bg-image {
+    background-image: url('../../assets/sveta-fedarava-tI_Odb7ZU6M-unsplash.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 20px;
+  }
+
+
+/* Estilo estático del modal */
+.modal-static {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+
+/* Contenedor del modal */
+.modal-content {
+    background-color: rgba(255, 255, 255, 0.9); /* Fondo semi-transparente */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+    max-height: 80%;
+    overflow-y: auto;
+    position: relative;
+    z-index: 1; /* Asegúrate de que esté por encima del fondo */
+}
+
+/* Estilo del texto */
+.terms-text h3 {
+    font-size: 1.3rem;
+    margin-top: 15px;
+    color: #008f39;
+}
+
+.terms-text p {
+    font-size: 1.1rem;
+    color: #333;
+}
+
+/* Scrollbar personalizado */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background-color: #44E32A;
+    border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.accept-button {
+    background-color: #44E32A; /* Color de fondo */
+    color: white; /* Color del texto */
+    border: none; /* Sin borde */
+    border-radius: 10px; /* Esquinas redondeadas */
+    padding: 8px 12px; /* Ajusta el espaciado interno aquí para hacerlo más compacto */
+    font-size: 0.9rem; /* Tamaño de fuente */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    transition: background-color 0.3s; /* Transición suave para el color de fondo */
+    width: 170px; /* Establece un ancho específico para el botón */
+    text-align: center; /* Asegura que el texto esté centrado */
+}
+
+.accept-button:hover {
+    background-color: #4bd736; /* Color al pasar el mouse */
+}
+
+/* Contenedor del botón */
+.button-container {
+
+    display: flex; /* Utiliza flexbox para alinear elementos */
+    justify-content: flex-end; /* Alinea el contenido a la derecha */
+    margin-top: 40px; /* Espacio adicional si es necesario */
+    margin-right: 70px; /* Ajusta este valor para mover el botón más a la derecha */
+}
+
+
+
+
+

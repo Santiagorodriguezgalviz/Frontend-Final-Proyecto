@@ -1,0 +1,88 @@
+<div class="container mx-auto px-4 py-2 md:py-24">
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="flex items-center justify-between py-2 px-6">
+      <div>
+        <span class="text-lg font-bold text-gray-800">{{ monthNames[month] }}</span>
+        <span class="ml-1 text-lg text-gray-600 font-normal">{{ year }}</span>
+      </div>
+      <div class="button-container">
+        <button (click)="changeMonth('prev')" class="btn-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="icon">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button (click)="changeMonth('next')" class="btn-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="icon">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="-mx-1 -mb-1">
+      <div class="flex flex-wrap">
+        <div *ngFor="let day of days" style="width: 14.26%" class="px-2 py-2">
+          <div class="text-gray-600 text-sm uppercase tracking-wide font-bold text-center">
+            {{ day }}
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap border-t border-l">
+        <div *ngFor="let blank of blankdays" style="width: 14.28%; height: 100px" class="border-r border-b"></div>
+        <div *ngFor="let date of no_of_days" style="width: 14.28%; height: 100px" class="relative border-r border-b">
+          <div (click)="showEventModal(date)"
+            [ngClass]="{'bg-blue-500 text-white': isToday(date), 'bg-gray-200 text-gray-800': !isToday(date)}"
+            class="calendar-day cursor-pointer mx-auto mt-2 flex items-center justify-center hover:bg-blue-300 transition duration-300">
+            {{ date }}
+          </div>
+
+          <div style="height: 65px;" class="overflow-y-auto mt-1">
+            <div *ngFor="let event of getEventsForDate(date)"
+              class="px-2 py-1 rounded-lg mt-1 overflow-hidden border text-sm relative" [ngClass]="{
+                'border-blue-200 text-blue-800 bg-blue-100': event.event_theme === 'azul',
+                'border-red-200 text-red-800 bg-red-100': event.event_theme === 'rojo',
+                'border-yellow-200 text-yellow-800 bg-yellow-100': event.event_theme === 'amarillo',
+                'border-green-200 text-green-800 bg-green-100': event.event_theme === 'verde',
+                'border-purple-200 text-purple-800 bg-purple-100': event.event_theme === 'morado'
+              }">
+              <p class="truncate">{{ event.event_title }}</p>
+              <div class="absolute top-1 right-1 flex space-x-1">
+                <button class="btn-icon edit" (click)="editEvent(event)" title="Editar">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon delete" (click)="deleteEvent(event)" title="Eliminar">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para agregar eventos -->
+  <div *ngIf="openEventModal" class="modal show-modal">
+    <div class="modal-content">
+      <span class="close" (click)="closeEventModal()">&times;</span>
+      <h2 class="modal-title">{{ editingEvent ? 'Editar Evento' : 'Agregar Evento' }}</h2>
+      <form (ngSubmit)="addEvent()">
+        <input [(ngModel)]="alert.title" name="alertTitle" class="form-control" placeholder="Título del evento"
+          required /> 
+          <input [(ngModel)]="alert.date" name="alertDate" class="form-control" [value]="alert.date | date: 'yyyy-MM-dd'" readonly />
+          <label for="UserId">Usuario:</label>
+          <input id="user-search" type="text" class="form-control" [(ngModel)]="alert.userId"
+            [ngbTypeahead]="searchUsers" [resultFormatter]="formatUser" [inputFormatter]="formatUser"
+            (selectItem)="onUserSelect($event)" placeholder="Buscar usuario" />
+        <select [(ngModel)]="alert.theme" name="alertTheme" class="form-control">
+          <option *ngFor="let theme of themes" [value]="theme.value">{{ theme.label }}</option>
+        </select>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeEventModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">{{ editingEvent ? 'Actualizar' : 'Guardar' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

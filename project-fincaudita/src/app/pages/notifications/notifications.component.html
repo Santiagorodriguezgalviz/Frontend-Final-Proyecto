@@ -1,0 +1,30 @@
+<div class="notifications-container">
+  <!-- Botón para regresar con icono SVG -->
+  <div class="back-button" routerLink="/dashboard/home" routerLinkActive="active">
+    <button class="back-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    </button>
+    <h2>Notificaciones</h2>
+  </div>
+
+  <!-- Si no hay notificaciones -->
+  <div *ngIf="notifications.length === 0" class="no-notifications">
+    <p>No tienes notificaciones nuevas.</p>
+  </div>
+
+  <!-- Lista de notificaciones -->
+  <ul *ngIf="notifications.length > 0" class="notifications-list">
+    <li *ngFor="let notification of notifications" [class.read]="notification.read" class="notification-item">
+      <div class="notification-content">
+        <p class="notification-message">{{ notification.message }}</p>
+        <small class="notification-date">{{ notification.date | date:'short' }}</small>
+      </div>
+      <button class="mark-read-btn" (click)="markAsRead(notification)">
+        {{ notification.read ? 'Leída' : 'Marcar como leída' }}
+      </button>
+    </li>
+  </ul>
+</div>

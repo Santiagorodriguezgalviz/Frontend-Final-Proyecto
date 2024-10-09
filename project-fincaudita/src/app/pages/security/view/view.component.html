@@ -1,0 +1,169 @@
+<!-- Título con estilo -->
+<h2 class="title">Lista de Vistas</h2>
+
+<div class="top-container">
+  <!-- Campo de búsqueda -->
+  <div class="search-container">
+    <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" class="form-control input-field" />
+  </div>  
+
+  <!-- Selector de ítems por página y exportación -->
+  <div class="export-container">
+    <div class="items-per-page">
+      <label for="itemsPerPage">Mostrar:</label>
+      <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
+        <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+    <div class="export-select">
+      <ng-select (change)="handleExport($event)" [placeholder]="'Exportar Como'" [clearable]="true" [searchable]="false">
+        <ng-option value="pdf" class="custom-option">
+          <div class="option-container">
+            <i class="fas fa-file-pdf"></i>
+            <span class="custom-option-text">PDF</span>
+          </div>
+        </ng-option>
+        <ng-option value="excel" class="custom-option">
+          <div class="option-container">
+            <i class="fas fa-file-excel"></i>
+            <span class="custom-option-text">Excel</span>
+          </div>
+        </ng-option>
+      </ng-select>
+    </div>
+  </div>
+
+  <!-- Botón para agregar nuevo -->
+  <button class="btn btn-success add-btn" (click)="openModal()">Agregar nuevo <i class="fas fa-plus"></i></button>
+</div>
+
+<!-- Modal para agregar/editar vista -->
+<div id="moduloModal" class="modal" [ngClass]="{'show-modal': isModalOpen}">
+    <div class="modal-content">
+        <span class="close" (click)="closeModal()">&times;</span>
+        <h2>{{ view.id === 0 ? 'Agregar Vista' : 'Editar Vista' }}</h2>
+
+        <hr class="modal-border">
+
+        <form #moduloForm="ngForm" (ngSubmit)="onSubmit(moduloForm)">
+            <input type="hidden" name="id" [(ngModel)]="view.id">
+
+            <div class="row">
+                <div class="col">
+                    <label for="Name">Nombre del view:</label>
+                    <input type="text" class="form-control input-field" id="Name" name="Name" [(ngModel)]="view.name" required>
+                </div>
+
+                <div class="col">
+                    <label for="Description">Descripción:</label>
+                    <input type="text" class="form-control input-field" id="Description" name="Description" [(ngModel)]="view.description" required>
+                </div>
+            </div>
+            <br>
+
+            <div class="row">
+                <div class="col">
+                    <label for="Route">Route:</label>
+                    <input type="text" class="form-control input-field" id="Route" name="Route" [(ngModel)]="view.route" required>
+                </div>
+
+                <div class="col">
+                    <label for="moduloName">Módulo:</label>
+                    <input type="text" class="form-control input-field" matInput [matAutocomplete]="auto" 
+                           [(ngModel)]="view.moduloName" 
+                           name="moduloName" 
+                           (input)="searchmodulos($event)" 
+                           required>
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onmoduloSelect($event)">
+                        <mat-option *ngFor="let modulo of filteredModulos" [value]="modulo.name">
+                            {{ modulo.name }}
+                        </mat-option>
+                    </mat-autocomplete>
+                </div>
+            </div>
+            <br>
+
+            <div class="row" *ngIf="view.id !== 0">
+                <div class="col">
+                    <label for="State">Estado:</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="State" name="State" [(ngModel)]="view.state">
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tabla de vistas -->
+<table *ngIf="filteredViews.length > 0" class="table">
+    <thead>
+        <tr>
+            <th>
+                <input type="checkbox" (change)="selectAll($event)" [checked]="areAllSelected()" />
+            </th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Route</th>
+            <th>Módulo</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let view of paginatedViews()">
+            <td>
+                <label class="checkbox-container">
+                    <input type="checkbox" [(ngModel)]="view.selected" />
+                    <div class="checkbox-custom"></div>
+                </label>
+            </td>
+            <td>{{ view.name }}</td>
+            <td>{{ view.description }}</td>
+            <td>{{ view.route }}</td>
+            <td>{{ getModuloName(view.moduloId) }}</td>
+            <td>{{ view.state ? 'Activo' : 'Inactivo' }}</td>
+            <td>
+                <button class="btn-icon edit" (click)="editView(view)" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon delete" (click)="deleteView(view.id)" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Mensaje si no hay vistas -->
+<p *ngIf="filteredViews.length === 0">No se encontraron views.</p>
+
+<!-- Footer de la tabla de datos -->
+<div class="data-table-footer">
+  <div class="pagination">
+      <button (click)="previousPage()" [disabled]="currentPage === 1" class="arrow">
+        &laquo; <!-- Flecha izquierda -->
+      </button>
+
+      <ng-container *ngFor="let page of getPageNumbers()">
+        <button (click)="goToPage(page)" [class.active]="currentPage === page">{{ page }}</button>
+      </ng-container>
+
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="arrow">
+        &raquo; <!-- Flecha derecha -->
+      </button>
+  </div>
+
+  <div class="delete-selected-container">
+      <button class="btn btn-danger" (click)="deleteSelected()" [disabled]="!hasSelected()">
+          <i class="fas fa-trash"></i> Eliminar seleccionados
+      </button>
+  </div>
+</div>
