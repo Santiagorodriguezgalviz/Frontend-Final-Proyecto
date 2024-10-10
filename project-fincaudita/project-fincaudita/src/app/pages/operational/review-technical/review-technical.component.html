@@ -1,0 +1,313 @@
+<!-- Título con estilo --><!-- Título con estilo -->
+<h2 class="title">Informe revisión técnica</h2>
+
+<div class="top-container">
+   <!-- Campo de búsqueda -->
+   <div class="search-container">
+     <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+       class="form-control input-field" />
+   </div>  
+   
+   <div class="export-container">
+     <!-- Selector de ítems por página -->
+     <div class="items-per-page">
+       <label for="itemsPerPage">Mostrar:</label>
+       <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
+         <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+       </select>
+     </div>
+   
+     <!-- Select para exportar -->
+     <div class="export-select">
+       <ng-select (change)="handleExport($event)" [placeholder]="'Exportar Como'" [clearable]="true" [searchable]="false">
+         <ng-option value="pdf" class="custom-option">
+           <div class="option-container">
+             <i class="fas fa-file-pdf"></i>
+             <span class="custom-option-text">PDF</span>
+           </div>
+         </ng-option>
+         <ng-option value="excel" class="custom-option">
+           <div class="option-container">
+             <i class="fas fa-file-excel"></i>
+             <span class="custom-option-text">Excel</span>
+           </div>
+         </ng-option>
+       </ng-select>
+     </div>
+   </div>
+ 
+   <!-- Botón para agregar un nuevo módulo -->
+   <button class="btn btn-success add-btn" (click)="openModal()">Agregar nuevo <i class="fas fa-plus"></i></button>
+ </div>
+ 
+   <!-- Modal -->
+   <div id="RevisiónModal" class="modal" [ngClass]="{'show-modal': isModalOpen}">
+       <div class="modal-content">
+           <span class="close" (click)="closeModal()">&times;</span>
+           <h2>{{ review.id === 0 ? 'Agregar Informe' : 'Editar Informe' }}</h2>
+
+           <hr class="modal-border">
+
+           <form #reviewTechnicalForm="ngForm" (ngSubmit)="onSubmit(reviewTechnicalForm)">
+               <input type="hidden" name="id" [(ngModel)]="review.id">
+
+               <div class="row">
+                   <div class="col">
+                       <label for="date_review">Fecha de revisión:</label>
+                       <input type="date" id="date_review" name="date_review" class="form-control input-field"
+                           [(ngModel)]="review.date_review" required>
+                   </div>
+
+                   <div class="col">
+                       <label for="code">Código:</label>
+                       <input type="text" class="form-control" id="code" name="code" [(ngModel)]="review.code"
+                           required>
+                   </div>
+               </div>
+               <br>
+
+               <div class="row">
+                   <div class="col">
+                       <mat-label>Nombre del técnico</mat-label>
+                       <input type="text" class="form-control input-field" matInput [matAutocomplete]="auto"
+                           [(ngModel)]="review.tecnico" name="tecnico" (input)="searchusers($event)" required>
+                       <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onusersSelect($event)">
+                           <mat-option *ngFor="let user of filteredUsers" [value]="user.username">
+                               {{ user.username }}
+                           </mat-option>
+                       </mat-autocomplete>
+                   </div>
+                   
+               <br>
+
+             
+                   <div class="col">
+                       <mat-label>Nombre de la Finca</mat-label>
+                       <input type="text" class="form-control input-field" matInput [matAutocomplete]="autoFarms"
+                           [(ngModel)]="review.lot" name="lot" (input)="searchFarms($event)" required>
+                       <mat-autocomplete #autoFarms="matAutocomplete" (optionSelected)="onFarmSelect($event)">
+                           <mat-option *ngFor="let farm of filteredFarms" [value]="farm.name">
+                               {{ farm.name }} - {{ farm.lots.length > 0 ? farm.lots[0].cultivo : 'Sin cultivo' }}
+                           </mat-option>
+                       </mat-autocomplete>
+                   </div>
+               </div>
+
+               <div class="row">
+                   <div class="col">
+                       <label for="observations">Observaciones:</label>
+                       <textarea id="observations" name="observations" class="form-control input-field"
+                                 [(ngModel)]="review.observation" (input)="adjustHeight($event)" 
+                                 rows="1" style="overflow:hidden; resize: none; transition: height 0.2s;">
+                       </textarea>
+                   </div>
+               
+
+                   <div class="col" *ngIf="review.id !== 0">
+                       <label for="State">Estado:</label>
+                       <div class="form-check form-switch">
+                           <input class="form-check-input" type="checkbox" id="State" name="State"
+                               [(ngModel)]="review.state">
+                       </div>
+                   </div>
+                   
+
+                   <div class="row">
+                       <div class="col">
+                         <label for="evidence">Evidencia Del Cultivo:</label>
+                         <input type="file" id="evidence" name="evidence" class="form-control input-field" (change)="onFileChange($event, 'evidence')">
+                         
+                           <!-- Mostrar el nombre del archivo seleccionado -->
+                           <input type="text" class="form-control input-field" [value]="review.evidences[0]?.document"
+                               readonly placeholder="Nombre del archivo">
+                               
+                         <!-- Mostrar la imagen cargada solo si existe -->
+                         <img *ngIf="review.evidences[0]?.document" [src]="review.evidences[0].document" alt="Evidencia del Cultivo" style="max-width: 100%; margin-top: 10px;">
+                         
+                         <!-- Botón para limpiar la evidencia, solo se muestra si hay una imagen -->
+                         <i *ngIf="review.evidences[0]?.document" (click)="clearEvidence()" class="fas fa-eraser" style="cursor: pointer; color: red;"></i>
+                       </div>
+                     </div>
+                     
+                     
+<!-- Lista de chequeo -->
+<div class="row">
+   <div class="col">
+       <h3>Lista de chequeo</h3>
+
+       <!-- Campos para Código y Calificación Total fuera de la tabla -->
+       <div class="row mb-3">
+           <div class="col">
+               <label for="observations">Item:</label>
+               <input type="text" class="form-control" [(ngModel)]="review.checklists.code"
+                      name="code" placeholder="Código">
+           </div>
+           <div class="col">
+               <label for="observations">Calificación total:</label>
+               <input type="number" class="form-control"
+                      [value]="calculateTotalQualification(review.checklists.qualifications)"
+                      readonly placeholder="Calificación total">
+           </div>
+       </div>
+
+      <!-- Tabla para los Criterios de Evaluación -->
+<table class="table">
+   <thead>
+     <tr>
+       <th>Criterio de evaluación</th>
+       <th>Observación</th>
+       <th>Calificación de criterio</th>
+     </tr>
+   </thead>
+   <tbody>
+       <tr *ngFor="let calification of califications; let i = index">
+           <td>{{ calification.name }}</td>
+           <td>
+               <input type="text" class="form-control"
+                   [(ngModel)]="calification.observation"
+                   name="observation{{i}}" placeholder="Observaciones">
+           </td>
+           <td>
+               <input type="number" class="form-control"
+                   [(ngModel)]="calification.qualification_criteria"
+                   name="qualification{{i}}" placeholder="Calificación"
+                   (input)="onQualificationChange()">
+           </td>
+       </tr>
+   </tbody>
+ </table>
+ 
+   </div>
+</div>
+
+<!-- Cierre de la lista de chequeo -->
+  
+<div class="row">
+   <div class="col">
+     <label for="signature_technician">Firma Del Técnico:</label>
+     <input type="file" name="technician" (change)="onFileChange($event, 'technician')" accept="image/*" class="form-control input-field">
+     <canvas #signaturePadTech style="border: 1px solid #ccc; width: 100%; height: 150px;"
+             (mousedown)="startDrawing('technician', signaturePadTech)" 
+             (mouseup)="stopDrawing()"
+             (mouseleave)="stopDrawing()" 
+             (mousemove)="draw($event, signaturePadTech)"></canvas>
+     
+     <!-- Icono de borrado -->
+     <i (click)="clearSignature('technician', signaturePadTech)" class="fas fa-eraser" style="cursor: pointer; color: red;"></i>
+     
+     <!-- Mostrar la firma del técnico -->
+     <img *ngIf="review.signature_technician" [src]="review.signature_technician" alt="Firma del Técnico" style="max-width: 40%; margin-top: 10px;">
+   </div>
+ 
+   <div class="col">
+     <label for="signature_producer">Firma Del Productor:</label>
+     <input type="file" name="producer" (change)="onFileChange($event, 'producer')" accept="image/*" class="form-control input-field">
+     <canvas #signaturePadProd style="border: 1px solid #ccc; width: 100%; height: 150px;"
+             (mousedown)="startDrawing('producer', signaturePadProd)" 
+             (mouseup)="stopDrawing()"
+             (mouseleave)="stopDrawing()" 
+             (mousemove)="draw($event, signaturePadProd)"></canvas>
+     
+     <!-- Icono de borrado -->
+     <i (click)="clearSignature('producer', signaturePadProd)" class="fas fa-eraser" style="cursor: pointer; color: red;"></i>
+     
+     <!-- Mostrar la firma del productor -->
+     <img *ngIf="review.signature_producer" [src]="review.signature_producer" alt="Firma del Productor" style="max-width: 40%; margin-top: 10px;">
+   </div>
+ </div>
+ 
+ 
+               <div class="modal-footer">
+                   <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
+                   <button type="submit" class="btn btn-primary">
+                       {{ isEditing ? 'Actualizar' : 'Guardar' }}
+                     </button>
+               </div>
+       </div>
+       </form>
+   </div>
+</div>
+
+<!-- Tabla de informes -->
+<table *ngIf="filteredReview.length > 0" class="table">
+   <thead>
+     <tr>
+       <th>
+         <input 
+           type="checkbox" 
+           (change)="selectAll($event)" 
+           [checked]="areAllSelected()" 
+         />
+       </th>
+           <th>Código</th>
+           <th>Fecha de Revisión</th>
+           <th>Nombre del Técnico</th>
+           <th>Finca y Cultivos</th>
+           <th>Observaciones</th>
+           <th>Estado</th>
+           <th>Acciones</th>
+       </tr>
+   </thead>
+   <tbody>
+       <tr *ngFor="let review of paginatedReviews()">
+           <td>
+               <label class="checkbox-container">
+                 <input type="checkbox" [(ngModel)]="review.selected" />
+                 <div class="checkbox-custom"></div>
+               </label>
+             </td>
+           <td>{{ review.code }}</td>
+           <td>{{ review.date_review | date }}</td>
+           <td>{{ getUserName(review.tecnicoId) }}</td>
+           <td>{{ review.lot }}</td>
+           <td>{{ review.observation }}</td>
+           <td>{{ review.state ? 'Activo' : 'Inactivo' }}</td>
+           <td> 
+               <div class="action-buttons">
+                   <button class="btn-icon edit" (click)="editReview(review.id)" title="Editar">
+                       <i class="fas fa-edit"></i>
+                   </button>
+                   <button class="btn-icon delete" (click)="deleteReview(review.id)" title="Eliminar">
+                       <i class="fas fa-trash"></i>
+                   </button>
+               </div>
+           </td>
+       </tr>
+   </tbody>
+</table>
+<p *ngIf="filteredReview.length === 0">No se encontraron informes.</p>
+
+
+
+
+<div class="data-table-footer">
+   <div class="pagination">
+   <button (click)="previousPage()" [disabled]="currentPage === 1" class="arrow">
+     &laquo; <!-- Flecha izquierda -->
+   </button>
+ 
+   <ng-container *ngFor="let page of getPageNumbers()">
+     <button 
+       (click)="goToPage(page)" 
+       [class.active]="currentPage === page"
+     >
+       {{ page }}
+     </button>
+   </ng-container>
+ 
+   <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="arrow">
+     &raquo; <!-- Flecha derecha -->
+   </button>
+ </div>
+ 
+ <!-- Eliminar seleccionados -->
+ <div class="delete-selected-container">
+   <button 
+     class="btn btn-danger" 
+     (click)="deleteSelected()" 
+     [disabled]="!hasSelected()"
+   >
+     <i class="fas fa-trash"></i> Eliminar seleccionados
+   </button>
+ </div>
+</div>

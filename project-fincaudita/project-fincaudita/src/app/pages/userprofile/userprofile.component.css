@@ -1,0 +1,148 @@
+/* Contenedor Principal */
+.profile-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #e7fff0;
+  border-radius: 12px;
+  font-family: 'Arial', sans-serif;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added subtle shadow for depth */
+  transition: transform 0.3s ease; /* Smooth hover effect */
+}
+
+.profile-container:hover {
+  transform: scale(1.02); /* Slight scaling on hover for interactivity */
+}
+
+/* Botón para regresar */
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.back-btn svg {
+  width: 24px;
+  height: 24px;
+  color: #44E32A;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.back-btn:hover svg {
+  color: #39c12a;
+  transform: scale(1.1);
+}
+
+/* Imagen de Perfil */
+.profile-image {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.profile-pic {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 4px solid #44e32a; /* Green border for emphasis */
+  transition: border-color 0.3s ease;
+}
+
+.profile-pic:hover {
+  border-color: #39c12a; /* Slight color change on hover */
+}
+
+.change-photo-text {
+  color: #050505;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.change-photo-text:hover {
+  color: #44E32A;
+}
+
+/* Datos del Usuario */
+.user-data {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.user-data h3 {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.user-data label {
+  display: block;
+  margin: 10px 0 5px;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.user-data input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Input Field Styling */
+.input-field {
+  transition: background-color 0.3s ease;
+}
+
+.input-field:focus {
+  border: 1px solid #44E32A !important;
+  box-shadow: 0 0 5px rgba(68, 227, 42, 0.5);
+  outline: none !important;
+}
+
+/* Toggle Password Visibility */
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  top: 75%;
+  transform: translateY(-55%);
+  cursor: pointer;
+  color: #27282a;
+  transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+  color: #44E32A;
+}
+
+/* Botón para guardar cambios */
+.save-btn {
+  background-color: #44E32A;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  margin-top: 20px;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.save-btn:hover {
+  background-color: #39c12a;
+  transform: translateY(-3px);
+}

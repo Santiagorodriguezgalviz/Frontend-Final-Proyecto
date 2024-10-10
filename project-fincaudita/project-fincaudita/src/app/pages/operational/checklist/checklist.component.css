@@ -1,0 +1,387 @@
+/* Título en color verde */
+.title {
+    color: #44E32A;
+    text-align: left;
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 40px;
+}
+
+/* Botón Agregar Nuevo */
+.add-btn {
+    float: right;
+    margin-bottom: 20px;
+    border: none;
+}
+
+/* Modal container 
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  
+  left: 20%;
+  top: 10%;
+  width: 60%;
+  height: auto; 
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+*/
+
+/* Modal container */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1100;
+}
+
+.show-modal {
+    display: block;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    width: 50%;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Add space between Description and State */
+.form-group+.form-group {
+    margin-top: 15px;
+    /* Adjust margin as needed */
+}
+
+/* Style checkbox */
+.form-check-input {
+    margin-top: 10px;
+    transform: scale(1.8);
+}
+
+.state-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .form-check-label {
+    margin-right: 10px; /* Or your desired spacing */
+  }
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+
+}
+
+/* Center close (X) icon horizontally and move it slightly up */
+.close {
+    position: absolute;
+    top: 10px;
+    /* Adjust top padding as needed */
+    transform: translateX(-50%);
+    /* Center horizontally */
+    right: 15px;
+    /* Adjust right padding if needed */
+    text-align: left;
+    /* Center text horizontally */
+    font-size: 24px;
+    /* Adjust font size if needed */
+}
+
+.close:hover {
+    text-decoration: none;
+    cursor: pointer;
+    color: #000000;
+}
+
+/* Botones del modal de cerrar y agregar */
+.btn-secondary {
+    background-color: #ff0000;
+    /* Secondary grayish color */
+    color: rgb(0, 0, 0);
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #ff0000;
+    color: rgb(255, 255, 255);
+}
+
+.btn-primary {
+    background-color: #44E32A;
+    /* Primary greenish color */
+    color: rgb(0, 0, 0);
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #44E32A;
+    color: rgb(255, 255, 255);
+}
+
+.btn-success {
+    background-color: #44E32A;
+    color: rgb(0, 0, 0);
+}
+
+.btn-success:hover {
+    background-color: #44E32A;
+    color: rgb(255, 255, 255);
+}
+
+/* Table styles */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(21, 205, 40, 0.1);
+}
+
+
+.table th,
+.table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.table tr:hover {
+    background-color: #f5f5f5;
+}
+
+/*Iconoes de la tabla de eliminar y editar*/
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.btn-icon.edit {
+    color: #000000;
+}
+
+.btn-icon.delete {
+    color: #000000;
+}
+
+.btn-icon.edit:hover {
+    color: #007bff;
+    /* Green */
+}
+
+.btn-icon.delete:hover {
+    color: #ff0000;
+    /* Red */
+}
+.input-field {
+    transition: background-color 0.3s ease; /* Transición suave */
+  }
+  
+  /* Estilo cuando el campo de entrada está en foco */
+  .input-field:focus {
+    border: 1px solid #44E32A !important; /* Borde verde */
+    outline: none !important; /* Eliminar el contorno por defecto */
+    box-shadow: 0 0 5px rgba(68, 227, 42, 0.5); /* Sombra verde */
+  }
+  
+  /* Estilo para el checkbox cuando está en foco */
+  .form-check-input:focus {
+    box-shadow: 0 0 5px rgba(68, 227, 42, 0.5); /* Sombra verde */
+    border: 1px solid #44E32A !important; /* Borde verde */
+  }
+  
+  /* Estilo para el checkbox cuando está activado */
+  .form-check-input:checked {
+    background-color: #44E32A !important; /* Fondo verde cuando está seleccionado */
+    border-color: #44E32A !important; /* Borde verde */
+  }
+  .delete-selected-container {
+    position: relative; /* Cambia a relative para poder usar top sin afectar a otros elementos */
+    display: flex;
+    justify-content: flex-end; /* Alinea el botón a la derecha */
+}
+/* Contenedor de búsqueda y exportación */
+.search-export-container {
+    display: flex;
+    justify-content: space-between; /* Distribuye espacio entre los elementos */
+    align-items: center; /* Alinea verticalmente al centro */
+    margin-bottom: 20px; /* Espaciado inferior */
+}
+
+/* Estilo para el input de búsqueda */
+.search-export-container input {
+    width: 300px; /* Ajusta el ancho del campo de búsqueda */
+    margin-right: 10px; /* Espaciado entre el campo de búsqueda y los botones */
+}
+
+/* Botones de exportación */
+.export-buttons {
+    display: flex;
+    gap: 10px; /* Espaciado entre los botones */
+}
+
+.search-container {
+    width: auto; /* Ajusta el ancho según sea necesario */
+}
+
+.form-control-sm {
+    width: 200px; /* Establece el ancho deseado del buscador */
+}
+
+
+  
+.pagination-container {
+    display: flex;
+    justify-content: flex-end; /* Alinear a la derecha */
+    align-items: center; /* Alinear verticalmente */
+    margin: 1rem 0; /* Espaciado alrededor */
+    border: 1px solid #44E32A; /* Borde alrededor del contenedor */
+    border-radius: 10px; /* Radio de borde para el contenedor */
+    padding: 0.5rem; /* Espaciado interno para el contenedor */
+    background-color: white; /* Fondo blanco para el contenedor */
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: flex-end;  /* Alinear verticalmente */
+  }
+  
+  .pagination button,
+  .arrow {
+    margin: 0 0.5rem; /* Espaciado entre los botones */
+    padding: 0.5rem 1rem; /* Espaciado interno */
+    border: none; /* Sin borde alrededor de cada número y flecha */
+    background-color: transparent; /* Fondo transparente */
+    color: #008f39; /* Color del texto */
+    cursor: pointer; /* Cambiar cursor */
+    transition: background-color 0.3s, color 0.3s; /* Transición para hover */
+    font-size: 1rem; /* Tamaño de fuente consistente */
+    display: flex; /* Alinear iconos y texto */
+    align-items: center; /* Centrar contenido verticalmente */
+    border-radius: 5px; /* Radio de borde para números y flechas */
+  }
+  
+  .arrow {
+    font-size: 1.5rem; /* Tamaño de la flecha */
+  }
+  
+  .pagination button:hover,
+  .arrow:hover {
+    background-color: #44E32A; /* Color de fondo al pasar el mouse */
+    color: white; /* Color del texto al pasar el mouse */
+  }
+  
+  .pagination button.active {
+    background-color: #44E32A; /* Color para el número de página activa */
+    color: white; /* Color del texto activo */
+  }
+  
+  .export-select {
+    width: 150px; /* Ajusta el ancho como desees */
+    position: relative;
+}
+
+/* Estilo del contenedor de ng-select */
+.ng-select {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    height: 37px;
+}
+
+/* Panel del dropdown */
+.ng-select .ng-dropdown-panel {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    position: absolute; /* Cambia a posición absoluta */
+    left: 0; /* Alinea el dropdown con el contenedor */
+    z-index: 10; /* Asegúrate de que el dropdown esté por encima de otros elementos */
+}
+
+/* Estilo del contenedor de las opciones */
+.option-container {
+    width: 150px;
+    display: flex;
+    align-items: center;
+    padding: 5px; /* Reducimos el padding para que estén más juntos */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f5f5f5;
+    margin-bottom: 1px; /* Reducimos el margen entre opciones */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Alineación y separación del icono */
+.option-container i {
+    margin-right: 1px; /* Reducimos el espacio entre el icono y el texto */
+    font-size: 18px;
+    color: #555;
+}
+
+/* Texto de la opción */
+.custom-option-text {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Hover en las opciones */
+.option-container:hover {
+    background-color: #e0e0e0;
+    cursor: pointer;
+}
+
+.container {
+    position: relative; /* Cambia esto al selector correcto de tu contenedor */
+}
+
+.items-per-page select {
+    padding: 4px ; /* Espaciado interno */
+    border: 2px solid #ccc; /* Color del borde por defecto */
+    border-radius: 4px; /* Bordes redondeados */
+    background-color: transparent; /* Sin fondo */
+    transition: border-color 0.3s; /* Suaviza el cambio de color */
+}
+.items-per-page select:focus {
+    border: 1px solid #44E32A !important; /* Borde verde */
+    outline: none !important; /* Eliminar el contorno por defecto */
+    box-shadow: 0 0 5px rgba(68, 227, 42, 0.5); /* Sombra verde */
+}
+.data-table-footer{
+    display: flex;
+    flex-direction: row-reverse;
+}
+.top-container{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.top-container > * {
+    flex-grow: 0.1; 
+}
+.export-container{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}

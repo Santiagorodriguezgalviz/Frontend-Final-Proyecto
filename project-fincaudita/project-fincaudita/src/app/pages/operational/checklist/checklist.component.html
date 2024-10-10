@@ -1,0 +1,144 @@
+<!-- Título con estilo -->
+<h2 class="title">Lista de Chequeo</h2>
+
+<div class="top-container">
+  <!-- Campo de búsqueda -->
+  <div class="search-container">
+    <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+      class="form-control input-field" />
+  </div>  
+  
+  <div class="export-container">
+    <!-- Selector de ítems por página -->
+    <div class="items-per-page">
+      <label for="itemsPerPage">Mostrar:</label>
+      <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
+        <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+  
+    <!-- Select para exportar -->
+    <div class="export-select">
+      <ng-select (change)="handleExport($event)" [placeholder]="'Exportar Como'" [clearable]="true" [searchable]="false">
+        <ng-option value="pdf" class="custom-option">
+          <div class="option-container">
+            <i class="fas fa-file-pdf"></i>
+            <span class="custom-option-text">PDF</span>
+          </div>
+        </ng-option>
+        <ng-option value="excel" class="custom-option">
+          <div class="option-container">
+            <i class="fas fa-file-excel"></i>
+            <span class="custom-option-text">Excel</span>
+          </div>
+        </ng-option>
+      </ng-select>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear/editar lista de chequeo -->
+<div id="checklistModal" class="modal" [ngClass]="{'show-modal': isModalOpen}">
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h2>{{ checklist.id === 0 ? 'Agregar Lista de Chequeo' : 'Editar Lista de Chequeo' }}</h2>
+
+    <hr class="modal-border">
+
+    <form #checklistForm="ngForm" (ngSubmit)="onSubmit(checklistForm)">
+      <input type="hidden" name="id" [(ngModel)]="checklist.id">
+
+      <div class="row">
+        <div class="col">
+          <label for="code">Código:</label>
+          <input type="text" class="form-control input-field" id="code" name="code" [(ngModel)]="checklist.code"
+            required>
+        </div>
+
+        <div class="col">
+          <label for="calification_total">Calificación Total:</label>
+          <input type="number" class="form-control input-field" id="calification_total" name="calification_total"
+            [(ngModel)]="checklist.calification_total" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col" *ngIf="checklist.id !== 0">
+          <label for="state">Estado:</label>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="state" name="state" [(ngModel)]="checklist.state">
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<!-- Tabla de checklists -->
+<table *ngIf="filteredChecklists.length > 0" class="table">
+  <thead>
+    <tr>
+      <th>
+        <input 
+          type="checkbox" 
+          (change)="selectAll($event)" 
+          [checked]="areAllSelected()" 
+        />
+      </th>
+      <th>Código</th>
+      <th>Calificación Total</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let checklist of paginatedCheklists()">
+      <td>
+        <label class="checkbox-container">
+          <input type="checkbox" [(ngModel)]="checklist.selected" />
+          <div class="checkbox-custom"></div>
+        </label>
+      </td>
+      <td>{{ checklist.code }}</td>
+      <td>{{ checklist.calification_total }}</td>
+      <td>{{ checklist.state ? 'Activo' : 'Inactivo' }}</td>
+      <td>
+        <button class="btn-icon delete" (click)="deleteChecklist(checklist.id)" title="Eliminar">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p *ngIf="filteredChecklists.length === 0">No se encontraron Registros de lista de chequeo.</p>
+
+<div class="data-table-footer">
+  <div class="pagination">
+    <button (click)="previousPage()" [disabled]="currentPage === 1" class="arrow">
+      &laquo; <!-- Flecha izquierda -->
+    </button>
+
+    <ng-container *ngFor="let page of getPageNumbers()">
+      <button (click)="goToPage(page)" [class.active]="currentPage === page">
+        {{ page }}
+      </button>
+    </ng-container>
+
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="arrow">
+      &raquo; <!-- Flecha derecha -->
+    </button>
+  </div>
+
+  <!-- Eliminar seleccionados -->
+  <div class="delete-selected-container">
+    <button class="btn btn-danger" (click)="deleteSelected()" [disabled]="!hasSelected()">
+      <i class="fas fa-trash"></i> Eliminar seleccionados
+    </button>
+  </div>
+</div>
