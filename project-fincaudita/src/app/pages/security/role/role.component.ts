@@ -96,16 +96,17 @@ export class RoleComponent implements OnInit {
   }
 
   // Filtrar roles según el término de búsqueda
-  filterRoles(): void {
-    const search = this.searchTerm.toLowerCase().trim();
-    this.filteredRoles = this.roles.filter(role =>
-      role.name.toLowerCase().includes(search) ||
-      role.description.toLowerCase().includes(search) ||
-      role.views.some(view => view.name.toLowerCase().includes(search) || (view.textoMostrar && view.textoMostrar.toLowerCase().includes(search))) ||
-      (role.state ? 'activo' : 'inactivo').includes(search)
-    );
-    this.currentPage = 1; // Resetear a la primera página
-  }
+// Filtrar roles según el término de búsqueda
+filterRoles(): void {
+  const search = this.searchTerm.toLowerCase().trim();
+  this.filteredRoles = this.roles.filter(role =>
+    role.name.toLowerCase().includes(search) ||
+    role.description.toLowerCase().includes(search) ||
+    role.views.some(view => view.name?.toLowerCase().includes(search) || view.textoMostrar?.toLowerCase().includes(search)) ||
+    (role.state ? 'activo' : 'inactivo').includes(search)
+  );
+  this.currentPage = 1; // Resetear a la primera página
+}
 
   // Obtener los roles para la página actual
   paginatedRoles(): Role[] {
@@ -173,7 +174,7 @@ export class RoleComponent implements OnInit {
       );
     } else {
       // Actualizar rol existente
-      this.http.put(`${this.apiUrl}/${this.role.id}`, roleToSave).subscribe(
+      this.http.put(this.apiUrl, roleToSave).subscribe(
         () => {
           const index = this.roles.findIndex(r => r.id === this.role.id);
           if (index !== -1) {

@@ -61,14 +61,13 @@ export class QualificationComponent implements OnInit {
     
     this.filteredQualifications = this.califications.filter(calification =>
       calification.observation.toLowerCase().includes(search) || 
-      calification.qualification_criteria.toLowerCase().includes(search) ||
-      this.getAssessmentCriteriaName(calification.assessmentCriteriaId)?.toLowerCase().includes(search) || // Filter by assessment criteria name
-      this.getChecklistName(calification.checklistId)?.toLowerCase().includes(search) || // Filter by checklist name
-      (calification.state ? 'activo' : 'inactivo').includes(search) // Filter by state
+      String(calification.qualification_criteria).toLowerCase().includes(search) ||
+      String(this.getAssessmentCriteriaName(calification.assessmentCriteriaId)).toLowerCase().includes(search) ||
+      String(this.getChecklistName(calification.checklistId)).toLowerCase().includes(search) ||
+      (calification.state ? 'Activo' : 'Inactivo').includes(search) // Filter by state
     );
-  
-    this.currentPage = 1; // Reset to the first page after filtering
   }
+  
   paginatedCalifications(): any[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;

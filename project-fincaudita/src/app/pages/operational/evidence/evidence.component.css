@@ -48,12 +48,12 @@
 
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto;
+    margin: 5% auto;
     padding: 20px;
-    width: 50%;
+    width: 70%;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
+} 
 
 /* Add space between Description and State */
 .form-group+.form-group {

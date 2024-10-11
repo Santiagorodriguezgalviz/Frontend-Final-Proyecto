@@ -67,10 +67,10 @@
 
             <div class="row">
               <div class="col">
-                  <label for="moduloName">Ciudad:</label>
-                  <input type="text" class="form-control input-field" matInput [matAutocomplete]="auto" [(ngModel)]="farm.cityName" name="cityName"
+                  <label for="cityName">Ciudad:</label>
+                  <input type="text" class="form-control input-field" matInput [matAutocomplete]="cityAuto" [(ngModel)]="farm.cityName" name="cityName"
                           (input)="searchCitys($event)" required>
-                      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCitySelect($event)">
+                      <mat-autocomplete #cityAuto="matAutocomplete" (optionSelected)="onCitySelect($event)">
                           <mat-option *ngFor="let city of filteredCitys" [value]="city.name">
                               {{ city.name }}
                           </mat-option>
@@ -78,12 +78,16 @@
               </div>
 
                 <div class="col">
-                    <label for="UserId">Usuario asignado:</label>
-                    <input type="text" class="form-control input-field" id="UserId" name="UserId"
-                        [ngbTypeahead]="searchUsers" [inputFormatter]="formatUser" [resultFormatter]="formatUser"
-                        (selectItem)="onUserSelect($event)" [ngModel]="getUserName(farm.userId)" required>
+                    <label for="userUsername">Usuario:</label>
+                    <input type="text" class="form-control input-field" matInput [matAutocomplete]="userAuto" [(ngModel)]="farm.userUsername" name="userUsername"
+                            (input)="searchUsers($event)" required>
+                        <mat-autocomplete #userAuto="matAutocomplete" (optionSelected)="onUserSelect($event)">
+                            <mat-option *ngFor="let user of filteredUsers" [value]="user.username">
+                                {{ user.username }}
+                            </mat-option>
+                        </mat-autocomplete>
                 </div>
-            </div>
+              </div>
 
             <div class="row">
                 <div class="col">
@@ -91,7 +95,6 @@
                     <input type="number" class="form-control input-field" id="Dimension" name="Dimension"
                         [(ngModel)]="farm.dimension" required>
                 </div>
-            </div>
 
             <div class="row">
               <div class="col" *ngIf="farm.id !== 0">
@@ -103,9 +106,6 @@
                 </div>
             </div>
 
-
-
-            <div class="row">
                 <div class="col">
                     <label for="farm">Cultivo:</label>
                     <p-multiSelect id="selectedCropId" name="selectedCropId" [options]="crops"
@@ -114,6 +114,7 @@
                     (onChange)="onFarmChange($event)">
                 </p-multiSelect>
                 </div>
+              </div>
 
                 <!-- Sección para agregar hectáreas de cultivos seleccionados -->
                 <div *ngIf="selectedCropId.length > 0">
@@ -149,7 +150,6 @@
                 <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
                 <button type="submit" class="btn btn-primary">Guardar</button>
             </div>
-    </div>
     </form>
 </div>
 </div>

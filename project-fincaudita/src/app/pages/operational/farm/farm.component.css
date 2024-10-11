@@ -33,12 +33,12 @@
 
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto;
+    margin: 5% auto;
     padding: 20px;
-    width: 60%;
+    width: 70%;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
+} 
 
 /* Add space between form elements */
 .form-group+.form-group {

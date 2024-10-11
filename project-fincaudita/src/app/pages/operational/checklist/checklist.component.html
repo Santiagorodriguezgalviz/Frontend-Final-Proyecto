@@ -35,11 +35,9 @@
       </ng-select>
     </div>
   </div>
-
-  <!-- Botón para agregar un nuevo módulo -->
-  <button class="btn btn-success add-btn" (click)="openModal()">Agregar nuevo <i class="fas fa-plus"></i></button>
 </div>
 
+<!-- Modal para crear/editar lista de chequeo -->
 <div id="checklistModal" class="modal" [ngClass]="{'show-modal': isModalOpen}">
   <div class="modal-content">
     <span class="close" (click)="closeModal()">&times;</span>
@@ -111,9 +109,6 @@
       <td>{{ checklist.calification_total }}</td>
       <td>{{ checklist.state ? 'Activo' : 'Inactivo' }}</td>
       <td>
-        <button class="btn-icon edit" (click)="editChecklist(checklist)" title="Editar">
-          <i class="fas fa-edit"></i>
-        </button>
         <button class="btn-icon delete" (click)="deleteChecklist(checklist.id)" title="Eliminar">
           <i class="fas fa-trash"></i>
         </button>

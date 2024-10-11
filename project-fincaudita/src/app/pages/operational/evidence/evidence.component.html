@@ -4,7 +4,7 @@
 <div class="top-container">
   <!-- Campo de búsqueda -->
   <div class="search-container">
-    <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+    <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" 
       class="form-control input-field" />
   </div>  
   
@@ -35,9 +35,6 @@
       </ng-select>
     </div>
   </div>
-
-  <!-- Botón para agregar un nuevo módulo -->
-  <button class="btn btn-success add-btn" (click)="openModal()">Agregar nuevo <i class="fas fa-plus"></i></button>
 </div>
 
 <div id="moduloModal" class="modal" [ngClass]="{'show-modal': isModalOpen}">
@@ -130,9 +127,6 @@
             <td>{{ evidence.reviewId }}</td>
             <td>{{ evidence.state ? 'Activo' : 'Inactivo' }}</td>
             <td>
-                <button class="btn-icon edit" (click)="editEvidences(evidence)" title="Editar">
-                    <i class="fas fa-edit"></i>
-                </button>
                 <button class="btn-icon delete" (click)="deleteEvidences(evidence.id)" title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -141,6 +135,7 @@
     </tbody>
 </table>
 <p *ngIf="filteredEvidence.length === 0">No se encontraron evidencias.</p>
+
 <div class="data-table-footer">
   <div class="pagination">
     <button (click)="previousPage()" [disabled]="currentPage === 1" class="arrow">

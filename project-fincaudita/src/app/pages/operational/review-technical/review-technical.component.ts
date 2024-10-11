@@ -8,12 +8,15 @@ import Swal from 'sweetalert2';
 import { AfterViewInit } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { log } from 'node:console';
+import * as XLSX from 'xlsx';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-review-technical',
   standalone: true,
-  imports: [HttpClientModule, FormsModule, CommonModule, NgbTypeaheadModule, MatInputModule,
+  imports: [HttpClientModule, FormsModule, CommonModule, NgSelectModule, NgbTypeaheadModule, MatInputModule,
     MatAutocompleteModule],
   templateUrl: './review-technical.component.html',
   styleUrls: ['./review-technical.component.css']
@@ -46,8 +49,14 @@ export class ReviewTechnicalComponent implements OnInit, AfterViewInit {
   filteredFarms: any[] = [];
   assessmentCriterias: any[] = [];
   califications: any[] = [];
+  filteredReview: any[] = [];
+  currentPage = 1;
+  itemsPerPage = 5;
+  searchTerm = '';
+  itemsPerPageOptions = [5, 10, 20, 50];
+  isDropdownOpen = false;
   isModalOpen = false;
-  isEditMode = false;
+  
 
 
   @ViewChild('signaturePadTech') signaturePadTechRef!: ElementRef<HTMLCanvasElement>;
@@ -75,7 +84,6 @@ export class ReviewTechnicalComponent implements OnInit, AfterViewInit {
     this.getFarms();
     this.getAssessmentCriterias();
   }
-  
 
   ngAfterViewInit(): void {
     this.initializeSignaturePads();
@@ -85,6 +93,153 @@ export class ReviewTechnicalComponent implements OnInit, AfterViewInit {
     this.signaturePadTech = new SignaturePad(this.signaturePadTechRef.nativeElement);
     this.signaturePadProd = new SignaturePad(this.signaturePadProdRef.nativeElement);
   }
+
+  filterReviews(): void {
+    const search = this.searchTerm.toLowerCase().trim();
+    this.filteredReview = this.reviews.filter(review =>
+      review.code.toLowerCase().includes(search) ||
+      this.formatDate(review.date_review).includes(search) || // Filtrar por fecha (formateada)
+      this.getUserName(review.tecnicoId)?.toLowerCase().includes(search) || // Filtrar por técnico
+      review.lot.toLowerCase().includes(search) || // Filtrar por lote
+      review.observation.toLowerCase().includes(search) || // Filtrar por observación
+      (review.state ? 'activo' : 'inactivo').includes(search) // Filtrar por estado
+    );
+    this.currentPage = 1; // Resetear a la primera página
+  }
+  
+  // Método para formatear la fecha
+  formatDate(date: Date): string {
+    const formattedDate = new Date(date).toLocaleDateString('es-ES', {
+      day: '2-digit', month: '2-digit', year: 'numeric'
+    });
+    return formattedDate;
+  }
+  
+  paginatedReviews(): any[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    return this.filteredReview.slice(start, end);
+  }
+  
+  exportToExcel(): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredReview);
+    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Reviews');
+    XLSX.writeFile(workbook, 'listado_de_reviews.xlsx');
+  }
+  
+  exportToPDF(): void {
+    const doc = new jsPDF();
+    autoTable(doc, {
+      head: [['Código', 'Fecha de Revisión', 'Técnico', 'Lote', 'Observación', 'Estado']],
+      body: this.filteredReview.map(review => [
+        review.code,
+        this.formatDate(review.date_review),
+        this.getUserName(review.tecnicoId),
+        review.lot,
+        review.observation,
+        review.state ? 'Activo' : 'Inactivo'
+      ]),
+    });
+    doc.save('listado_de_reviews.pdf');
+  }
+
+onSearchChange(): void {
+  this.filterReviews();
+}
+
+handleExport(event: any): void {
+  const value = event;
+  
+  if (value === 'pdf') {
+    this.exportToPDF();
+  } else if (value === 'excel') {
+    this.exportToExcel();
+  }
+
+  // Resetear el select después de la exportación
+  this.searchTerm = ''; // Esto restablece el valor
+}
+
+updatePagination(): void {
+  this.currentPage = 1;
+  this.filterReviews();
+}
+
+onItemsPerPageChange(): void {
+  this.updatePagination();
+}
+
+previousPage(): void {
+  if (this.currentPage > 1) {
+    this.currentPage--;
+  }
+}
+
+nextPage(): void {
+  if (this.currentPage < this.totalPages) {
+    this.currentPage++;
+  }
+}
+
+get totalPages(): number {
+  return Math.ceil(this.filteredReview.length / this.itemsPerPage);
+}
+
+getPageNumbers(): number[] {
+  return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+}
+
+goToPage(page: number): void {
+  this.currentPage = page;
+}
+
+hasSelected(): boolean {
+  return this.reviews.some(review => review.selected);
+}
+
+selectAll(event: any): void {
+  const checked = event.target.checked;
+  this.reviews.forEach(review => (review.selected = checked));
+}
+
+// Verificar si todas las reviews están seleccionadas
+areAllSelected(): boolean {
+  return this.reviews.length > 0 && this.reviews.every(review => review.selected);
+}
+
+deleteSelected(): void {
+  const selectedIds = this.reviews.filter(review => review.selected).map(review => review.code);
+
+  if (selectedIds.length > 0) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¡No podrás revertir esto!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminarlo',
+      cancelButtonText: 'No, cancelar',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const deleteRequests = selectedIds.map(id => this.http.delete(`${this.apiUrl}/${id}`).toPromise());
+        Promise.all(deleteRequests)
+          .then(() => {
+            this.reviews = this.reviews.filter(review => !selectedIds.includes(review.code));
+            this.filterReviews();
+            Swal.fire('¡Eliminados!', 'Las reviews seleccionadas han sido eliminadas.', 'success');
+          })
+          .catch((error) => {
+            console.error('Error eliminando reviews seleccionadas:', error);
+            Swal.fire('Error', 'Hubo un problema al eliminar las reviews seleccionadas.', 'error');
+          });
+      }
+    });
+  } else {
+    Swal.fire('Error', 'No hay reviews seleccionadas para eliminar.', 'error');
+  }
+}
+
 
   searchusers(event: any): void {
     const term = event.target.value.toLowerCase();
@@ -108,6 +263,7 @@ export class ReviewTechnicalComponent implements OnInit, AfterViewInit {
           ...review,
           date_review: new Date(review.date_review).toISOString().slice(0, 10)
         }));
+        this.filterReviews();
       },
       (error) => {
         console.error('Error al cargar las revisiones:', error);
@@ -115,7 +271,6 @@ export class ReviewTechnicalComponent implements OnInit, AfterViewInit {
       }
     );
   }
-  
 
   getUsers(): void {
     this.http.get<any[]>(this.usersUrl).subscribe(
@@ -204,6 +359,7 @@ export class ReviewTechnicalComponent implements OnInit, AfterViewInit {
     this.isModalOpen = false;
     this.isEditing = false;
     this.resetForm();
+    this.isEditing = false;
     this.filteredUsers = [];
   }
 
@@ -422,7 +578,6 @@ export class ReviewTechnicalComponent implements OnInit, AfterViewInit {
         });
 
         this.review.checklists.qualifications = this.califications;
-        delete this.review.checklists.id;
 
         const selectedUser = this.users.find(user => user.id === this.review.tecnicoId);
         if (selectedUser) {
@@ -434,7 +589,7 @@ export class ReviewTechnicalComponent implements OnInit, AfterViewInit {
         }
         this.review.evidences = evidences;
 
-
+        this.isEditing = true;
         this.openModal();
       },
       (error) => {
@@ -442,16 +597,6 @@ export class ReviewTechnicalComponent implements OnInit, AfterViewInit {
         Swal.fire('Error', 'Hubo un problema al cargar la revisión.', 'error');
       }
     );
-  }
-
-  selectAll(event: any): void {
-    const checked = event.target.checked;
-    this.reviews.forEach(review => (review.selected = checked));
-  }
-  
-  // Verificar si todos los roles están seleccionados
-  areAllSelected(): boolean {
-    return this.reviews.length > 0 && this.reviews.every(review => review.selected);
   }
 
   deleteReview(id: number): void {
