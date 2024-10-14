@@ -48,14 +48,80 @@ export class UserComponent implements OnInit {
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
+  usernameStrength: number = 0; // Valor entre 0 y 1
+  usernameStrengthMessage: string = '';
+
+  updateUsernameStrength(usernameField: any): void {
+    const username = usernameField.value;
+
+    // Resetear fuerza y mensaje
+    this.usernameStrength = 0;
+    this.usernameStrengthMessage = '';
+
+    // Evaluar fuerza del nombre de usuario
+    const lengthCriteria = username.length >= 4 && username.length <= 15; // Mínimo 4 y máximo 15 caracteres
+    const uppercaseCriteria = /[A-Z]/.test(username); // Al menos una mayúscula
+    const lowercaseCriteria = /[a-z]/.test(username); // Al menos una minúscula
+
+    const criteriaMet = [lengthCriteria, uppercaseCriteria, lowercaseCriteria].filter(Boolean).length;
+
+    // Calcular fuerza
+    this.usernameStrength = criteriaMet / 3; // Normalizado entre 0 y 1
+
+  }
+  passwordStrength: number = 0;
+passwordStrengthMessage: string | null = null;
+
+updatePasswordStrength(passwordField: any): void {
+  if (passwordField.value) {
+    const lengthCriteria = passwordField.value.length >= 8 ? 1 : 0;
+    const uppercaseCriteria = /[A-Z]/.test(passwordField.value) ? 1 : 0;
+    const numberCriteria = /\d/.test(passwordField.value) ? 1 : 0;
+    
+    this.passwordStrength = lengthCriteria + uppercaseCriteria + numberCriteria;
+
+  }
+}
+
+  onInputChange(field: any) {
+    field.control.updateValueAndValidity();
+  }
+
   ngOnInit(): void {
     this.getUsers();
     this.getPersons();
     this.getRoles();
   }
+  
+  togglePasswordVisibility() {
+    const passwordInput = document.getElementById('password') as HTMLInputElement;
+    const icon = document.getElementById('togglePassword');
+    
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      icon?.classList.remove('fa-eye');
+      icon?.classList.add('fa-eye-slash');
+    } else {
+      passwordInput.type = 'password';
+      icon?.classList.remove('fa-eye-slash');
+      icon?.classList.add('fa-eye');
+    }
+  }
+  
   getPersonName(personId: number): string | undefined {
     const person = this.persons.find(p => p.id === personId);
     return person ? person.first_name : undefined;
+  }
+
+  validateUsername(username: string): boolean {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{4,15}$/;
+    return regex.test(username);
+  }
+
+  // Función de validación de la contraseña
+  validatePassword(password: string): boolean {
+    const regex = /^(?=.*[A-Z])(?=.*[0-9]).{8,}$/;
+    return regex.test(password);
   }
   
 
@@ -316,22 +382,23 @@ export class UserComponent implements OnInit {
 
   deleteUsers(id: number): void {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'You won\'t be able to revert this!',
+      title: '¿Estás seguro?',
+      text: '¡No podrás revertir esto!',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'No, cancel!',
+      confirmButtonText: 'Sí, elimínalo!',
+      cancelButtonText: 'No, cancelar!',
       reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
         this.http.delete(`${this.apiUrl}/${id}`).subscribe(() => {
           this.getUsers();
-          Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
+          Swal.fire('¡Eliminado!', 'Tu archivo ha sido eliminado.', 'success');
         });
       }
     });
   }
+  
 
   resetForm(): void {
     this.user = { id: 0, username: '', password: '', personId: 0, state: true, roles: [] };

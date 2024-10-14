@@ -51,29 +51,82 @@
             <input type="hidden" name="id" [(ngModel)]="treatment.id">
 
             <div class="row">
-                <div class="col">
-                    <label for="DateTreatment">Fecha de tratamiento:</label>
-                    <input type="date" class="form-control" id="DateTreatment" name="dateTreatment"
-                        [(ngModel)]="treatment.dateTreatment" required>
+              <div class="col">
+                <label for="date_review">Fecha de revisión:</label>
+                <input 
+                  type="date" 
+                  id="date_review" 
+                  name="date_review" 
+                  class="form-control input-field" 
+                  [(ngModel)]="treatment.dateTreatment" 
+                  required>
+                
+                <!-- Mensaje de error si la fecha no es del mes actual -->
+                <div *ngIf="treatment.dateTreatment && !isDateInCurrentMonth()" class="text-danger">
+                  La fecha debe ser del mes actual.
                 </div>
+                
+                <!-- Mensaje de error si el campo está vacío -->
+                <div *ngIf="!treatment.dateTreatment" class="text-danger">
+                  La fecha es obligatoria.
+                </div>
+              </div>
+            
 
-                <div class="col">
-                    <label for="typetreatment">Tipo de tratamiento:</label>
-                    <select class="form-control" id="typetreatment" name="typeTreatment"
-                        [(ngModel)]="treatment.typeTreatment" required>
-                        <option value="" disabled selected>Seleccione el tipo de tratamiento</option>
-                        <option value="Fertilizacion">Fertilización</option>
-                        <option value="Fumigacion">Fumigación</option>
-                    </select>
+              <div class="col">
+                <label for="typetreatment">Tipo de tratamiento:</label>
+                <select 
+                  class="form-control input-field" 
+                  id="typetreatment" 
+                  name="typeTreatment" 
+                  [(ngModel)]="treatment.typeTreatment" 
+                  required 
+                  #typeTreatment="ngModel"
+                  [ngClass]="{
+                    'is-invalid': typeTreatment.invalid && (typeTreatment.dirty || typeTreatment.touched), 
+                    'is-valid': typeTreatment.valid && (typeTreatment.dirty || typeTreatment.touched)
+                  }">
+                  <option value="" disabled selected>Seleccione el tipo de tratamiento</option>
+                  <option value="Fertilizacion">Fertilización</option>
+                  <option value="Fumigacion">Fumigación</option>
+                </select>
+                
+                <!-- Mensaje de error -->
+                <div *ngIf="typeTreatment.invalid && (typeTreatment.dirty || typeTreatment.touched)" class="invalid-feedback">
+                  <div *ngIf="typeTreatment.errors?.['required']">
+                    Por favor, seleccione un tipo de tratamiento.
+                  </div>
                 </div>
-            </div>
+              </div>              
+            <br>
+            
 
             <div class="row">
-                <div class="col">
-                    <label for="QuantityMix">Cantidad de mezcla:</label>
-                    <input type="text" class="form-control" id="QuantityMix" name="quantityMix"
-                        [(ngModel)]="treatment.quantityMix" required>
+              <div class="col">
+                <label for="QuantityMix">Cantidad de mezcla (Litros o Gramos):</label>
+                <input type="text" 
+                       class="form-control input-field" 
+                       id="QuantityMix" 
+                       name="quantityMix"
+                       [(ngModel)]="treatment.quantityMix" 
+                       required 
+                       #quantityMix="ngModel"
+                       [ngClass]="{
+                         'is-invalid': quantityMix.invalid && (quantityMix.dirty || quantityMix.touched), 
+                         'is-valid': quantityMix.valid && (quantityMix.dirty || quantityMix.touched)
+                       }">
+                
+                <!-- Mensaje de error si la cantidad no es válida -->
+                <div *ngIf="quantityMix.invalid && (quantityMix.dirty || quantityMix.touched)" class="invalid-feedback">
+                  <div *ngIf="quantityMix.errors?.['required']">
+                    La cantidad de mezcla es obligatoria.
+                  </div>
+                  <div *ngIf="quantityMix.errors?.['pattern']">
+                    Debe ser un número positivo (litros o gramos).
+                  </div>
                 </div>
+              </div>
+            
 
                 <div class="col" *ngIf="treatment.id !== 0">
                     <label for="State">Estado:</label>
@@ -85,75 +138,119 @@
                 </div>
             </div>
 
-                <div class="row">
-                    <div class="col">
-                        <label for="selectedLots">Seleccionar Lotes:</label>
-                        <p-multiSelect id="selectedLots" name="selectedLots"
-                            [options]="farms"
-                            [(ngModel)]="selectedLots"
-                            optionLabel="cultivo"
-                            [ngModelOptions]="{standalone: true}"
-                            placeholder="Selecciona lotes"
-                            scrollHeight="150px"
-                            display="chip">
-                            <ng-template let-farm pTemplate="item">
-                                <div>
-                                    <strong>Finca: {{ farm.farmName }}</strong> - Cultivo: {{ farm.cultivo }}
-                                </div>
-                            </ng-template>
-                        </p-multiSelect>
+
+            <div class="row">
+              <div class="col">
+                <label for="selectedLots">Seleccionar Lotes:</label>
+                <p-multiSelect id="selectedLots" 
+                               name="selectedLots"
+                               [options]="farms"
+                               [(ngModel)]="selectedLots"
+                               optionLabel="cultivo"
+                               [ngModelOptions]="{standalone: true}"
+                               placeholder="Selecciona lotes"
+                               scrollHeight="150px"
+                               display="chip"
+                               required
+                               #lots="ngModel"
+                               [ngClass]="{
+                                 'is-valid': selectedLots.length > 0 && (lots.dirty || lots.touched),
+                                 'is-invalid': selectedLots.length === 0 && (lots.dirty || lots.touched)
+                               }">
+                  <ng-template let-farm pTemplate="item">
+                    <div>
+                      <strong>Finca: {{ farm.farmName }}</strong> - Cultivo: {{ farm.cultivo }}
                     </div>
-                    <p *ngIf="farms.length === 0">No hay lotes disponibles.</p>
-    
-                    <div class="col">
-                        <label for="selectedSupplies">Seleccionar Insumos:</label>
-                        <p-multiSelect id="selectedSupplies" name="selectedSupplies" 
-                            [options]="supplies" [(ngModel)]="selectedSupplies"
-                            optionLabel="name" placeholder="Seleccione suministros"
-                            scrollHeight="150px" display="chip"
-                            (onChange)="onSuppliesChange($event)">
-                        </p-multiSelect>
-                    </div>
+                  </ng-template>
+                </p-multiSelect>
+            
+                <!-- Mensaje de error si no se selecciona ningún lote -->
+                <div *ngIf="selectedLots.length === 0 && (lots.dirty || lots.touched)" class="invalid-feedback">
+                  Debe seleccionar al menos un lote.
                 </div>
+            
+                <!-- Mensaje si no hay lotes disponibles -->
+                <p *ngIf="farms.length === 0" class="text-danger">No hay lotes disponibles.</p>
+              </div>
+            
     
-                <!-- Sección para agregar insumos con sus dosis -->
-                <div *ngIf="selectedSupplies.length > 0">
-                    <h5>Insumos Seleccionados</h5>
-    
-                    
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Insumo</th>
-                                <th>Dosis</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let supply of treatment.supplieList; let i = index">
-                                <td>{{ supply.name }}</td>
-                                <td>
-                                    <input type="text" [(ngModel)]="supply.dose" name="dose-{{i}}" class="form-control" placeholder="Ingrese dosis">
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger" (click)="removeSupplie(supply.id)">
-                                      <i class="fas fa-trash"></i>
-                                    </button>
-                                  </td>
-        
-                            </tr>
-                        </tbody>
-                    </table>
+              <div class="col">
+                <label for="selectedSupplies">Seleccionar Insumos:</label>
+                <p-multiSelect id="selectedSupplies" 
+                               name="selectedSupplies" 
+                               [options]="supplies" 
+                               [(ngModel)]="selectedSupplies"
+                               optionLabel="name" 
+                               placeholder="Seleccione suministros"
+                               scrollHeight="150px" 
+                               display="chip"
+                               (onChange)="onSuppliesChange($event)"
+                               required
+                               #suppliesNgModel="ngModel"
+                               [ngClass]="{
+                                 'is-valid': selectedSupplies.length > 0 && (suppliesNgModel.dirty || suppliesNgModel.touched),
+                                 'is-invalid': selectedSupplies.length === 0 && (suppliesNgModel.dirty || suppliesNgModel.touched)
+                               }">
+                </p-multiSelect>
+              
+                <!-- Mensaje de error si no se selecciona ningún insumo -->
+                <div *ngIf="selectedSupplies.length === 0 && (suppliesNgModel.dirty || suppliesNgModel.touched)" class="invalid-feedback">
+                  Debe seleccionar al menos un insumo.
                 </div>
-                <br>
+              </div>
+              
+              <!-- Sección para agregar insumos con sus dosis -->
+              <div *ngIf="selectedSupplies.length > 0">
+                <h5>Insumos Seleccionados</h5>
+              
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Insumo</th>
+                      <th>Dosis</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let supply of treatment.supplieList; let i = index">
+                      <td>{{ supply.name }}</td>
+                      <td>
+                        <input type="text" 
+                               [(ngModel)]="supply.dose" 
+                               name="dose-{{i}}" 
+                               class="form-control input-field" 
+                               placeholder="Ingrese dosis" 
+                               required 
+                               #doseNgModel="ngModel"
+                               [ngClass]="{
+                                 'is-valid': supply.dose && (doseNgModel.dirty || doseNgModel.touched),
+                                 'is-invalid': !supply.dose && (doseNgModel.dirty || doseNgModel.touched)
+                               }">
+                        <!-- Mensaje de error si la dosis está vacía -->
+                        <div *ngIf="!supply.dose && (doseNgModel.dirty || doseNgModel.touched)" class="invalid-feedback">
+                          La dosis es obligatoria.
+                        </div>
+                      </td>
+                      <td>
+                        <button type="button" class="btn btn-danger" (click)="removeSupplie(supply.id)">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <br>
+              
     
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
                 <button type="submit" class="btn btn-primary">
                     {{ isEditing ? 'Actualizar' : 'Guardar' }}
                   </button>
+             </div>
             </div>
-      
+            </div>
         </form>
     </div>
 </div>

@@ -47,82 +47,344 @@
 
         <hr class="modal-border">
 
-        <form #personForm="ngForm" (ngSubmit)="onSubmit(personForm)">
+        <form #personForm="ngForm" (ngSubmit)="onSubmit(personForm)" novalidate>
             <input type="hidden" name="id" [(ngModel)]="person.id">
 
+            <!-- Primer Paso -->
             <div class="row">
                 <div class="col">
-                    <label for="First_name">Primer nombre:</label>
-                    <input type="text" class="form-control input-field" id="First_name" name="First_name" [(ngModel)]="person.first_name" required>
+                  <label for="First_name">Nombres:</label>
+                  <div class="input-group position-relative">
+                    <input
+                      type="text"
+                      class="form-control input-field"
+                      id="First_name"
+                      name="First_name"
+                      [(ngModel)]="person.first_name"
+                      required
+                      minlength="3"
+                      maxlength="25"
+                      pattern="^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$"
+                      #firstName="ngModel"
+                      [ngClass]="{
+                        'is-invalid': firstName.invalid && (firstName.touched || firstName.dirty),
+                        'is-valid': firstName.valid && (firstName.touched || firstName.dirty)
+                      }"
+                      (input)="onInputChange(firstName)"
+                    />
+                    <i *ngIf="firstName.valid && person.first_name" class="fa fa-check-circle text-success" 
+                       style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                    <i *ngIf="firstName.invalid && (firstName.touched || firstName.dirty)" class="fas fa-exclamation-circle text-danger" 
+                       style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                  </div>
+                  <div *ngIf="firstName.invalid && (firstName.touched || firstName.dirty)" class="text-danger">
+                    <div *ngIf="firstName.errors?.['required']">El nombre es obligatorio.</div>
+                    <div *ngIf="firstName.errors?.['minlength']">El nombre debe tener al menos 3 caracteres.</div>
+                    <div *ngIf="firstName.errors?.['maxlength']">El nombre no debe exceder los 25 caracteres.</div>
+                    <div *ngIf="firstName.errors?.['pattern']">Solo se permiten letras y espacios.</div>
+                  </div>
+                  <div *ngIf="firstName.valid && (firstName.touched || firstName.dirty)" class="text-success">
+                  </div>
                 </div>
+            
 
                 <div class="col">
-                    <label for="Last_name">Segundo nombre:</label>
-                    <input type="text" class="form-control input-field" id="Last_name" name="Last_name" [(ngModel)]="person.last_name" required>
+                  <label for="Last_name">Apellidos:</label>
+                  <div class="input-group position-relative">
+                    <input
+                      type="text"
+                      class="form-control input-field"
+                      id="Last_name"
+                      name="Last_name"
+                      [(ngModel)]="person.last_name"
+                      required
+                      minlength="3"
+                      maxlength="15"
+                      pattern="^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$"
+                      #lastName="ngModel"
+                      [ngClass]="{
+                        'is-invalid': lastName.invalid && (lastName.touched || lastName.dirty),
+                        'is-valid': lastName.valid && (lastName.touched || lastName.dirty)
+                      }"
+                      (input)="onInputChange(lastName)"
+                    />
+                    <i *ngIf="lastName.valid && person.last_name" class="fa fa-check-circle text-success" 
+                       style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                    <i *ngIf="lastName.invalid && (lastName.touched || lastName.dirty)" class="fas fa-exclamation-circle text-danger" 
+                       style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                  </div>
+                  <div *ngIf="lastName.invalid && (lastName.touched || lastName.dirty)" class="text-danger">
+                    <div *ngIf="lastName.errors?.['required']">El apellido es obligatorio.</div>
+                    <div *ngIf="lastName.errors?.['minlength']">El apellido debe tener al menos 3 caracteres.</div>
+                    <div *ngIf="lastName.errors?.['maxlength']">El apellido no debe exceder los 15 caracteres.</div>
+                    <div *ngIf="lastName.errors?.['pattern']">Solo se permiten letras y espacios.</div>
+                  </div>
+                  <div *ngIf="lastName.valid && (lastName.touched || lastName.dirty)" class="text-success">
+                  </div>
                 </div>
-            </div>
-            <br>
+              </div>
+              
 
+            <!-- Email y Tipo de Documento -->
             <div class="row">
                 <div class="col">
-                    <label for="Email">Email:</label>
-                    <input type="email" class="form-control input-field" id="Email" name="Email" [(ngModel)]="person.email" required>
+                    <label for="Email">Correo Electrónico:</label>
+                    <div class="input-group position-relative">
+                        <input
+                            type="email"
+                            class="form-control input-field"
+                            id="Email"
+                            name="Email"
+                            [(ngModel)]="person.email"
+                            required
+                            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                            #email="ngModel"
+                            [ngClass]="{
+                                'is-invalid': email.invalid && (email.touched || email.dirty),
+                                'is-valid': email.valid && (email.touched || email.dirty)
+                            }"
+                            (input)="onInputChange(email)"
+                        />
+                        <i *ngIf="email.valid && person.email" class="fa fa-check-circle text-success" 
+                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                        <i *ngIf="email.invalid && (email.touched || email.dirty)" class="fas fa-exclamation-circle text-danger" 
+                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                    </div>
+                    <div *ngIf="email.invalid && (email.touched || email.dirty)" class="text-danger">
+                        <div *ngIf="email.errors?.['required']">El email es obligatorio.</div>
+                        <div *ngIf="email.errors?.['pattern']">El email debe tener un formato válido y contener un dominio.</div>
+                    </div>
                 </div>
+            
+           
 
-                <div class="col">
-                    <label for="Type_document">Tipo de documento:</label>
-                    <select class="form-control input-field" id="Type_document" name="Type_document" [(ngModel)]="person.type_document" required>
-                        <option value="">Seleccione</option>
-                        <option value="CC">Cédula de ciudadanía</option>
-                        <option value="TI">Tarjeta de identidad</option>
-                        <option value="CE">Cédula de extranjería</option>
-                        <option value="PS">Pasaporte</option>
-                    </select>
-                </div>
-            </div>
-            <br>
+                    <div class="col">
+                      <label for="Type_document">Tipo de documento:</label>
+                      <div class="input-group position-relative">
+                        <select 
+                          class="form-control input-field" 
+                          id="Type_document" 
+                          name="Type_document" 
+                          [(ngModel)]="person.type_document" 
+                          required 
+                          #typeDocument="ngModel"
+                          [ngClass]="{
+                            'is-invalid': typeDocument.invalid && (typeDocument.touched || typeDocument.dirty), 
+                            'is-valid': typeDocument.valid && (typeDocument.touched || typeDocument.dirty)
+                          }"
+                          (change)="onInputChange(typeDocument)"
+                        >
+                          <option value="">Seleccione</option>
+                          <option value="CC">Cédula de ciudadanía</option>
+                          <option value="CE">Cédula de extranjería</option>
+                          <option value="PS">Pasaporte</option>
+                        </select>
+                        <i *ngIf="typeDocument.valid && person.type_document" class="fa fa-check-circle text-success" 
+                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                        <i *ngIf="typeDocument.invalid && (typeDocument.touched || typeDocument.dirty)" class="fas fa-exclamation-circle text-danger" 
+                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                      </div>
+                      <div *ngIf="typeDocument.invalid && (typeDocument.touched || typeDocument.dirty)" class="text-danger">
+                        <div *ngIf="typeDocument.errors?.['required']">Seleccione un tipo de documento.</div>
+                      </div>
+                      <div *ngIf="typeDocument.valid && (typeDocument.touched || typeDocument.dirty)" class="text-success">
+                      </div>
+                    </div>
+                  </div>
+                  
 
+            <!-- Documento y Dirección -->
             <div class="row">
                 <div class="col">
-                    <label for="Document">Documento:</label>
-                    <input type="text" class="form-control input-field" id="Document" name="Document" [(ngModel)]="person.document" required>
+                  <label for="Document">Número de Documento:</label>
+                  <div class="input-group position-relative">
+                    <input 
+                      type="text" 
+                      class="form-control input-field" 
+                      id="Document" 
+                      name="Document" 
+                      [(ngModel)]="person.document" 
+                      required 
+                      pattern="^[0-9]+$"  
+                      minlength="8"  
+                      maxlength="10" 
+                      #document="ngModel"
+                      (keypress)="validateNumberInput($event)" 
+                      (input)="validateNumberLength($event)" 
+                      [ngClass]="{
+                        'is-invalid': document.invalid && (document.dirty || document.touched), 
+                        'is-valid': document.valid && (document.dirty || document.touched)
+                      }"
+                    />
+                    <i *ngIf="document.valid && person.document" class="fa fa-check-circle text-success" 
+                       style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                    <i *ngIf="document.invalid && (document.dirty || document.touched)" class="fas fa-exclamation-circle text-danger" 
+                       style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                  </div>
+                  <div *ngIf="document.invalid && (document.dirty || document.touched)" class="text-danger">
+                    <div *ngIf="document.errors?.['required']">El documento es obligatorio.</div>
+                    <div *ngIf="document.errors?.['pattern']">El documento solo puede contener números.</div>
+                    <div *ngIf="document.errors?.['minlength']">El documento debe tener al menos 8 caracteres.</div>
+                    <div *ngIf="document.errors?.['maxlength']">El documento no puede tener más de 10 caracteres.</div>
+                  </div>
+                  <div *ngIf="document.valid && (document.dirty || document.touched)" class="text-success">
+                  </div>
                 </div>
+              
+            
 
-                <div class="col">
-                    <label for="Address">Dirección:</label>
-                    <input type="text" class="form-control input-field" id="Address" name="Address" [(ngModel)]="person.address" required>
-                </div>
-            </div>
-            <br>
+                    <div class="col">
+                      <label for="Address">Dirección:</label>
+                      <div class="input-group position-relative">
+                        <input 
+                          type="text" 
+                          class="form-control input-field" 
+                          id="Address" 
+                          name="Address" 
+                          [(ngModel)]="person.addres" 
+                          required 
+                          pattern="^[A-Za-z0-9\s]+$" 
+                          placeholder="Ej: Calle 123 #45-67"
+                          #address="ngModel"
+                          [ngClass]="{
+                            'is-invalid': address.invalid && (address.dirty || address.touched), 
+                            'is-valid': address.valid && (address.dirty || address.touched)
+                          }"
+                        />
+                        <i *ngIf="address.valid && person.addres" class="fa fa-check-circle text-success" 
+                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                        <i *ngIf="address.invalid && (address.dirty || address.touched)" class="fas fa-exclamation-circle text-danger" 
+                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                      </div>
+                      <div *ngIf="address.invalid && (address.dirty || address.touched)" class="text-danger">
+                        <div *ngIf="address.errors?.['required']">La dirección es obligatoria.</div>
+                        <div *ngIf="address.errors?.['pattern']">Solo se permiten letras y números, sin comas, puntos ni otros caracteres especiales.</div>
+                      </div>
+                      <div *ngIf="address.valid && (address.dirty || address.touched)" class="text-success">
+                      </div>
+                    </div>
+                  </div>               
 
+            <!-- Teléfono y Fecha de Nacimiento -->
             <div class="row">
                 <div class="col">
                     <label for="Phone">Teléfono:</label>
-                    <input type="text" class="form-control input-field" id="Phone" name="Phone" [(ngModel)]="person.phone" required>
+                    <div class="input-group position-relative">
+                        <input 
+                            type="text" 
+                            class="form-control input-field" 
+                            id="Phone" 
+                            name="Phone" 
+                            [(ngModel)]="person.phone" 
+                            required 
+                            pattern="^[0-9]{9,10}$"  
+                            minlength="9"  
+                            maxlength="10" 
+                            #phone="ngModel"
+                            (keypress)="validateNumberInput($event)" 
+                            (input)="validateNumberLength($event)" 
+                            [ngClass]="{
+                                'is-invalid': phone.invalid && (phone.dirty || phone.touched), 
+                                'is-valid': phone.valid && (phone.dirty || phone.touched)
+                            }"
+                        />
+                        <i *ngIf="phone.valid && person.phone" class="fa fa-check-circle text-success" 
+                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                        <i *ngIf="phone.invalid && (phone.dirty || phone.touched)" class="fas fa-exclamation-circle text-danger" 
+                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                    </div>
+                    <!-- Mensajes de error -->
+                    <div *ngIf="phone.invalid && (phone.dirty || phone.touched)" class="invalid-feedback">
+                        <div *ngIf="phone.errors?.['required']">El teléfono es obligatorio.</div>
+                        <div *ngIf="phone.errors?.['pattern']">El teléfono debe tener entre 9 y 10 dígitos y solo números.</div>
+                        <div *ngIf="phone.errors?.['minlength']">El teléfono debe tener al menos 9 dígitos.</div>
+                        <div *ngIf="phone.errors?.['maxlength']">El teléfono no puede tener más de 10 dígitos.</div>
+                    </div>
                 </div>
+            
+                    <div class="col">
+                        <label for="Birth_of_date">Fecha de nacimiento:</label>
+                        <div class="input-group position-relative">
+                            <input 
+                                type="date" 
+                                class="form-control input-field" 
+                                id="Birth_of_date" 
+                                name="Birth_of_date" 
+                                [(ngModel)]="person.birth_of_date" 
+                                required 
+                                [min]="minDate" 
+                                [max]="maxDate"
+                                #birthDate="ngModel"
+                                [ngClass]="{
+                                    'is-invalid': birthDate.invalid && (birthDate.dirty || birthDate.touched), 
+                                    'is-valid': birthDate.valid && (birthDate.dirty || birthDate.touched)
+                                }"
+                            />
+                            <i *ngIf="birthDate.valid && person.birth_of_date" class="fa fa-check-circle text-success" 
+                               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                            <i *ngIf="birthDate.invalid && (birthDate.dirty || birthDate.touched)" class="fas fa-exclamation-circle text-danger" 
+                               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                        </div>
+                        <!-- Mensajes de error -->
+                        <div *ngIf="birthDate.invalid && (birthDate.dirty || birthDate.touched)" class="invalid-feedback">
+                            <div *ngIf="birthDate.errors?.['required']">La fecha de nacimiento es obligatoria.</div>
+                            <div *ngIf="birthDate.errors?.['max']">Debes tener menos de 70 años.</div>
+                            <div *ngIf="birthDate.errors?.['min']">Debes tener al menos 18 años.</div>
+                        </div>
+                    </div>
+                </div>           
+                
 
-                <div class="col">
-                    <label for="Birth_of_date">Fecha de nacimiento:</label>
-                    <input type="date" class="form-control input-field" id="Birth_of_date" name="Birth_of_date" [(ngModel)]="person.birth_of_date" required>
-                </div>
-            </div>
-            <br>
-
+            <!-- Ciudad y Estado -->
             <div class="row">
                 <div class="col">
-                    <label for="City">Ciudad:</label>
-                    <input type="text" class="form-control input-field" id="City" name="City" [(ngModel)]="person.cityName" (input)="searchCitys($event)" required>
-                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCitySelect($event)">
+                    <label for="cityName">Ciudad:</label>
+                    <div class="input-group position-relative">
+                        <input 
+                            type="text" 
+                            class="form-control input-field" 
+                            matInput 
+                            [matAutocomplete]="cityAuto" 
+                            [(ngModel)]="person.cityName" 
+                            name="cityName"
+                            (input)="searchCitys($event)" 
+                            required 
+                            #cityField="ngModel"
+                            [ngClass]="{
+                                'is-invalid': cityField.invalid && cityField.touched, 
+                                'is-valid': cityField.valid && cityField.touched
+                            }"
+                        />
+                        <i *ngIf="cityField.valid && person.cityName" class="fa fa-check-circle text-success" 
+                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                        <i *ngIf="cityField.invalid && cityField.touched" class="fas fa-exclamation-circle text-danger" 
+                           style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                    </div>
+            
+                    <mat-autocomplete #cityAuto="matAutocomplete" (optionSelected)="onCitySelect($event)">
                         <mat-option *ngFor="let city of filteredCitys" [value]="city.name">
                             {{ city.name }}
                         </mat-option>
                     </mat-autocomplete>
+            
+                    <!-- Mensajes de error para Ciudad -->
+                    <div *ngIf="cityField.invalid && cityField.touched" class="invalid-feedback">
+                        <div *ngIf="cityField.errors?.['required']">Debes seleccionar una ciudad.</div>
+                    </div>
                 </div>
+                            
+              
+  
 
                 <div class="col" *ngIf="person.id !== 0">
                     <label for="State">Estado:</label>
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="State" name="State" [(ngModel)]="person.state">
+                        <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id="State" 
+                            name="State" 
+                            [(ngModel)]="person.state">
                     </div>
                 </div>
             </div>
@@ -130,7 +392,7 @@
             <br>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
-                <button type="submit" class="btn btn-primary">Guardar</button>
+                <button type="submit" class="btn btn-primary" [disabled]="personForm.invalid">Guardar</button>
             </div>
         </form>
     </div>
@@ -140,11 +402,15 @@
 <table *ngIf="filteredPersons.length > 0" class="table">
     <thead>
         <tr>
-            <th><input type="checkbox" (change)="selectAll($event)" [checked]="areAllSelected()" /></th>
+            <th>
+                <input type="checkbox" (change)="selectAll($event)" [checked]="areAllSelected()" />
+            </th>
             <th>Nombre</th>
             <th>Documento</th>
             <th>Email</th>
             <th>Teléfono</th>
+            <th>Fecha de nacimiento</th>
+            <th>Ciudad</th>
             <th>Estado</th>
             <th>Acciones</th>
         </tr>
@@ -161,6 +427,8 @@
             <td>{{ person.document }}</td>
             <td>{{ person.email }}</td>
             <td>{{ person.phone }}</td>
+            <td>{{ person.birth_of_date | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ getCityName(person.cityId)}}</td>
             <td>{{ person.state ? 'Activo' : 'Inactivo' }}</td>
             <td>
                 <button class="btn-icon edit" (click)="editPersons(person)" title="Editar">

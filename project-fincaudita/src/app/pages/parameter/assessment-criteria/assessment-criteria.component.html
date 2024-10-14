@@ -5,8 +5,8 @@
   <div class="search-container">
     <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
       class="form-control input-field" />
-  </div>  
-  
+  </div>
+
   <div class="export-container">
     <!-- Selector de ítems por página -->
     <div class="items-per-page">
@@ -15,10 +15,11 @@
         <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
       </select>
     </div>
-  
+
     <!-- Select para exportar -->
     <div class="export-select">
-      <ng-select (change)="handleExport($event)" [placeholder]="'Exportar Como'" [clearable]="true" [searchable]="false">
+      <ng-select (change)="handleExport($event)" [placeholder]="'Exportar Como'" [clearable]="true"
+        [searchable]="false">
         <ng-option value="pdf" class="custom-option">
           <div class="option-container">
             <i class="fas fa-file-pdf"></i>
@@ -40,129 +41,195 @@
 </div>
 
 <div id="cityModal" class="modal" [ngClass]="{'show-modal': isModalOpen}">
-    <div class="modal-content">
-        <span class="close" (click)="closeModal()">&times;</span>
-        <h2>{{ assesment.id === 0 ? 'Agregar Criterio evaluativo' : 'Editar Criterio evaluativo' }}</h2>
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h2>{{ assesment.id === 0 ? 'Agregar Criterio evaluativo' : 'Editar Criterio evaluativo' }}</h2>
 
-        <hr class="modal-border">
+    <hr class="modal-border">
 
-        <form #assesmentForm="ngForm" (ngSubmit)="onSubmit(assesmentForm)">
-            <input type="hidden" name="id" [(ngModel)]="assesment.id">
+    <form #assesmentForm="ngForm" (ngSubmit)="onSubmit(assesmentForm)">
+      <input type="hidden" name="id" [(ngModel)]="assesment.id">
 
-            <div class="row">
-                <div class="col">
-                    <label for="Name">Nombre:</label>
-                    <input type="text" class="form-control input-field" id="Name" name="Name" [(ngModel)]="assesment.name" required>
-                </div>
+      <div class="row">
+        <div class="col">
+          <label for="Name">Nombre:</label>
+          <div class="input-group position-relative">
+            <input type="text" class="form-control input-field" id="Name" name="Name" [(ngModel)]="assesment.name"
+              required minlength="5" maxlength="20" #nameField="ngModel" [ngClass]="{
+                'is-invalid': nameField.invalid && (nameField.touched || nameField.dirty),
+                'is-valid': nameField.valid && (nameField.touched || nameField.dirty)
+              }">
+            <i *ngIf="nameField.valid && assesment.name" class="fa fa-check-circle text-success"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="nameField.invalid && (nameField.touched || nameField.dirty)"
+              class="fas fa-exclamation-circle text-danger"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
 
-                <div class="col">
-                    <label for="Description">Rango de calificación:</label>
-                    <input type="number" class="form-control input-field" id="rating" name="Description"
-                        [(ngModel)]="assesment.rating_range">
-                </div>
-            </div>
-            <br>
+          <!-- Mensajes de error para Nombre -->
+          <div *ngIf="nameField.invalid && (nameField.touched || nameField.dirty)" class="invalid-feedback">
+            <div *ngIf="nameField.errors?.['required']">El nombre es obligatorio.</div>
+            <div *ngIf="nameField.errors?.['minlength']">El nombre debe tener al menos 5 caracteres.</div>
+            <div *ngIf="nameField.errors?.['maxlength']">El nombre no puede exceder los 20 caracteres.</div>
+          </div>
+          <div *ngIf="nameField.valid && nameField.touched" class="valid-feedback">
+            El nombre es válido.
+          </div>
+        </div>
 
-            <div class="row">
-                <div class="col">
-                    <label for="TypeCriterian">Tipo de criterio:</label>
-                    <select class="form-control input-field" id="TypeCriterian" name="typeCriterian" [(ngModel)]="assesment.type_criterian" required>
-                        <option value="" disabled selected>Seleccione el tipo de criterio</option>
-                        <option value="Sanidad">Sanidad</option>
-                        <option value="Rendimiento">Rendimiento</option>
-                        <option value="Fertilidad del Suelo">Fertilidad del Suelo</option>
-                        <option value="Condiciones Climáticas">Condiciones Climáticas</option>
-                        <option value="Control de Plagas">Control de Plagas</option>
-                    </select>
-                </div>
+        <div class="col">
+          <label for="Description">Rango de calificación:</label>
+          <div class="input-group position-relative">
+            <input 
+              type="number" 
+              class="form-control input-field" 
+              id="rating" 
+              name="rating" 
+              [(ngModel)]="assesment.rating_range" 
+              required 
+              min="1" 
+              max="100" 
+              (keypress)="onlyPositiveNumbers($event)" 
+              #ratingField="ngModel"
+              [ngClass]="{
+                'is-invalid': ratingField.invalid && (ratingField.touched || ratingField.dirty),
+                'is-valid': ratingField.valid && (ratingField.touched || ratingField.dirty)
+              }" 
+            >
+            <i *ngIf="ratingField.valid && assesment.rating_range" class="fa fa-check-circle text-success"
+               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="ratingField.invalid && (ratingField.touched || ratingField.dirty)" class="fas fa-exclamation-circle text-danger"
+               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
+        
+          <!-- Mensajes de error para Rango de calificación -->
+          <div *ngIf="ratingField.invalid && (ratingField.touched || ratingField.dirty)" class="invalid-feedback">
+            <div *ngIf="ratingField.errors?.['required']">El rango de calificación es obligatorio.</div>
+            <div *ngIf="ratingField.errors?.['min']">El rango debe ser al menos 1.</div>
+            <div *ngIf="ratingField.errors?.['max']">El rango no puede ser mayor que 100.</div>
+            <div *ngIf="ratingField.errors?.['pattern']">Solo se permiten números positivos.</div>
+          </div>
+          <div *ngIf="ratingField.valid && ratingField.touched" class="valid-feedback">
+            Rango de calificación válido.
+          </div>
+        </div>
+      </div>   
 
-                <div class="col" *ngIf="assesment.id !== 0">
-                    <label for="State">Estado:</label>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="State" name="State"
-                            [(ngModel)]="assesment.state">
-                    </div>
-                </div>
-            </div>
-            <br>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
-                <button type="submit" class="btn btn-primary">Guardar</button>
-            </div>
+      <div class="row">
+        <div class="col">
+          <label for="TypeCriterian">Tipo de criterio:</label>
+          <div class="input-group position-relative">
+            <select 
+              class="form-control input-field" 
+              id="TypeCriterian" 
+              name="typeCriterian" 
+              [(ngModel)]="assesment.type_criterian" 
+              required 
+              #typeCriterianField="ngModel"
+              [ngClass]="{
+                'is-invalid': typeCriterianField.invalid && (typeCriterianField.touched || typeCriterianField.dirty),
+                'is-valid': typeCriterianField.valid && (typeCriterianField.touched || typeCriterianField.dirty)
+              }">
+              <option value="" disabled selected>Seleccione el tipo de criterio</option>
+              <option value="Sanidad">Sanidad</option>
+              <option value="Rendimiento">Rendimiento</option>
+              <option value="Fertilidad del Suelo">Fertilidad del Suelo</option>
+              <option value="Condiciones Climáticas">Condiciones Climáticas</option>
+              <option value="Control de Plagas">Control de Plagas</option>
+            </select>
+            <i *ngIf="typeCriterianField.valid && assesment.type_criterian" class="fa fa-check-circle text-success"
+               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="typeCriterianField.invalid && (typeCriterianField.touched || typeCriterianField.dirty)" class="fas fa-exclamation-circle text-danger"
+               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
+      
+          <!-- Mensajes de error para Tipo de criterio -->
+          <div *ngIf="typeCriterianField.invalid && (typeCriterianField.touched || typeCriterianField.dirty)" class="invalid-feedback">
+            <div *ngIf="typeCriterianField.errors?.['required']">Debe seleccionar un tipo de criterio.</div>
+          </div>
+          <div *ngIf="typeCriterianField.valid && typeCriterianField.touched" class="valid-feedback">
+            Tipo de criterio válido.
+          </div>
+        </div>
+      
 
-        </form>
-    </div>
+
+        <div class="col" *ngIf="assesment.id !== 0">
+          <label for="State">Estado:</label>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="State" name="State" [(ngModel)]="assesment.state">
+          </div>
+        </div>
+      </div>
+      <br>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+
+    </form>
+  </div>
 </div>
 
 <table *ngIf="filteredCriteria.length > 0" class="table">
-    <thead>
-        <tr>
-          <th>
-            <input 
-              type="checkbox" 
-              (change)="selectAll($event)" 
-              [checked]="areAllSelected()" 
-            />
-          </th>
-            <th>Nombre</th>
-            <th>Rango de  calificación</th>
-            <th>Tipo de criterio</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let assesment of paginatedCriteria()">
-          <td>
-            <label class="checkbox-container">
-              <input type="checkbox" [(ngModel)]="assesment.selected" />
-              <div class="checkbox-custom"></div>
-            </label>
-          </td>
-            <td>{{ assesment.name }}</td>
-            <td>{{ assesment.rating_range }}</td>
-            <td>{{ assesment.type_criterian }}</td>
-            <td>{{ assesment.state ? 'Activo' : 'Inactivo' }}</td>
-            <td>
-                <button class="btn-icon edit" (click)="editassesment(assesment)" title="Editar">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon delete" (click)="deleteassesment(assesment.id)" title="Eliminar">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </td>
-        </tr>
-    </tbody>
+  <thead>
+    <tr>
+      <th>
+        <input type="checkbox" (change)="selectAll($event)" [checked]="areAllSelected()" />
+      </th>
+      <th>Nombre</th>
+      <th>Rango de calificación</th>
+      <th>Tipo de criterio</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let assesment of paginatedCriteria()">
+      <td>
+        <label class="checkbox-container">
+          <input type="checkbox" [(ngModel)]="assesment.selected" />
+          <div class="checkbox-custom"></div>
+        </label>
+      </td>
+      <td>{{ assesment.name }}</td>
+      <td>{{ assesment.rating_range }}</td>
+      <td>{{ assesment.type_criterian }}</td>
+      <td>{{ assesment.state ? 'Activo' : 'Inactivo' }}</td>
+      <td>
+        <button class="btn-icon edit" (click)="editassesment(assesment)" title="Editar">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn-icon delete" (click)="deleteassesment(assesment.id)" title="Eliminar">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+  </tbody>
 </table>
-<p *ngIf="filteredCriteria.length === 0">No se encontraron Criterio Evaluativos.</p>
+<p *ngIf="filteredCriteria.length === 0">No se encontraron Criterios Evaluativos.</p>
 <div class="data-table-footer">
   <div class="pagination">
     <button (click)="previousPage()" [disabled]="currentPage === 1" class="arrow">
       &laquo; <!-- Flecha izquierda -->
     </button>
-  
+
     <ng-container *ngFor="let page of getPageNumbers()">
-      <button 
-        (click)="goToPage(page)" 
-        [class.active]="currentPage === page"
-      >
+      <button (click)="goToPage(page)" [class.active]="currentPage === page">
         {{ page }}
       </button>
     </ng-container>
-  
+
     <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="arrow">
       &raquo; <!-- Flecha derecha -->
     </button>
   </div>
-  
+
   <!-- Eliminar seleccionados -->
   <div class="delete-selected-container">
-    <button 
-      class="btn btn-danger" 
-      (click)="deleteSelected()" 
-      [disabled]="!hasSelected()"
-    >
+    <button class="btn btn-danger" (click)="deleteSelected()" [disabled]="!hasSelected()">
       <i class="fas fa-trash"></i> Eliminar seleccionados
     </button>
   </div>

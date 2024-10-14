@@ -17,7 +17,7 @@ import autoTable from 'jspdf-autotable';
 })
 export class SuppliesComponent {
   supplies: any[] = [];
-  supplie: any = { id: 0, name: '', description: '', code: '', price: 0, state: false };
+  supplie: any = { id: 0, name: '', description: '', code: '', price: '', state: false };
   isModalOpen = false;
   filteredSupplies: any[] = [];
   currentPage = 1;
@@ -29,6 +29,21 @@ export class SuppliesComponent {
   private apiUrl = 'http://localhost:9191/api/Supplies';
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+
+  onlyAlphanumeric(event: KeyboardEvent) {
+    const regex = /^[a-zA-Z0-9]*$/; // Solo permite letras y números
+    if (!regex.test(event.key)) {
+      event.preventDefault(); // Previene la entrada si no es válida
+    }
+  }
+  
+  onlyPositiveNumbers(event: KeyboardEvent) {
+    // Permitir solo números (0-9) y el punto (.) si es necesario
+    const char = String.fromCharCode(event.keyCode);
+    if (!/[0-9]/.test(char)) {
+      event.preventDefault(); // Previene la entrada si no es válida
+    }
+  }
 
   ngOnInit(): void {
     this.getsupplies();

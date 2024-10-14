@@ -5,8 +5,8 @@
   <div class="search-container">
     <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
       class="form-control input-field" />
-  </div>  
-  
+  </div>
+
   <div class="export-container">
     <!-- Selector de ítems por página -->
     <div class="items-per-page">
@@ -15,10 +15,11 @@
         <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
       </select>
     </div>
-  
+
     <!-- Select para exportar -->
     <div class="export-select">
-      <ng-select (change)="handleExport($event)" [placeholder]="'Exportar Como'" [clearable]="true" [searchable]="false">
+      <ng-select (change)="handleExport($event)" [placeholder]="'Exportar Como'" [clearable]="true"
+        [searchable]="false">
         <ng-option value="pdf" class="custom-option">
           <div class="option-container">
             <i class="fas fa-file-pdf"></i>
@@ -40,133 +41,205 @@
 </div>
 
 <div id="cityModal" class="modal" [ngClass]="{'show-modal': isModalOpen}">
-    <div class="modal-content">
-        <span class="close" (click)="closeModal()">&times;</span>
-        <h2>{{ supplie.id === 0 ? 'Agregar Insumo' : 'Editar Insumo' }}</h2>
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h2>{{ supplie.id === 0 ? 'Agregar Insumo' : 'Editar Insumo' }}</h2>
 
-        <hr class="modal-border">
+    <hr class="modal-border">
 
-        <form #supplieForm="ngForm" (ngSubmit)="onSubmit(supplieForm)">
-            <input type="hidden" name="id" [(ngModel)]="supplie.id">
+    <form #supplieForm="ngForm" (ngSubmit)="onSubmit(supplieForm)">
+      <input type="hidden" name="id" [(ngModel)]="supplie.id">
 
-            <div class="row">
-                <div class="col">
-                    <label for="Name">Nombre:</label>
-                    <input type="text" class="form-control input-field" id="Name" name="Name" [(ngModel)]="supplie.name" required>
-                </div>
+      <div class="row">
+        <div class="col">
+          <label for="Name">Nombre:</label>
+          <div class="input-group position-relative">
+            <input type="text" class="form-control input-field" id="Name" name="Name" [(ngModel)]="supplie.name"
+              required minlength="5" maxlength="30" #nameField="ngModel" [ngClass]="{
+                      'is-invalid': nameField.invalid && (nameField.touched || nameField.dirty),
+                      'is-valid': nameField.valid && (nameField.touched || nameField.dirty)
+                    }" />
+            <i *ngIf="nameField.valid && supplie.name" class="fa fa-check-circle text-success"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="nameField.invalid && (nameField.touched || nameField.dirty)"
+              class="fas fa-exclamation-circle text-danger"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
 
-                <div class="col">
-                    <label for="Description">Descripción:</label>
-                    <input type="text" class="form-control input-field" id="Description" name="Description"
-                        [(ngModel)]="supplie.description">
-                </div>
+          <!-- Mensajes de error para Nombre -->
+          <div *ngIf="nameField.invalid && (nameField.touched || nameField.dirty)" class="invalid-feedback">
+            <div *ngIf="nameField.errors?.['required']">El nombre es obligatorio.</div>
+            <div *ngIf="nameField.errors?.['minlength']">El nombre debe tener al menos 5 caracteres.</div>
+            <div *ngIf="nameField.errors?.['maxlength']">El nombre no puede exceder los 30 caracteres.</div>
+          </div>
+          <div *ngIf="nameField.valid && nameField.touched" class="valid-feedback">
+            El nombre es válido.
+          </div>
+        </div>
+
+
+        <div class="col">
+          <label for="Description">Descripción:</label>
+          <div class="input-group position-relative">
+            <input type="text" class="form-control input-field" id="Description" name="Description"
+              [(ngModel)]="supplie.description" required minlength="5" maxlength="25" #descriptionField="ngModel"
+              [ngClass]="{
+                      'is-invalid': descriptionField.invalid && (descriptionField.touched || descriptionField.dirty),
+                      'is-valid': descriptionField.valid && (descriptionField.touched || descriptionField.dirty)
+                    }" />
+            <i *ngIf="descriptionField.valid && supplie.description" class="fa fa-check-circle text-success"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="descriptionField.invalid && (descriptionField.touched || descriptionField.dirty)"
+              class="fas fa-exclamation-circle text-danger"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
+
+          <!-- Mensajes de error para Descripción -->
+          <div *ngIf="descriptionField.invalid && (descriptionField.touched || descriptionField.dirty)"
+            class="invalid-feedback">
+            <div *ngIf="descriptionField.errors?.['required']">La descripción es obligatoria.</div>
+            <div *ngIf="descriptionField.errors?.['minlength']">La descripción debe tener al menos 5 caracteres.</div>
+            <div *ngIf="descriptionField.errors?.['maxlength']">La descripción no puede exceder los 25 caracteres.</div>
+          </div>
+          <div *ngIf="descriptionField.valid && descriptionField.touched" class="valid-feedback">
+            La descripción es válida.
+          </div>
+        </div>
+      </div>
+      <br>
+
+      <div class="row">
+        <div class="col">
+          <label for="Price">Precio:</label>
+          <div class="input-group position-relative">
+            <input type="number" class="form-control input-field" id="Price" name="Price" [(ngModel)]="supplie.price"
+              required min="1" #priceField="ngModel" [ngClass]="{
+                    'is-invalid': priceField.invalid && (priceField.touched || priceField.dirty),
+                    'is-valid': priceField.valid && (priceField.touched || priceField.dirty)
+                  }" (keypress)="onlyPositiveNumbers($event)">
+            <i *ngIf="priceField.valid && supplie.price >= 0" class="fa fa-check-circle text-success"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="priceField.invalid && (priceField.touched || priceField.dirty)"
+              class="fas fa-exclamation-circle text-danger"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
+
+          <!-- Mensajes de error para Precio -->
+          <div *ngIf="priceField.invalid && (priceField.touched || priceField.dirty)" class="invalid-feedback">
+            <div *ngIf="priceField.errors?.['required']">El precio es obligatorio.</div>
+            <div *ngIf="priceField.errors?.['min']">El precio debe ser un número positivo.</div>
+          </div>
+          <div *ngIf="priceField.valid && priceField.touched" class="valid-feedback">
+            El precio es válido.
+          </div>
+        </div>
+
+        <div class="col">
+          <label for="Code">Código:</label>
+          <div class="input-group position-relative">
+            <input type="text" class="form-control input-field" id="Code" name="Code" [(ngModel)]="supplie.code"
+              required pattern="^[a-zA-Z0-9]*$" #codeField="ngModel" [ngClass]="{
+                    'is-invalid': codeField.invalid && (codeField.touched || codeField.dirty),
+                    'is-valid': codeField.valid && (codeField.touched || codeField.dirty)
+                  }" (keypress)="onlyAlphanumeric($event)">
+            <i *ngIf="codeField.valid && supplie.code" class="fa fa-check-circle text-success"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="codeField.invalid && (codeField.touched || codeField.dirty)"
+              class="fas fa-exclamation-circle text-danger"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
+
+          <!-- Mensajes de error para Código -->
+          <div *ngIf="codeField.invalid && (codeField.touched || codeField.dirty)" class="invalid-feedback">
+            <div *ngIf="codeField.errors?.['required']">El código es obligatorio.</div>
+            <div *ngIf="codeField.errors?.['pattern']">El código solo puede contener letras y números.</div>
+          </div>
+          <div *ngIf="codeField.valid && codeField.touched" class="valid-feedback">
+            El código es válido.
+          </div>
+        </div>
+
+
+
+        <div class="row">
+          <div class="col" *ngIf="supplie.id !== 0">
+            <label for="State">Estado:</label>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="State" name="State" [(ngModel)]="supplie.state">
             </div>
-            <br>
+          </div>
+        </div>
+        <br>
 
-            <div class="row">
-                <div class="col">
-                    <label for="Code">Precío:</label>
-                    <input type="number" class="form-control input-field" id="Price" name="Code" [(ngModel)]="supplie.price"
-                        required>
-                </div>
-
-                <div class="col">
-                    <label for="Code">Código:</label>
-                    <input type="text" class="form-control input-field" id="Code" name="Code" [(ngModel)]="supplie.code" required>
-                </div>
-            </div>
-            
-            <div class="row">
-              <div class="col" *ngIf="supplie.id !== 0">
-                    <label for="State">Estado:</label>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="State" name="State"
-                        [(ngModel)]="supplie.state">
-                    </div>
-                </div>
-            </div>
-            <br>
-            
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
-                <button type="submit" class="btn btn-primary">Guardar</button>
-            </div>
-
-        </form>
-    </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
 
 <table *ngIf="filteredSupplies.length > 0" class="table">
-    <thead>
-        <tr>
-          <th>
-            <input 
-              type="checkbox" 
-              (change)="selectAll($event)" 
-              [checked]="areAllSelected()" 
-            />
-          </th>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Precío</th>
-            <th>Código</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let supplie of paginateSupplies()">
-          <td>
-            <label class="checkbox-container">
-              <input type="checkbox" [(ngModel)]="supplie.selected" />
-              <div class="checkbox-custom"></div>
-            </label>
-          </td>
-            <td>{{ supplie.name }}</td>
-            <td>{{ supplie.description }}</td>
-            <td>{{ supplie.price }}</td>
-            <td>{{ supplie.code }}</td>
-            <td>{{ supplie.state ? 'Activo' : 'Inactivo' }}</td>
-            <td>
-                <button class="btn-icon edit" (click)="editsupplie(supplie)" title="Editar">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon delete" (click)="deletesupplie(supplie.id)" title="Eliminar">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </td>
-        </tr>
-    </tbody>
+  <thead>
+    <tr>
+      <th>
+        <input type="checkbox" (change)="selectAll($event)" [checked]="areAllSelected()" />
+      </th>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Precío</th>
+      <th>Código</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let supplie of paginateSupplies()">
+      <td>
+        <label class="checkbox-container">
+          <input type="checkbox" [(ngModel)]="supplie.selected" />
+          <div class="checkbox-custom"></div>
+        </label>
+      </td>
+      <td>{{ supplie.name }}</td>
+      <td>{{ supplie.description }}</td>
+      <td>{{ supplie.price }}</td>
+      <td>{{ supplie.code }}</td>
+      <td>{{ supplie.state ? 'Activo' : 'Inactivo' }}</td>
+      <td>
+        <button class="btn-icon edit" (click)="editsupplie(supplie)" title="Editar">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn-icon delete" (click)="deletesupplie(supplie.id)" title="Eliminar">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+  </tbody>
 </table>
-<p *ngIf="filteredSupplies.length === 0">No se encontraron supplies.</p>
+<p *ngIf="filteredSupplies.length === 0">No se encontraron Insumos.</p>
 
 <div class="data-table-footer">
   <div class="pagination">
     <button (click)="previousPage()" [disabled]="currentPage === 1" class="arrow">
       &laquo; <!-- Flecha izquierda -->
     </button>
-  
+
     <ng-container *ngFor="let page of getPageNumbers()">
-      <button 
-        (click)="goToPage(page)" 
-        [class.active]="currentPage === page"
-      >
+      <button (click)="goToPage(page)" [class.active]="currentPage === page">
         {{ page }}
       </button>
     </ng-container>
-  
+
     <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="arrow">
       &raquo; <!-- Flecha derecha -->
     </button>
   </div>
-  
+
   <!-- Eliminar seleccionados -->
   <div class="delete-selected-container">
-    <button 
-      class="btn btn-danger" 
-      (click)="deleteSelected()" 
-      [disabled]="!hasSelected()"
-    >
+    <button class="btn btn-danger" (click)="deleteSelected()" [disabled]="!hasSelected()">
       <i class="fas fa-trash"></i> Eliminar seleccionados
     </button>
   </div>

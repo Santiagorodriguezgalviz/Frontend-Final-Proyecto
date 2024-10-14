@@ -29,7 +29,7 @@ export class PersonComponent implements OnInit {
     type_document: '',
     document: '',
     addres: '',
-    phone: 0,
+    phone: '',
     birth_of_date: new Date().toISOString().slice(0, 10),
     cityId: 0,
     state: false,
@@ -45,13 +45,59 @@ export class PersonComponent implements OnInit {
 
   private apiUrl = 'http://localhost:9191/api/Person';
   private citysUrl = 'http://localhost:9191/api/City';
-
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
   
   isDropdownOpen = false;
   itemsPerPageOptions = [5, 10, 20, 50];
   
+  minDate?: string; 
+  maxDate?: string;  
+
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {
+    this.setDateLimits();
+  }
+
+  onInputChange(field: any) {
+    field.control.updateValueAndValidity();
+  }
   
+  setDateLimits() {
+    const today = new Date();
+
+    // Calcular la fecha máxima (70 años atrás)
+    const maxYear = today.getFullYear() - 18; // Persona debe tener al menos 18 años
+    const maxMonth = today.getMonth() + 1; // Se suma 1 porque los meses son 0-indexados
+    const maxDay = today.getDate();
+
+    // Establecer el formato YYYY-MM-DD
+    this.maxDate = `${maxYear}-${this.pad(maxMonth)}-${this.pad(maxDay)}`;
+
+    // Calcular la fecha mínima (70 años atrás)
+    const minYear = today.getFullYear() - 70; // Persona no debe tener más de 70 años
+    this.minDate = `${minYear}-${this.pad(maxMonth)}-${this.pad(maxDay)}`;
+  }
+
+  pad(num: number): string {
+    return num < 10 ? '0' + num : '' + num; // Añade un 0 a los números menores de 10
+  }
+
+
+  validateNumberInput(event: KeyboardEvent) {
+    const allowedKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Backspace', 'Tab', 'ArrowLeft', 'ArrowRight'];
+    
+    if (!allowedKeys.includes(event.key)) {
+        event.preventDefault();  // Evita que se ingresen letras y otros caracteres
+    }
+}
+
+validateNumberLength(event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    if (input.value.length > 10) {
+        input.value = input.value.slice(0, 10);  // Limita a 10 caracteres
+    }
+}
+
+
 
   exportToExcel(): void {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.persons);
@@ -103,24 +149,24 @@ export class PersonComponent implements OnInit {
     return this.filteredPersons.slice(start, end); // Devuelve la porción filtrada
   }
 
-    searchCitys(event: any): void {
-      const term = event.target.value.toLowerCase();
-      this.filteredCitys = this.citys.filter(city => 
-        city.name.toLowerCase().includes(term)
-      );
-    }
-
-    onCitySelect(event: any): void {
-      const selectedcity = this.citys.find(city => 
-        city.name === event.option.value
-      );
-      if (selectedcity) {
-          this.person.cityId = selectedcity.id;
-          this.person.cityName = selectedcity.name; // Agregar esto
-          // Cierra el autocompletar
-          this.filteredCitys = [];
-      }
+  searchCitys(event: any): void {
+    const term = event.target.value.toLowerCase();
+    this.filteredCitys = this.citys.filter(city => 
+      city.name.toLowerCase().includes(term)
+    );
   }
+
+  onCitySelect(event: any): void {
+    const selectedcity = this.citys.find(city => 
+      city.name === event.option.value
+    );
+    if (selectedcity) {
+        this.person.cityId = selectedcity.id;
+        this.person.cityName = selectedcity.name; // Agregar esto
+        // Cierra el autocompletar
+        this.filteredCitys = [];
+    }
+}
   
 
   ngOnInit(): void {
@@ -150,6 +196,8 @@ export class PersonComponent implements OnInit {
     this.http.get<any[]>(this.citysUrl).subscribe(
       (citys) => {
         this.citys = citys;
+        this.filteredCitys;
+
       },
       (error) => {
         console.error('Error fetching cities:', error);
@@ -157,21 +205,23 @@ export class PersonComponent implements OnInit {
     );
   }
 
+
   filterPersons(): void {
     const search = this.searchTerm.toLowerCase().trim(); // Asegúrate de que no haya espacios extra
-    
+
     this.filteredPersons = this.persons.filter(person =>
-      person.first_name.toLowerCase().includes(search) ||
-      person.last_name.toLowerCase().includes(search) ||
-      person.email.toLowerCase().includes(search) ||
-      person.type_document.toLowerCase().includes(search) ||
-      person.document.toString().includes(search) || // Filtrar por documento numérico convertido a string
-      person.addres.toLowerCase().includes(search) ||
-      person.phone.toString().includes(search) // Filtrar por teléfono numérico convertido a string
+        (person.first_name.toLowerCase().includes(search) || 
+        person.last_name.toLowerCase().includes(search)) || 
+        person.document.toString().includes(search) || 
+        person.email.toLowerCase().includes(search) || 
+        person.phone.toString().includes(search) || 
+        person.birth_of_date.toLocaleLowerCase().includes(search) || // Filtrar por fecha de nacimiento
+        this.getCityName(person.cityId).toLowerCase().includes(search) || // Filtrar por nombre de ciudad
+        (person.state ? 'Activo' : 'Inactivo').toLowerCase().includes(search) // Filtrar por estado
     );
     this.currentPage = 1;
-  }
-  
+}
+
   onSearchChange(): void {
     this.filterPersons();
   }

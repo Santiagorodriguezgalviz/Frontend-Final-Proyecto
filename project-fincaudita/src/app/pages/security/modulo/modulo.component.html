@@ -6,8 +6,8 @@
   <div class="search-container">
     <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
       class="form-control input-field" />
-  </div>  
-  
+  </div>
+
   <div class="export-container">
     <!-- Selector de ítems por página -->
     <div class="items-per-page">
@@ -16,10 +16,11 @@
         <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
       </select>
     </div>
-  
+
     <!-- Select para exportar -->
     <div class="export-select">
-      <ng-select (change)="handleExport($event)" [placeholder]="'Exportar Como'" [clearable]="true" [searchable]="false">
+      <ng-select (change)="handleExport($event)" [placeholder]="'Exportar Como'" [clearable]="true"
+        [searchable]="false">
         <ng-option value="pdf" class="custom-option">
           <div class="option-container">
             <i class="fas fa-file-pdf"></i>
@@ -41,6 +42,7 @@
 </div>
 
 <!-- Modal para agregar/editar módulo -->
+<!-- Modal para agregar/editar módulo -->
 <div id="moduloModal" class="modal" [ngClass]="{'show-modal': isModalOpen}">
   <div class="modal-content">
     <span class="close" (click)="closeModal()">&times;</span>
@@ -48,46 +50,139 @@
 
     <hr class="modal-border">
 
-    <form #moduloForm="ngForm" (ngSubmit)="onSubmit(moduloForm)">
+    <form #moduloForm="ngForm" (ngSubmit)="onSubmit(moduloForm)" novalidate>
       <input type="hidden" name="id" [(ngModel)]="modulo.id">
 
       <div class="row">
         <div class="col">
           <label for="Name">Nombre del módulo:</label>
-          <input type="text" class="form-control input-field" id="Name" name="Name" [(ngModel)]="modulo.name" required>
+          <div class="input-group position-relative">
+            <input
+              type="text"
+              class="form-control input-field"
+              id="Name"
+              name="Name"
+              [(ngModel)]="modulo.name"
+              required
+              minlength="1"
+              maxlength="15"
+              #nameField="ngModel"
+              [ngClass]="{
+                'is-invalid': nameField.invalid && (nameField.touched || nameField.dirty),
+                'is-valid': nameField.valid && (nameField.touched || nameField.dirty)
+              }"
+              (input)="onInputChange(nameField)"
+            />
+            <i *ngIf="nameField.valid && modulo.name" class="fa fa-check-circle text-success" 
+               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="nameField.invalid && (nameField.touched || nameField.dirty)" class="fas fa-exclamation-circle text-danger" 
+               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
+          <div *ngIf="nameField.invalid && (nameField.touched || nameField.dirty)" class="text-danger">
+            <div *ngIf="nameField.errors?.['required']">El nombre es obligatorio.</div>
+            <div *ngIf="nameField.errors?.['minlength']">Debe tener al menos 1 carácter.</div>
+            <div *ngIf="nameField.errors?.['maxlength']">No puede tener más de 15 caracteres.</div>
+          </div>
+          <div *ngIf="nameField.valid && (nameField.touched || nameField.dirty)" class="text-success">
+          </div>
         </div>
-
+      
         <div class="col">
           <label for="Description">Descripción:</label>
-          <input type="text" class="form-control input-field" id="Description" name="Description"
-            [(ngModel)]="modulo.description" required>
-        </div>
-      </div>
-      <br>
-
-      <div class="row">
-        <div class="col">
-          <label for="Position">Posición:</label>
-          <input type="number" class="form-control input-field" id="Position" name="Position"
-            [(ngModel)]="modulo.position" required>
-        </div>
-
-        <div class="col">
+          <div class="input-group position-relative">
+            <input
+              type="text"
+              class="form-control input-field"
+              id="Description"
+              name="Description"
+              [(ngModel)]="modulo.description"
+              required
+              minlength="5"
+              maxlength="30"
+              #descField="ngModel"
+              [ngClass]="{
+                'is-invalid': descField.invalid && (descField.touched || descField.dirty),
+                'is-valid': descField.valid && (descField.touched || descField.dirty)
+              }"
+              (input)="onInputChange(descField)"
+            />
+            <i *ngIf="descField.valid && modulo.description" class="fa fa-check-circle text-success" 
+               style="position: absolute; right: 30px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="descField.invalid && (descField.touched || descField.dirty)" class="fas fa-exclamation-circle text-danger" 
+               style="position: absolute; right: 30px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
+          <div *ngIf="descField.invalid && (descField.touched || descField.dirty)" class="text-danger">
+            <div *ngIf="descField.errors?.['required']">La descripción es obligatoria.</div>
+            <div *ngIf="descField.errors?.['minlength']">Debe tener al menos 5 caracteres.</div>
+            <div *ngIf="descField.errors?.['maxlength']">No puede tener más de 30 caracteres.</div>
+          </div>
+          <div *ngIf="descField.valid && (descField.touched || descField.dirty)" class="valid-feedback" style="color: #44E32A;">
+            Descripción Válida <i class="fas fa-check-circle" style="color: #44E32A;"></i>
+          </div>
+          </div>
+      
+          
+            <div class="col">
+              <label for="Position">Posición:</label>
+              <div class="input-group position-relative">
+                <input
+                  type="number"
+                  class="form-control input-field"
+                  id="Position"
+                  name="Position" 
+                  [(ngModel)]="modulo.position"
+                  required
+                  #positionField="ngModel"
+                  min="1"
+                  max="10"
+                  (keypress)="onlyPositiveNumbers($event)"
+                  (input)="onInputChange(positionField)"  
+                  [ngClass]="{
+                    'is-invalid': positionField.invalid && (positionField.touched || positionField.dirty),
+                    'is-valid': positionField.valid && (positionField.touched || positionField.dirty)
+                  }"
+                  [ngbTooltip]="'Los números de la posición serán usados para el orden del menú.'"
+                  placement="top"
+                  triggers="mouseenter:focus"
+                />
+                <i *ngIf="positionField.valid && modulo.position" class="fa fa-check-circle text-success" 
+                   style="position: absolute; right: 30px; top: 50%; transform: translateY(-50%);"></i>
+                <i *ngIf="positionField.invalid && (positionField.touched || positionField.dirty)" class="fas fa-exclamation-circle text-danger" 
+                   style="position: absolute; right: 30px; top: 50%; transform: translateY(-50%);"></i>
+              </div>
+              <div *ngIf="positionField.invalid && (positionField.touched || positionField.dirty)" class="text-danger">
+                <div *ngIf="positionField.errors?.['required']">La posición es obligatoria.</div>
+                <div *ngIf="positionField.errors?.['min']">La posición debe ser mayor a 1.</div>
+                <div *ngIf="positionField.errors?.['max']"> El valor de la posición no puede ser mayor a 10.</div>
+              </div>
+              <div *ngIf="positionField.valid && (positionField.touched || positionField.dirty)" class="valid-feedback" style="color: #44E32A;">
+                Posición válida <i class="fas fa-check-circle" style="color: #44E32A;"></i>
+              </div>
+              </div>
+       
+          
+          
+      
+      
+        <div class="col" *ngIf="modulo.id !== 0">
           <label for="State">Estado:</label>
           <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="State" name="State" [(ngModel)]="modulo.state">
           </div>
         </div>
       </div>
+
       <br>
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
-        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="moduloForm.invalid">Guardar</button>
       </div>
+      
     </form>
   </div>
 </div>
+
 
 <!-- Tabla de módulos -->
 <table *ngIf="filteredModulos.length > 0" class="table">
@@ -131,7 +226,7 @@
   <!-- Paginación -->
   <div class="pagination">
     <button (click)="previousPage()" [disabled]="currentPage === 1" class="arrow">
-      &laquo; <!-- Flecha izquierda -->
+      &laquo;
     </button>
 
     <ng-container *ngFor="let page of getPageNumbers()">
@@ -141,7 +236,7 @@
     </ng-container>
 
     <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="arrow">
-      &raquo; <!-- Flecha derecha -->
+      &raquo;
     </button>
   </div>
 

@@ -46,6 +46,13 @@ export class CountryComponent implements OnInit {
     );
   }
 
+  onlyAlphanumeric(event: KeyboardEvent) {
+    const regex = /^[a-zA-Z0-9]*$/; // Solo permite letras y números
+    if (!regex.test(event.key)) {
+      event.preventDefault(); // Previene la entrada si no es válida
+    }
+  }
+  
   filterCountries(): void {
     const search = this.searchTerm.toLowerCase().trim();
     this.filteredcountry = this.countries.filter(country =>

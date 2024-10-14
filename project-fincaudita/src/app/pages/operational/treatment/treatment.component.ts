@@ -64,7 +64,20 @@ export class TreatmentComponent implements OnInit {
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
-  ngOnInit(): void {
+  isDateInCurrentMonth(): boolean {
+    if (!this.treatment.dateTreatment) {
+      return false; // Si no hay fecha, no es válido
+    }
+
+    const selectedDate = new Date(this.treatment.dateTreatment);
+    const currentDate = new Date();
+    
+    return (
+      selectedDate.getFullYear() === currentDate.getFullYear() &&
+      selectedDate.getMonth() === currentDate.getMonth()
+    );
+
+  }  ngOnInit(): void {
     this.getTreatments();
     this.getFarms();
     this.getSupplies();

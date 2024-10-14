@@ -34,7 +34,7 @@ export interface Farm {
 export class FarmComponent implements OnInit {
 
   farms: any[] = [];
-  farm: any = { id: 0, name: '', cityId: 0, userId: 0, lots: [], addres: '', dimension: 0, state: false };
+  farm: any = { id: 0, name: '', cityId: 0, userId: 0, lots: [], addres: '', dimension: '', state: true };
   cities: any[] = [];
   users: any[] = [];
   crops: any[] = [];
@@ -57,6 +57,13 @@ export class FarmComponent implements OnInit {
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
+  onlyPositiveNumbers(event: KeyboardEvent) {
+    // Permitir solo números (0-9) y el punto (.) si es necesario
+    const char = String.fromCharCode(event.keyCode);
+    if (!/[0-9]/.test(char)) {
+      event.preventDefault(); // Previene la entrada si no es válida
+    }
+  }
   ngOnInit(): void {
     this.getFarms();
     this.getCities();

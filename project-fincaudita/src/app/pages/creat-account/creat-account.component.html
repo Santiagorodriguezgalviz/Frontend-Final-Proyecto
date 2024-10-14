@@ -1,298 +1,424 @@
-<!-- Contenedor de fondo con imagen y modal -->
 <div class="background-container bg-image">
-  <!-- Modal con efecto de desenfoque -->
-  <div class="modal-overlay" [ngClass]="{'show': showModal}">
-    <div class="modal-content">
-      <div class="container forgot-password-form">
-        <div class="form-container">
-          <!-- Indicador de progreso con 3 pasos -->
-          <div class="progress-indicator">
-            <div class="step">
-              <div [ngClass]="{'step-number': true, 'completed': currentStep > 1, 'active': currentStep === 1}">1</div>
-              <div [ngClass]="{'line': true, 'completed': currentStep > 1}"></div>
-              <div [ngClass]="{'step-number': true, 'completed': currentStep > 2, 'active': currentStep === 2}">2</div>
-              <div [ngClass]="{'line': true, 'completed': currentStep > 2}"></div>
-              <div [ngClass]="{'step-number': true, 'active': currentStep === 3}">3</div>
-            </div>
-            <div class="static-line"></div>
-          </div>
+  <div class="container forgot-password-form">
+    <div class="form-container">
+      <!-- Indicador de progreso con 3 pasos -->
+      <div class="progress-indicator">
+        <div class="step">
+          <div [ngClass]="{'step-number': true, 'completed': currentStep > 1, 'active': currentStep === 1}">1</div>
+          <div [ngClass]="{'line': true, 'completed': currentStep > 1}"></div>
+          <div [ngClass]="{'step-number': true, 'completed': currentStep > 2, 'active': currentStep === 2}">2</div>
+          <div [ngClass]="{'line': true, 'completed': currentStep > 2}"></div>
+          <div [ngClass]="{'step-number': true, 'active': currentStep === 3}">3</div>
+        </div>
+        <div class="static-line"></div>
+      </div>
 
-          <!-- Primer Paso -->
-              <div *ngIf="currentStep === 1">
-                <form class="row g-3 needs-validation" novalidate>
-                  <div class="col-md-6">
-                    <label for="first_name" class="form-label">Nombres</label>
-                    <div class="input-group">
-                      <input type="text" id="first_name" class="form-control" placeholder="Nombres" 
-                            [(ngModel)]="person.first_name" name="first_name" required minlength="1" maxlength="20" 
-                            (input)="filterInput($event)" 
-                            [ngClass]="{'is-valid': validateLetters(person.first_name) && person.first_name.length > 0 && person.first_name.length <= 50, 
+      <!-- Primer Paso -->
+      <div *ngIf="currentStep === 1">
+        <form class="row g-3 needs-validation" novalidate>
+          <div class="col-md-6">
+            <label for="first_name" class="form-label">Nombres</label>
+            <div class="input-group">
+              <input type="text" id="first_name" class="form-control input-field" placeholder="Nombres"
+                [(ngModel)]="person.first_name" name="first_name" required minlength="1" maxlength="20"
+                (input)="filterInput($event)"
+                [ngClass]="{'is-valid': validateLetters(person.first_name) && person.first_name.length > 0 && person.first_name.length <= 50, 
                                         'is-invalid': person.first_name.length === 0 || !validateLetters(person.first_name) || person.first_name.length > 50}" />
-                      <div class="input-group-append">
-                        <span class="input-group-text" *ngIf="validateLetters(person.first_name) && person.first_name.length > 0 && person.first_name.length <= 50">
-                          <i class="fas fa-check text-success"></i>
-                        </span>
-                        <span class="input-group-text" *ngIf="person.first_name.length === 0 || !validateLetters(person.first_name) || person.first_name.length > 50">
-                          <i class="fas fa-exclamation-circle text-danger"></i>
-                        </span>
-                      </div>
-                    </div>
-                    <div class="invalid-feedback">El nombre es obligatorio, no debe contener números o caracteres especiales y debe tener un máximo de 50 caracteres.</div>
-                  </div>
-                  
-                  <div class="col-md-6">
-                    <label for="last_name" class="form-label">Apellidos</label>
-                    <div class="input-group">
-                      <input type="text" id="last_name" class="form-control" placeholder="Apellidos" 
-                            [(ngModel)]="person.last_name" name="last_name" required minlength="1" maxlength="20" 
-                            (input)="filterInput($event)" 
-                            [ngClass]="{'is-valid': validateLetters(person.last_name) && person.last_name.length > 0 && person.last_name.length <= 50, 
-                                        'is-invalid': person.last_name.length === 0 || !validateLetters(person.last_name) || person.last_name.length > 50}" />
-                      <div class="input-group-append">
-                        <span class="input-group-text" *ngIf="validateLetters(person.last_name) && person.last_name.length > 0 && person.last_name.length <= 50">
-                          <i class="fas fa-check text-success"></i>
-                        </span>
-                        <span class="input-group-text" *ngIf="person.last_name.length === 0 || !validateLetters(person.last_name) || person.last_name.length > 50">
-                          <i class="fas fa-exclamation-circle text-danger"></i>
-                        </span>
-                      </div>
-                    </div>
-                    <div class="invalid-feedback">El apellido es obligatorio, no debe contener números o caracteres especiales y debe tener un máximo de 50 caracteres.</div>
-                  </div>
-              
-            
-                  <div class="col-md-6 position-relative">
-                    <label for="type_document" class="form-label">Tipo de documento</label>
-                    <div class="input-group">
-                      <select id="type_document" class="form-select" 
-                              [(ngModel)]="person.type_document" name="type_document" required 
-                              [ngClass]="{'is-valid': person.type_document !== '', 'is-invalid': person.type_document === ''}">
-                        <option value="">Seleccione</option>
-                        <option value="CC">Cédula de ciudadanía</option>
-                        <option value="TI">Tarjeta de identidad</option>
-                        <option value="CE">Cédula de extranjería</option>
-                        <option value="PS">Pasaporte</option>
-                      </select>
-                      <span class="input-group-text" *ngIf="person.type_document && person.type_document !== ''"
-                            style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: transparent; border: none;">
-                        <i class="fas fa-check text-success"></i>
-                      </span>
-                      <span class="input-group-text" *ngIf="person.type_document === ''"
-                            style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: transparent; border: none;">
-                        <i class="fas fa-exclamation-circle text-danger"></i>
-                      </span>
-                    </div>
-                    <div class="invalid-feedback">Seleccione un tipo de documento.</div>
-                  </div>
-                  
-
-                  <div class="col-md-6">
-                    <label for="document" class="form-label">Número del documento</label>
-                    <div class="input-group">
-                      <input type="tel" id="document" class="form-control" placeholder="Número del documento" 
-                            [(ngModel)]="person.document" name="document" required minlength="10" maxlength="10" 
-                            pattern="[0-9]{10}" 
-                            [ngClass]="{'is-valid': person.document && person.document.toString().length === 10, 'is-invalid': person.document && person.document.toString().length !== 10}" 
-                            (keypress)="validateNumber($event)" />
-                      <div class="input-group-append">
-                        <span class="input-group-text" *ngIf="person.document && person.document.toString().length === 10">
-                          <i class="fas fa-check text-success"></i>
-                        </span>
-                        <span class="input-group-text" *ngIf="person.document && person.document.toString().length < 10">
-                          <i class="fas fa-exclamation-circle text-danger"></i>
-                        </span>
-                      </div>
-                    </div>
-                    <div class="invalid-feedback">Número de documento es obligatorio y debe tener exactamente 10 dígitos.</div>
-                  </div>
-                  
-                  
-                  <div class="col-md-6">
-                    <label for="phone" class="form-label">Teléfono</label>
-                    <div class="input-group">
-                      <input type="tel" id="phone" class="form-control" placeholder="Teléfono" 
-                            [(ngModel)]="person.phone" name="phone" required minlength="10" maxlength="10" 
-                            pattern="[0-9]{10}" 
-                            [ngClass]="{'is-valid': person.phone && person.phone.toString().length === 10, 'is-invalid': person.phone && person.phone.toString().length !== 10}" 
-                            (keypress)="validateNumber($event)" />
-                      <div class="input-group-append">
-                        <span class="input-group-text" *ngIf="person.phone && person.phone.toString().length === 10">
-                          <i class="fas fa-check text-success"></i>
-                        </span>
-                        <span class="input-group-text" *ngIf="person.phone && person.phone.toString().length < 10">
-                          <i class="fas fa-exclamation-circle text-danger"></i>
-                        </span>
-                      </div>
-                    </div>
-                    <div class="invalid-feedback">Teléfono es obligatorio y debe tener exactamente 10 dígitos.</div>
-                  </div>              
-                  
-                
-                  
-                  <div class="col-md-6">
-                    <label for="birth_date" class="form-label">Fecha de nacimiento</label>
-                    <div class="input-group">
-                      <input type="date" id="birth_date" class="form-control" [(ngModel)]="person.birth_of_date" name="birth_date" required />
-                      
-                      <div class="input-group-append">
-                        <span class="input-group-text" *ngIf="person.birth_of_date">
-                          <i class="fas fa-check" [ngClass]="{'text-success': person.birth_of_date, 'text-danger': !person.birth_of_date}"></i>
-                        </span>
-                      </div>
-                    </div>
-                    <div class="invalid-feedback">La fecha de nacimiento es obligatoria.</div>
-                  </div>
-                  <div class="button-group d-flex justify-content-between">
-                    <button type="button" class="btn btn-secondary1" (click)="confirmExit()">Anterior</button>
-                    <button type="button" class="btn btn-success1" (click)="nextStep()">Siguiente</button>
-                  </div>
-                </form>
-              </div>
-
-              <div class="mt-3"> <!-- Elimina text-end para alineación a la izquierda -->
-                <span class="login-text">
-                    ¿Ya tienes cuenta? <a [routerLink]="'/login'" class="login-link"> Iniciar sesión</a>
+              <div class="input-group-append">
+                <span class="input-group-text"
+                  *ngIf="validateLetters(person.first_name) && person.first_name.length > 0 && person.first_name.length <= 50">
+                  <i class="fas fa-check text-success"></i>
                 </span>
+                <span class="input-group-text"
+                  *ngIf="person.first_name.length === 0 || !validateLetters(person.first_name) || person.first_name.length > 50">
+                  <i class="fas fa-exclamation-circle text-danger"></i>
+                </span>
+              </div>
             </div>
-            
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="form-check"> <!-- Elimina ms-auto para que quede a la izquierda -->
-                    <input class="form-check-input" type="checkbox" id="termsCheckbox" style="border-color: #008f39;">
-                    <label class="form-check-label" for="termsCheckbox" style="color: #f8f9fa;">
-                        <a class="text-decoration-underline" [routerLink]="'/terms-conditions'" routerLinkActive="active" style="color: #f8f9fa;">
-                            Acepto términos y condiciones
-                        </a>
-                    </label>
-                </div>
-            </div>
-
-
-          
-          <div *ngIf="currentStep === 2">
-            <form class="row g-3 needs-validation" novalidate>
-              <div class="col-md-6 mb-3 position-relative1">
-                <label for="CityId" class="form-label">Ciudad</label>
-                <input type="text" class="form-control" id="CityId" name="CityId"
-                       [ngbTypeahead]="searchCitys"
-                       [inputFormatter]="formatCity" 
-                       [resultFormatter]="formatCity"
-                       (selectItem)="onCitySelect($event)"
-                       [ngModel]="getCityName(person.cityId)"
-                       placeholder="Buscar ciudad"
-                       required>
-                <div class="invalid-feedback"></div>
-              </div>
-              
-              <div class="col-md-6 mb-3 position-relative2">
-                <label for="address" class="form-label">Dirección</label>
-                <div class="input-group">
-                  <input type="text" id="address" class="form-control" placeholder="Ej: Calle 123 #45-67" 
-                         [(ngModel)]="person.addres" name="address" required
-                         (input)="validateAddress(person.addres)"
-                         [ngClass]="{
-                           'is-valid': isValidAddress, 
-                           'is-invalid': !isValidAddress && person.addres && person.addres.length > 0
-                         }" />
-                  <span class="input-group-text" *ngIf="isValidAddress">
-                    <i class="fas fa-check text-success"></i>
-                  </span>
-                  <span class="input-group-text" *ngIf="!isValidAddress && person.addres && person.addres.length > 0"
-                        style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: transparent; border: none;">
-                    <i class="fas fa-exclamation-circle text-danger"></i>
-                  </span>
-                </div>
-                <div class="invalid-feedback">La dirección debe comenzar con Calle, Carrera o Transversal, y seguir el formato adecuado.</div>
-              </div>
-              
-              <div class="col-md-6 mb-3 position-relative3">
-                <label for="email" class="form-label">Correo electrónico</label>
-                <div class="input-group">
-                  <input type="email" id="email" class="form-control" placeholder="Correo electrónico"
-                         [(ngModel)]="person.email" name="email" required 
-                         (ngModelChange)="onEmailChange()" />
-                  <span class="input-group-text" *ngIf="person.email && emailError === ''">
-                    <i class="fas fa-check text-success"></i>
-                  </span>
-                  <span class="input-group-text" *ngIf="emailError"
-                        style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: transparent; border: none;">
-                    <i class="fas fa-exclamation-circle text-danger"></i>
-                  </span>
-                </div>
-                <div class="invalid-feedback">{{ emailError }}</div>
-                <div class="email-guidelines" style="color: #454444; font-size: 0.9em; margin-top: 0.5rem;">
-                  El correo debe ser de Gmail o Hotmail y contener el símbolo "&#64;".
-                </div>
-              </div>
-              
-              
-              <div class="col-md-6 mb-3 position-relative4">
-                <label for="Username" class="form-label">Nombre de usuario</label>
-                <div class="input-group">
-                  <input type="text" id="Username" class="form-control" placeholder="Nombre de usuario"
-                         [(ngModel)]="user.username" name="username" required minlength="4" maxlength="15"
-                         [ngClass]="{'is-valid': user.username && isValidUsername(user.username), 'is-invalid': user.username && !isValidUsername(user.username)}" />
-                  <span class="input-group-text" *ngIf="user.username && isValidUsername(user.username)">
-                    <i class="fas fa-check text-success"></i>
-                  </span>
-                  <span class="input-group-text" *ngIf="user.username && !isValidUsername(user.username)"
-                        style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: transparent; border: none;">
-                    <i class="fas fa-exclamation-circle text-danger"></i>
-                  </span>
-                </div>
-                <div class="invalid-feedback" style="color: red; margin-top: 0.5rem;">{{ usernameError }}</div>
-                <div class="username-guidelines" style="color: #454444; font-size: 0.9em; margin-top: 0.5rem;">
-                  El nombre de usuario debe tener entre 4 y 15 caracteres, contener al menos una letra mayúscula, una letra minúscula, y no debe contener números ni caracteres especiales.
-                </div>
-              </div>
-              
-              <div class="col-md-6 mb-3 position-relative">
-                <label for="password" class="form-label">Contraseña</label>
-                <input type="password" id="password" class="form-control input-password" placeholder="Contraseña"
-                       [(ngModel)]="user.password" name="password" required minlength="8" 
-                       [ngClass]="{'is-valid': isValidPassword(user.password), 'is-invalid': user.password && !isValidPassword(user.password)}" />
-                <i id="togglePassword" class="fas fa-eye position-absolute toggle-password"
-                   (click)="togglePasswordVisibility()"></i>
-                <div class="input-group-append">
-                  <span class="input-group-text" *ngIf="user.password && isValidPassword(user.password)">
-                    <i class="fas fa-check text-success"></i>
-                  </span>
-                </div>
-                <div *ngIf="user.password && !isValidPassword(user.password)">
-                  {{ passwordError }}
-                </div>
-                <div class="password-guidelines" style="color: #454444; font-size: 0.9em; margin-top: 0.5rem;">
-                  La contraseña debe tener al menos 8 caracteres, incluir al menos una mayúscula y un número.
-                </div>
-              </div>
-
-            
-
-  <div class="button-group d-flex justify-content-between">
-                <button type="button" class="btn btn-secondary" (click)="prevStep()">Anterior</button>
-                <button type="button" class="btn btn-success" (click)="nextStep()">Siguiente</button>
-              </div>
-            </form>
+            <div class="invalid-feedback">El nombre es obligatorio, no debe contener números o caracteres especiales
+              y debe tener un máximo de 50 caracteres.</div>
           </div>
 
-          <!-- Tercer Paso -->
-          <div *ngIf="currentStep === 3">
-            <h3>Resumen de la Información</h3>
-            <p><strong>Nombres:</strong> {{ person.first_name }}</p>
-            <p><strong>Apellidos:</strong> {{ person.last_name }}</p>
-            <p><strong>Tipo de documento:</strong> {{ person.type_document }}</p>
-            <p><strong>Número de documento:</strong> {{ person.document }}</p>
-            <p><strong>Teléfono:</strong> {{ person.phone }}</p>
-            <p><strong>Fecha de nacimiento:</strong> {{ person.birth_of_date | date }}</p>
-            <p><strong>Ciudad:</strong> {{ getCityName(person.cityId) }}</p>
-            <p><strong>Dirección:</strong> {{ person.addres }}</p>
-            <p><strong>Correo electrónico:</strong> {{ person.email }}</p>
-            <p><strong>Nombre de usuario:</strong> {{ user.username }}</p>
+          <div class="col-md-6">
+            <label for="last_name" class="form-label">Apellidos</label>
+            <div class="input-group">
+              <input type="text" id="last_name" class="form-control input-field" placeholder="Apellidos"
+                [(ngModel)]="person.last_name" name="last_name" required minlength="1" maxlength="20"
+                (input)="filterInput($event)"
+                [ngClass]="{'is-valid': validateLetters(person.last_name) && person.last_name.length > 0 && person.last_name.length <= 50, 
+                                        'is-invalid': person.last_name.length === 0 || !validateLetters(person.last_name) || person.last_name.length > 50}" />
+              <div class="input-group-append">
+                <span class="input-group-text"
+                  *ngIf="validateLetters(person.last_name) && person.last_name.length > 0 && person.last_name.length <= 50">
+                  <i class="fas fa-check text-success"></i>
+                </span>
+                <span class="input-group-text"
+                  *ngIf="person.last_name.length === 0 || !validateLetters(person.last_name) || person.last_name.length > 50">
+                  <i class="fas fa-exclamation-circle text-danger"></i>
+                </span>
+              </div>
+            </div>
+            <div class="invalid-feedback">El apellido es obligatorio, no debe contener números o caracteres
+              especiales y debe tener un máximo de 50 caracteres.</div>
+          </div>
+
+
+          <div class="col-md-6 position-relative">
+            <label for="type_document" class="form-label input-field">Tipo de documento</label>
+            <div class="input-group">
+              <select id="type_document" class="form-select" [(ngModel)]="person.type_document" name="type_document"
+                required
+                [ngClass]="{'is-valid': person.type_document !== '', 'is-invalid': person.type_document === ''}">
+                <option value="">Seleccione</option>
+                <option value="CC">Cédula de ciudadanía</option>
+                <option value="TI">Tarjeta de identidad</option>
+                <option value="CE">Cédula de extranjería</option>
+                <option value="PS">Pasaporte</option>
+              </select>
+              <span class="input-group-text" *ngIf="person.type_document && person.type_document !== ''"
+                style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: transparent; border: none;">
+                <i class="fas fa-check text-success"></i>
+              </span>
+              <span class="input-group-text" *ngIf="person.type_document === ''"
+                style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: transparent; border: none;">
+                <i class="fas fa-exclamation-circle text-danger"></i>
+              </span>
+            </div>
+            <div class="invalid-feedback">Seleccione un tipo de documento.</div>
+          </div>
+
+
+          <div class="col-md-6">
+            <label for="document" class="form-label">Número del documento</label>
+            <div class="input-group">
+              <input type="tel" id="document" class="form-control input-field" placeholder="Número del documento"
+                [(ngModel)]="person.document" name="document" required minlength="10" maxlength="10" pattern="[0-9]{10}"
+                [ngClass]="{'is-valid': person.document && person.document.toString().length === 10, 'is-invalid': person.document && person.document.toString().length !== 10}"
+                (keypress)="validateNumber($event)" />
+              <div class="input-group-append">
+                <span class="input-group-text" *ngIf="person.document && person.document.toString().length === 10">
+                  <i class="fas fa-check text-success"></i>
+                </span>
+                <span class="input-group-text" *ngIf="person.document && person.document.toString().length < 10">
+                  <i class="fas fa-exclamation-circle text-danger"></i>
+                </span>
+              </div>
+            </div>
+            <div class="invalid-feedback">Número de documento es obligatorio y debe tener exactamente 10 dígitos.
+            </div>
+          </div>
+
+
+          <div class="col-md-6">
+            <label for="phone" class="form-label input-field">Teléfono</label>
+            <div class="input-group">
+              <input type="tel" id="phone" class="form-control" placeholder="Teléfono" [(ngModel)]="person.phone"
+                name="phone" required minlength="10" maxlength="10" pattern="[0-9]{10}"
+                [ngClass]="{'is-valid': person.phone && person.phone.toString().length === 10, 'is-invalid': person.phone && person.phone.toString().length !== 10}"
+                (keypress)="validateNumber($event)" />
+              <div class="input-group-append">
+                <span class="input-group-text" *ngIf="person.phone && person.phone.toString().length === 10">
+                  <i class="fas fa-check text-success"></i>
+                </span>
+                <span class="input-group-text" *ngIf="person.phone && person.phone.toString().length < 10">
+                  <i class="fas fa-exclamation-circle text-danger"></i>
+                </span>
+              </div>
+            </div>
+            <div class="invalid-feedback">Teléfono es obligatorio y debe tener exactamente 10 dígitos.</div>
+          </div>
+
+
+
+          <div class="col">
+            <label for="Birth_of_date">Fecha de nacimiento:</label>
+            <div class="input-group">
+                <input 
+                    type="date" 
+                    class="form-control input-field" 
+                    id="Birth_of_date" 
+                    name="Birth_of_date" 
+                    [(ngModel)]="person.birth_of_date" 
+                    required 
+                    [min]="minDate" 
+                    [max]="maxDate"
+                    #birthDate="ngModel"
+                    [ngClass]="{
+                        'is-invalid': birthDate.invalid && (birthDate.dirty || birthDate.touched), 
+                        'is-valid': birthDate.valid && (birthDate.dirty || birthDate.touched)
+                    }">
+                <div class="input-group-append">
+                    <span class="input-group-text" *ngIf="person.birth_of_date">
+                        <i class="fas fa-check"
+                            [ngClass]="{'text-success': person.birth_of_date, 'text-danger': !person.birth_of_date}"></i>
+                    </span>
+                </div>
+            </div>
+            <!-- Mensajes de error -->
+            <div *ngIf="birthDate.invalid && (birthDate.dirty || birthDate.touched)" class="invalid-feedback">
+                <div *ngIf="birthDate.errors?.['required']">La fecha de nacimiento es obligatoria.</div>
+                <div *ngIf="birthDate.errors?.['max']">Debes tener menos de 70 años.</div>
+                <div *ngIf="birthDate.errors?.['min']">Debes tener al menos 18 años.</div>
+            </div>
+        </div>
+        
+        <!-- Botones para navegar entre pasos -->
+        <div class="button-group d-flex justify-content-between mt-3">
+            <button type="button" class="btn btn-secondary1" (click)="confirmExit()">Anterior</button>
+            <button type="button" class="btn btn-success1" (click)="nextStep()">Siguiente</button>
+        </div>        
+        </form>
+      </div>
+
+      <!-- Segundo Paso -->
+      <div *ngIf="currentStep === 2">
+        <form> <!-- Asegúrate de abrir la etiqueta <form> -->
+          <div class="row">
+            <div class="col">
+              <label for="City" class="form-label input-field">Ciudad:</label>
+              <input type="text" class="form-control input-field" matInput [matAutocomplete]="cityAuto"
+                [(ngModel)]="person.cityName" name="cityName" (input)="searchCitys($event)" required
+                #cityField="ngModel"
+                [ngClass]="{'is-invalid': cityField.invalid && cityField.touched, 'is-valid': cityField.valid && cityField.touched}">
+
+              <mat-autocomplete #cityAuto="matAutocomplete" (optionSelected)="onCitySelect($event)">
+                <mat-option *ngFor="let city of filteredCitys" [value]="city.name">
+                  {{ city.name }}
+                </mat-option>
+              </mat-autocomplete>
+
+              <!-- Mensajes de error para Ciudad -->
+              <div *ngIf="cityField.invalid && cityField.touched" class="invalid-feedback">
+                <div *ngIf="cityField.errors?.['required']">Debes seleccionar una ciudad.</div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label for="address" class="form-label input-field">Dirección</label>
+              <div class="input-group">
+                <input type="text" id="address" class="form-control" placeholder="Ej: Calle 123 #45-67"
+                  [(ngModel)]="person.addres" name="address" required (input)="validateAddress(person.addres)"
+                  [ngClass]="{
+              'is-valid': isValidAddress,
+              'is-invalid': !isValidAddress && person.addres && person.addres.length > 0
+            }" />
+                <span class="input-group-text" *ngIf="isValidAddress">
+                  <i class="fas fa-check text-success"></i>
+                </span>
+                <span class="input-group-text" *ngIf="!isValidAddress && person.addres && person.addres.length > 0"
+                  style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: transparent; border: none;">
+                  <i class="fas fa-exclamation-circle text-danger"></i>
+                </span>
+              </div>
+              <div class="invalid-feedback">La dirección debe comenzar con Calle, Carrera o Transversal, y seguir el
+                formato adecuado.</div>
+            </div>
+
+            <!-- Input de Correo Electrónico (sin validaciones) -->
+            <div class="col-md-6 mb-3 position-relative3">
+              <label for="email" class="form-label input-field">Correo electrónico</label>
+              <div class="input-group">
+                <input type="email" id="email" class="form-control" placeholder="Correo electrónico"
+                  [(ngModel)]="person.email" name="email" required (ngModelChange)="onEmailChange()" />
+                <span class="input-group-text" *ngIf="person.email && emailError === ''">
+                  <i class="fas fa-check text-success"></i>
+                </span>
+                <span class="input-group-text" *ngIf="emailError"
+                  style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: transparent; border: none;">
+                  <i class="fas fa-exclamation-circle text-danger"></i>
+                </span>
+              </div>
+              <div class="invalid-feedback">{{ emailError }}</div>
+              <div class="email-guidelines" style="color: #ffffff; font-size: 0.9em; margin-top: 0.5rem;">
+                El correo debe ser de Gmail o Hotmail y contener el símbolo "&#64;".
+              </div>
+            </div>
+
+            <!-- Input de Usuario (sin validaciones) -->
             
+              <div class="col-md-6 mb-3 position-relative">
+                <label for="Username" class="form-label input-field">Nombre de usuario</label>
+                <div class="input-group position-relative">
+                  <input
+                    type="text"
+                    id="Username"
+                    class="form-control"
+                    placeholder="Nombre de usuario"
+                    [(ngModel)]="user.username"
+                    name="username"
+                    required
+                    minlength="4"
+                    maxlength="15"
+                    pattern="^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{4,15}$"
+                    #usernameField="ngModel"
+                    [ngClass]="{
+                      'is-invalid': usernameField.invalid && (usernameField.touched || usernameField.dirty),
+                      'is-valid': usernameField.valid && (usernameField.touched || usernameField.dirty)
+                    }"
+                    (input)="updateUsernameStrength(usernameField)"
+                  />
+                  <i *ngIf="usernameField.valid && user.username" class="fa fa-check-circle text-success"
+                    style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%);"></i>
+                  <i *ngIf="usernameField.invalid && (usernameField.touched || usernameField.dirty)" class="fas fa-exclamation-circle text-danger"
+                    style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%);"></i>
+                </div>
+            
+                <!-- Barra de Progreso para el Nombre de Usuario -->
+                <div class="progress" style="height: 5px; margin-top: 5px;">
+                  <div
+                    class="progress-bar"
+                    role="progressbar"
+                    [style.width.%]="usernameStrength * 100"
+                    [style.backgroundColor]="usernameField.invalid ? 'red' : '#44E32A'"
+                  ></div>
+                </div>
+            
+                <div *ngIf="usernameField.invalid && (usernameField.touched || usernameField.dirty)" class="text-danger">
+                  <div *ngIf="usernameField.errors?.['required']">El nombre de usuario es obligatorio.</div>
+                  <div *ngIf="usernameField.errors?.['minlength']">Debe tener al menos 4 caracteres.</div>
+                  <div *ngIf="usernameField.errors?.['maxlength']">No puede tener más de 15 caracteres.</div>
+                  <div *ngIf="usernameField.errors?.['pattern']">Debe incluir al menos una letra mayúscula y una letra minúscula, sin números ni caracteres especiales.</div>
+                </div>
+                
+                <div *ngIf="usernameField.valid && (usernameField.touched || usernameField.dirty)" class="text-success">
+                  <div>¡El nombre de usuario es válido!</div>
+                </div>
+            
+                <div *ngIf="usernameStrengthMessage" class="text-info">{{ usernameStrengthMessage }}</div>
+            
+                <div class="username-guidelines" style="color: #ffffff; font-size: 0.9em; margin-top: 0.5rem;">
+                  El nombre de usuario debe tener entre 4 y 15 caracteres, contener al menos una letra mayúscula, una
+                  letra minúscula, y no debe contener números ni caracteres especiales.
+                </div>
+              </div>
+          
+            
+
+            <!-- Input de Contraseña (sin validaciones) -->
+            <div class="col-md-6 mb-3 position-relative">
+              <label for="Password" class="form-label input-field">Contraseña</label>
+              <div class="input-group position-relative">
+                <input
+                  type="password"
+                  id="Password"
+                  class="form-control input-field"
+                  placeholder="Contraseña"
+                  [(ngModel)]="user.password"
+                  name="Password"
+                  required
+                  minlength="8"
+                  pattern="^(?=.*[A-Z])(?=.*[0-9]).{8,}$"
+                  #passwordField="ngModel"
+                  [ngClass]="{
+                    'is-invalid': passwordField.invalid && (passwordField.touched || passwordField.dirty),
+                    'is-valid': passwordField.valid && (passwordField.touched || passwordField.dirty)
+                  }"
+                  (input)="updatePasswordStrength(passwordField)"
+                />
+                <i class="fas fa-eye position-absolute toggle-password" (click)="togglePasswordVisibility()"></i>
+                <i *ngIf="passwordField.valid && user.password" class="fa fa-check-circle text-success" 
+                   style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%);"></i>
+                <i *ngIf="passwordField.invalid && (passwordField.touched || passwordField.dirty)" class="fas fa-exclamation-circle text-danger" 
+                   style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%);"></i>
+              </div>
+            
+              <!-- Barra de Progreso para la Contraseña -->
+              <div class="progress" style="height: 5px; margin-top: 5px;">
+                <div
+                  class="progress-bar"
+                  role="progressbar"
+                  [style.width.%]="user.password ? passwordStrength * 100 / 3 : 0" 
+                  [style.backgroundColor]="passwordField.invalid ? 'red' : '#44E32A'"
+                ></div>
+              </div>
+            
+              <div *ngIf="passwordField.invalid && (passwordField.touched || passwordField.dirty)" class="text-danger">
+                <div *ngIf="passwordField.errors?.['required']">La contraseña es obligatoria.</div>
+                <div *ngIf="passwordField.errors?.['minlength']">Debe tener al menos 8 caracteres.</div>
+                <div *ngIf="passwordField.errors?.['pattern']">La contraseña debe incluir al menos una letra mayúscula y un número.</div>
+              </div>
+              
+              <div *ngIf="passwordField.valid && (passwordField.touched || passwordField.dirty)" class="text-success">
+                <div>¡La contraseña es válida!</div>
+              </div>
+              
+              <div *ngIf="passwordStrengthMessage" class="text-info">{{ passwordStrengthMessage }}</div>
+              
+              <div class="password-guidelines" style="color: #ffffff; font-size: 0.9em; margin-top: 0.5rem;">
+                La contraseña debe tener al menos 8 caracteres, incluir al menos una mayúscula y un número.
+              </div>
+            </div>
+
+
+            <div class="mt-3">
+              <span class="login-text">
+                ¿Ya tienes cuenta? <a [routerLink]="'/login'" class="login-link"> Iniciar sesión</a>
+              </span>
+            </div>
+
+
+            <!-- Checkbox para activar el modal -->
+            <label class="underline-text hover-underline" (click)="openModal()">
+              <input type="checkbox" [(ngModel)]="isCheckboxChecked" name="termsCheckbox"
+                (change)="onCheckboxChange()" />
+              Acepto los términos y condiciones
+            </label>
+
+            <!-- Modal -->
+            <div id="termsModal" class="modal" [ngClass]="{'show-modal': isModalOpen}" *ngIf="isModalOpen">
+              <div class="modal-content">
+                <span class="close" (click)="closeModal()">&times;</span>
+                <h5 class="modal-title" id="termsModalLabel">Términos y Condiciones</h5>
+
+                <hr class="modal-border">
+
+                <div class="modal-body">
+                  <div class="terms-text">
+                    <p>
+                      Bienvenido a FincaAudita, la plataforma especializada en el monitoreo y gestión de fincas.
+                      Antes de utilizar nuestros servicios, te pedimos que leas detenidamente los siguientes
+                      términos y condiciones. Al acceder o utilizar FincaAudita, aceptas estar legalmente vinculado
+                      por estos términos.
+                    </p>
+
+                  </div>
+                </div>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
+                  <button type="button" class="btn btn-primary" (click)="acceptTerms()">Aceptar Términos y
+                    condiciones</button>
+                </div>
+              </div>
+            </div>
+
+
             <div class="button-group d-flex justify-content-between">
               <button type="button" class="btn btn-secondary" (click)="prevStep()">Anterior</button>
-              <button type="submit" class="btn btn-primary" (click)="onSubmit()">Registrar</button>
+              <button type="button" class="btn btn-success" (click)="nextStep()">Siguiente</button>
             </div>
-          </div>
+          </div> <!-- Cierre del div row -->
+        </form> <!-- Cierre del formulario -->
+      </div>
+
+      <!-- Tercer Paso -->
+      <div *ngIf="currentStep === 3" class="summary-container">
+        <h3 class="form-label2">Resumen de la Información</h3>
+        <p class="form-label"><strong>Nombres:</strong> {{ person.first_name }}</p>
+        <p class="form-label"><strong>Apellidos:</strong> {{ person.last_name }}</p>
+        <p class="form-label"><strong>Tipo de documento:</strong> {{ person.type_document }}</p>
+        <p class="form-label"><strong>Número de documento:</strong> {{ person.document }}</p>
+        <p class="form-label"><strong>Teléfono:</strong> {{ person.phone }}</p>
+        <p class="form-label"><strong>Fecha de nacimiento:</strong> {{ person.birth_of_date | date }}</p>
+        <p class="form-label"><strong>Ciudad:</strong> {{ getCityName(person.cityId) }}</p>
+        <p class="form-label"><strong>Dirección:</strong> {{ person.addres }}</p>
+        <p class="form-label"><strong>Correo electrónico:</strong> {{ person.email }}</p>
+        <p class="form-label"><strong>Nombre de usuario:</strong> {{ user.username }}</p>
+
+
+        <div class="button-group d-flex justify-content-between">
+          <button type="button" class="btn btn-secondary" (click)="prevStep()">Anterior</button>
+          <button type="submit" class="btn btn-primary" (click)="onSubmit()">Registrar</button>
         </div>
       </div>
     </div>

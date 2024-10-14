@@ -6,8 +6,8 @@
   <div class="search-container">
     <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
       class="form-control input-field" />
-  </div>  
-  
+  </div>
+
   <div class="export-container">
     <!-- Selector de ítems por página -->
     <div class="items-per-page">
@@ -16,10 +16,11 @@
         <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
       </select>
     </div>
-  
+
     <!-- Select para exportar -->
     <div class="export-select">
-      <ng-select (change)="handleExport($event)" [placeholder]="'Exportar Como'" [clearable]="true" [searchable]="false">
+      <ng-select (change)="handleExport($event)" [placeholder]="'Exportar Como'" [clearable]="true"
+        [searchable]="false">
         <ng-option value="pdf" class="custom-option">
           <div class="option-container">
             <i class="fas fa-file-pdf"></i>
@@ -42,170 +43,299 @@
 
 <!-- Modal para agregar o editar una finca -->
 <div id="farmModal" class="modal" [ngClass]="{'show-modal': isModalOpen}">
-    <div class="modal-content">
-        <span class="close" (click)="closeModal()">&times;</span>
-        <h2>{{ farm.id === 0 ? 'Agregar finca' : 'Editar finca' }}</h2>
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h2>{{ farm.id === 0 ? 'Agregar finca' : 'Editar finca' }}</h2>
 
-        <hr class="modal-border">
+    <hr class="modal-border">
 
-        <form #farmForm="ngForm" (ngSubmit)="onSubmit(farmForm)">
-            <input type="hidden" name="id" [(ngModel)]="farm.id">
+    <form #farmForm="ngForm" (ngSubmit)="onSubmit(farmForm)" novalidate>
+      <input type="hidden" name="id" [(ngModel)]="farm.id">
 
-            <div class="row">
-                <div class="col">
-                    <label for="Name">Nombre de la finca:</label>
-                    <input type="text" class="form-control input-field" id="Name" name="Name" [(ngModel)]="farm.name"
-                        required>
+      <div class="row">
+        <!-- Nombre de la finca -->
+        <div class="col">
+          <label for="Name">Nombre de la finca:</label>
+          <div class="input-group position-relative">
+            <input type="text" class="form-control input-field" id="Name" name="Name" [(ngModel)]="farm.name" required
+              minlength="3" maxlength="15" #name="ngModel" [ngClass]="{
+                'is-valid': name.valid && (name.dirty || name.touched),
+                'is-invalid': name.invalid && (name.dirty || name.touched)
+              }">
+            <i *ngIf="name.valid && (name.dirty || name.touched)" class="fa fa-check-circle text-success"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="name.invalid && (name.dirty || name.touched)" class="fas fa-exclamation-circle text-danger"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
+
+          <!-- Mensajes de retroalimentación -->
+          <div *ngIf="name.valid && (name.dirty || name.touched)" class="valid-feedback">
+            <i class="fas fa-check"></i> Nombre válido.
+          </div>
+          <div *ngIf="name.invalid && (name.dirty || name.touched)" class="invalid-feedback">
+            <span *ngIf="name.errors?.['required']">El nombre es obligatorio.</span>
+            <span *ngIf="name.errors?.['minlength']">Mínimo 3 caracteres.</span>
+            <span *ngIf="name.errors?.['maxlength']">Máximo 15 caracteres.</span>
+          </div>
+        </div>
+
+
+        <!-- Dirección -->
+        <div class="col">
+          <label for="Addres">Dirección:</label>
+          <div class="input-group position-relative">
+            <input type="text" class="form-control input-field" id="Addres" name="Addres" [(ngModel)]="farm.addres"
+              required minlength="3" maxlength="15" placeholder="Verde el paraíso" #addres="ngModel" [ngClass]="{
+                  'is-valid': addres.valid && (addres.dirty || addres.touched),
+                  'is-invalid': addres.invalid && (addres.dirty || addres.touched)
+                }">
+            <i *ngIf="addres.valid && (addres.dirty || addres.touched)" class="fa fa-check-circle text-success"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="addres.invalid && (addres.dirty || addres.touched)" class="fas fa-exclamation-circle text-danger"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
+
+          <!-- Mensajes de retroalimentación -->
+          <div *ngIf="addres.valid && (addres.dirty || addres.touched)" class="valid-feedback">
+            <i class="fas fa-check"></i> Dirección válida.
+          </div>
+          <div *ngIf="addres.invalid && (addres.dirty || addres.touched)" class="invalid-feedback">
+            <span *ngIf="addres.errors?.['required']">La dirección es obligatoria.</span>
+            <span *ngIf="addres.errors?.['minlength']">Mínimo 3 caracteres.</span>
+            <span *ngIf="addres.errors?.['maxlength']">Máximo 15 caracteres.</span>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row mt-3">
+        <div class="col">
+          <label for="cityName">Ciudad:</label>
+          <div class="input-group position-relative">
+            <input type="text" class="form-control input-field" id="cityName" name="cityName" matInput
+              [matAutocomplete]="cityAuto" [(ngModel)]="farm.cityName" required #cityName="ngModel"
+              (input)="searchCitys($event)" [ngClass]="{
+                  'is-valid': cityName.valid && (cityName.dirty || cityName.touched),
+                  'is-invalid': cityName.invalid && (cityName.dirty || cityName.touched)
+                }">
+            <i *ngIf="cityName.valid && (cityName.dirty || cityName.touched)" class="fa fa-check-circle text-success"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="cityName.invalid && (cityName.dirty || cityName.touched)"
+              class="fas fa-exclamation-circle text-danger"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
+
+          <mat-autocomplete #cityAuto="matAutocomplete" (optionSelected)="onCitySelect($event)">
+            <mat-option *ngFor="let city of filteredCitys" [value]="city.name">
+              {{ city.name }}
+            </mat-option>
+          </mat-autocomplete>
+
+          <div *ngIf="cityName.valid && (cityName.dirty || cityName.touched)" class="valid-feedback d-block">
+          </div>
+          <div *ngIf="cityName.invalid && (cityName.dirty || cityName.touched)" class="invalid-feedback d-block">
+            <span *ngIf="cityName.errors?.['required']">La ciudad es obligatoria.</span>
+          </div>
+        </div>
+
+        <!-- Usuario -->
+        <div class="col">
+          <label for="userUsername">Usuario:</label>
+          <div class="input-group position-relative">
+            <input type="text" class="form-control input-field" id="userUsername" name="userUsername" matInput
+              [matAutocomplete]="userAuto" [(ngModel)]="farm.userUsername" required #userUsername="ngModel"
+              (input)="searchUsers($event)" [ngClass]="{
+                'is-valid': userUsername.valid && (userUsername.dirty || userUsername.touched),
+                'is-invalid': userUsername.invalid && (userUsername.dirty || userUsername.touched)
+              }">
+            <i *ngIf="userUsername.valid && (userUsername.dirty || userUsername.touched)"
+              class="fa fa-check-circle text-success"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="userUsername.invalid && (userUsername.dirty || userUsername.touched)"
+              class="fas fa-exclamation-circle text-danger"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
+
+          <mat-autocomplete #userAuto="matAutocomplete" (optionSelected)="onUserSelect($event)">
+            <mat-option *ngFor="let user of filteredUsers" [value]="user.username">
+              {{ user.username }}
+            </mat-option>
+          </mat-autocomplete>
+
+          <div *ngIf="userUsername.valid && (userUsername.dirty || userUsername.touched)"
+            class="valid-feedback d-block">
+          </div>
+          <div *ngIf="userUsername.invalid && (userUsername.dirty || userUsername.touched)"
+            class="invalid-feedback d-block">
+            <span *ngIf="userUsername.errors?.['required']">El usuario es obligatorio.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <!-- Dimensión -->
+        <div class="col">
+          <label for="Dimension">Dimensión (Hectáreas):</label>
+          <div class="input-group position-relative">
+            <input type="number" class="form-control input-field" id="Dimension" name="Dimension"
+              [(ngModel)]="farm.dimension" required min="1" max="200" (keypress)="onlyPositiveNumbers($event)"
+              #dimension="ngModel" [ngClass]="{
+                  'is-valid': dimension.valid && (dimension.dirty || dimension.touched),
+                  'is-invalid': dimension.invalid && (dimension.dirty || dimension.touched)
+                }">
+            <i *ngIf="dimension.valid && (dimension.dirty || dimension.touched)" class="fa fa-check-circle text-success"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="dimension.invalid && (dimension.dirty || dimension.touched)"
+              class="fas fa-exclamation-circle text-danger"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
+
+          <div *ngIf="dimension.valid && (dimension.dirty || dimension.touched)" class="valid-feedback">
+            <i class="fas fa-check"></i> Dimensión válida.
+          </div>
+          <div *ngIf="dimension.invalid && (dimension.dirty || dimension.touched)" class="invalid-feedback">
+            <span *ngIf="dimension.errors?.['required']">La dimensión es obligatoria.</span>
+            <span *ngIf="dimension.errors?.['min']">Debe ser un número positivo.</span>
+            <span *ngIf="dimension.errors?.['max']">La dimensión no puede exceder las 200 hectáreas.</span>
+          </div>
+        </div>
+
+
+
+        <!-- Cultivo -->
+        <div class="col">
+          <label for="farm">Cultivo:</label>
+          <div class="position-relative">
+            <p-multiSelect id="selectedCropId" name="selectedCropId" [options]="crops" [(ngModel)]="selectedCropId"
+              optionLabel="name" placeholder="Selecciona cultivos" scrollHeight="250px" display="chip"
+              (onChange)="onFarmChange($event)" required #cultivo="ngModel" [ngClass]="{
+                'is-valid': selectedCropId.length > 0 && (cultivo.dirty || cultivo.touched),
+                'is-invalid': selectedCropId.length === 0 && (cultivo.dirty || cultivo.touched)
+              }">
+            </p-multiSelect>
+
+            <i *ngIf="selectedCropId.length > 0 && (cultivo.dirty || cultivo.touched)"
+              class="fa fa-check-circle text-success"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="selectedCropId.length === 0 && (cultivo.dirty || cultivo.touched)"
+              class="fas fa-exclamation-circle text-danger"
+              style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
+
+          <div *ngIf="selectedCropId.length > 0 && (cultivo.dirty || cultivo.touched)" class="valid-feedback d-block">
+            <i class="fas fa-check"></i> Al menos un cultivo seleccionado.
+          </div>
+          <div *ngIf="selectedCropId.length === 0 && (cultivo.dirty || cultivo.touched)"
+            class="invalid-feedback d-block">
+            <span>Debe seleccionar al menos un cultivo.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección para agregar hectáreas de cultivos seleccionados -->
+      <div *ngIf="selectedCropId.length > 0" class="mt-3">
+        <h5>Cultivos Seleccionados</h5>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Cultivo</th>
+              <th>Número de hectáreas</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let lot of farm.lots; let i = index">
+              <td>{{ lot.name }}</td>
+              <td>
+                <input type="number" [(ngModel)]="lot.num_hectareas" name="num_hectareas-{{i}}" class="form-control"
+                  placeholder="Ingrese número de hectáreas" required min="1" #hectarea="ngModel" [ngClass]="{
+                    'is-valid': lot.num_hectareas > 0 && (hectarea.dirty || hectarea.touched),
+                    'is-invalid': lot.num_hectareas <= 0 && (hectarea.dirty || hectarea.touched)
+                  }">
+
+                <div *ngIf="lot.num_hectareas > 0 && (hectarea.dirty || hectarea.touched)" class="valid-feedback">
+                  <i class="fas fa-check"></i> Valor válido.
                 </div>
-
-                <div class="col">
-                    <label for="Addres">Dirección:</label>
-                    <input type="text" class="form-control input-field" id="Addres" name="Addres"
-                        [(ngModel)]="farm.addres" required>
+                <div *ngIf="lot.num_hectareas <= 0 && (hectarea.dirty || hectarea.touched)" class="invalid-feedback">
+                  <span>Debe ser un número positivo.</span>
                 </div>
-            </div>
+              </td>
+              <td>
+                <button type="button" class="btn btn-danger" (click)="removeLot(lot.id)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-            <div class="row">
-              <div class="col">
-                  <label for="cityName">Ciudad:</label>
-                  <input type="text" class="form-control input-field" matInput [matAutocomplete]="cityAuto" [(ngModel)]="farm.cityName" name="cityName"
-                          (input)="searchCitys($event)" required>
-                      <mat-autocomplete #cityAuto="matAutocomplete" (optionSelected)="onCitySelect($event)">
-                          <mat-option *ngFor="let city of filteredCitys" [value]="city.name">
-                              {{ city.name }}
-                          </mat-option>
-                      </mat-autocomplete>
-              </div>
+      <div class="row mt-3">
+        <div class="col" *ngIf="farm.id !== 0">
+          <label for="State">Estado:</label>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="State" name="State" [(ngModel)]="farm.state">
+          </div>
+        </div>
+      </div>
 
-                <div class="col">
-                    <label for="userUsername">Usuario:</label>
-                    <input type="text" class="form-control input-field" matInput [matAutocomplete]="userAuto" [(ngModel)]="farm.userUsername" name="userUsername"
-                            (input)="searchUsers($event)" required>
-                        <mat-autocomplete #userAuto="matAutocomplete" (optionSelected)="onUserSelect($event)">
-                            <mat-option *ngFor="let user of filteredUsers" [value]="user.username">
-                                {{ user.username }}
-                            </mat-option>
-                        </mat-autocomplete>
-                </div>
-              </div>
-
-            <div class="row">
-                <div class="col">
-                    <label for="Dimension">Dimensión:</label>
-                    <input type="number" class="form-control input-field" id="Dimension" name="Dimension"
-                        [(ngModel)]="farm.dimension" required>
-                </div>
-
-            <div class="row">
-              <div class="col" *ngIf="farm.id !== 0">
-                    <label for="State">Estado:</label>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="State" name="State"
-                            [(ngModel)]="farm.state">
-                    </div>
-                </div>
-            </div>
-
-                <div class="col">
-                    <label for="farm">Cultivo:</label>
-                    <p-multiSelect id="selectedCropId" name="selectedCropId" [options]="crops"
-                    [(ngModel)]="selectedCropId" optionLabel="name" placeholder="Selecciona cultivos"
-                    scrollHeight="250px" display="chip"
-                    (onChange)="onFarmChange($event)">
-                </p-multiSelect>
-                </div>
-              </div>
-
-                <!-- Sección para agregar hectáreas de cultivos seleccionados -->
-                <div *ngIf="selectedCropId.length > 0">
-                <h5>Cultivos Seleccionados</h5>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Cultivo</th>
-                            <th>Número de hectáreas</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let lot of farm.lots; let i = index">
-                            <td>{{ lot.name }}</td>
-                            <td>
-                                <input type="number" [(ngModel)]="lot.num_hectareas" name="num_hectareas-{{i}}"
-                                    class="form-control" placeholder="Ingrese número de hectáreas" required>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-danger" (click)="removeLot(lot.id)">
-                                  <i class="fas fa-trash"></i>
-                                </button>
-                              </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
-                <button type="submit" class="btn btn-primary">Guardar</button>
-            </div>
+      <div class="modal-footer mt-4">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
+        <button type="submit" class="btn btn-primary"
+          [disabled]="farmForm.invalid || selectedCropId.length === 0">Guardar</button>
+      </div>
     </form>
-</div>
+  </div>
 </div>
 
 <!-- Tabla de Fincas -->
-<table *ngIf="filteredFarms. length > 0" class="table">
-    <thead>
-        <tr>
-          <th>
-            <input 
-              type="checkbox" 
-              (change)="selectAll($event)" 
-              [checked]="areAllSelected()" 
-            />
-          </th>
-            <th>Nombre</th>
-            <th>Dirección</th>
-            <th>Ciudad</th>
-            <th>Usuario</th>
-            <th>Dimensión</th>
-            <th>Lote</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let farm of paginatedFarm()">
-          <td>
-            <label class="checkbox-container">
-              <input type="checkbox" [(ngModel)]="farm.selected" />
-              <div class="checkbox-custom"></div>
-            </label>
-          </td>
-            <td>{{ farm.name }}</td>
-            <td>{{ farm.addres }}</td>
-            <td>{{ getCityName(farm.cityId) }}</td>
-            <td>{{ getUserName(farm.userId) }}</td>
-            <td>{{ farm.dimension }}</td>
-            <td>
-                <ul>
-                    <li *ngFor="let lot of farm.lots">
-                        {{ lot.cultivo }} - Núm-hectareas: {{ lot.num_hectareas }}
-                    </li>
-                </ul>
-            </td>
-            <td>{{ farm.state ? 'Activo' : 'Inactivo' }}</td>
-            <td>
-                <button class="btn-icon edit" (click)="editFarm(farm)" title="Editar">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon delete" (click)="deleteFarm(farm.id)" title="Eliminar">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </td>
-        </tr>
-    </tbody>
+<table *ngIf="filteredFarms.length > 0" class="table">
+  <thead>
+    <tr>
+      <th>
+        <input type="checkbox" (change)="selectAll($event)" [checked]="areAllSelected()" />
+      </th>
+      <th>Nombre</th>
+      <th>Dirección</th>
+      <th>Ciudad</th>
+      <th>Usuario</th>
+      <th>Dimensión</th>
+      <th>Lote</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let farm of paginatedFarm()">
+      <td>
+        <label class="checkbox-container">
+          <input type="checkbox" [(ngModel)]="farm.selected" />
+          <div class="checkbox-custom"></div>
+        </label>
+      </td>
+      <td>{{ farm.name }}</td>
+      <td>{{ farm.addres }}</td>
+      <td>{{ getCityName(farm.cityId) }}</td>
+      <td>{{ getUserName(farm.userId) }}</td>
+      <td>{{ farm.dimension }}</td>
+      <td>
+        <ul>
+          <li *ngFor="let lot of farm.lots">
+            {{ lot.cultivo }} - Núm-hectareas: {{ lot.num_hectareas }}
+          </li>
+        </ul>
+      </td>
+      <td>{{ farm.state ? 'Activo' : 'Inactivo' }}</td>
+      <td>
+        <button class="btn-icon edit" (click)="editFarm(farm)" title="Editar">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn-icon delete" (click)="deleteFarm(farm.id)" title="Eliminar">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+  </tbody>
 </table>
 
 <!-- Mensaje para cuando no haya fincas -->
@@ -215,28 +345,21 @@
     <button (click)="previousPage()" [disabled]="currentPage === 1" class="arrow">
       &laquo; <!-- Flecha izquierda -->
     </button>
-  
+
     <ng-container *ngFor="let page of getPageNumbers()">
-      <button 
-        (click)="goToPage(page)" 
-        [class.active]="currentPage === page"
-      >
+      <button (click)="goToPage(page)" [class.active]="currentPage === page">
         {{ page }}
       </button>
     </ng-container>
-  
+
     <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="arrow">
       &raquo; <!-- Flecha derecha -->
     </button>
   </div>
-  
+
   <!-- Eliminar seleccionados -->
   <div class="delete-selected-container">
-    <button 
-      class="btn btn-danger" 
-      (click)="deleteSelected()" 
-      [disabled]="!hasSelected()"
-    >
+    <button class="btn btn-danger" (click)="deleteSelected()" [disabled]="!hasSelected()">
       <i class="fas fa-trash"></i> Eliminar seleccionados
     </button>
   </div>

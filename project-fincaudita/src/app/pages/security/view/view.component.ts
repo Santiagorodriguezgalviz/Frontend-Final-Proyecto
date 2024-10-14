@@ -37,6 +37,10 @@ export class ViewComponent implements OnInit {
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
+  onInputChange(field: any) {
+    field.control.updateValueAndValidity();
+  }
+  
   searchmodulos(event: any): void {
     const term = event.target.value.toLowerCase();
     this.filteredModulos = this.modulos.filter(modulo => 

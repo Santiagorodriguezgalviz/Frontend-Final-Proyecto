@@ -1,4 +1,3 @@
-<!-- Título con estilo -->
 <h2 class="title">Lista de Usuarios</h2>
 
 <div class="top-container">
@@ -10,7 +9,6 @@
 
   <!-- Selector de ítems por página -->
   <div class="export-container">
-    <!-- Selector de ítems por página -->
     <div class="items-per-page">
       <label for="itemsPerPage">Mostrar:</label>
       <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
@@ -42,68 +40,221 @@
 </div>
 
 <!-- El Modal -->
+<!-- El Modal -->
 <div id="moduloModal" class="modal" [ngClass]="{'show-modal': isModalOpen}">
-    <div class="modal-content">
-        <span class="close" (click)="closeModal()">&times;</span>
-        <h2>{{ user.id === 0 ? 'Agregar Usuario' : 'Editar Usuario' }}</h2>
+  <div class="modal-content">
+      <span class="close" (click)="closeModal()">&times;</span>
+      <h2>{{ user.id === 0 ? 'Agregar Usuario' : 'Editar Usuario' }}</h2>
+      
+      <hr class="modal-border">
 
-        <hr class="modal-border">
+      <form #moduloForm="ngForm" (ngSubmit)="onSubmit(moduloForm)">
+          <input type="hidden" name="id" [(ngModel)]="user.id">
 
-        <form #moduloForm="ngForm" (ngSubmit)="onSubmit(moduloForm)">
-            <input type="hidden" name="id" [(ngModel)]="user.id">
+          <div class="row">
+            <div class="col">
+              <!-- Nombre del Usuario -->
+              <label for="Username">Nombre del usuario:</label>
+              <div class="input-group position-relative">
+                <input
+                  type="text"
+                  class="form-control input-field"
+                  id="Username"
+                  name="Username"
+                  [(ngModel)]="user.username"
+                  required
+                  minlength="4"
+                  maxlength="15"
+                  pattern="^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{4,15}$"
+                  #usernameField="ngModel"
+                  [ngClass]="{
+                    'is-invalid': usernameField.invalid && (usernameField.touched || usernameField.dirty),
+                    'is-valid': usernameField.valid && (usernameField.touched || usernameField.dirty)
+                  }"
+                  (input)="updateUsernameStrength(usernameField)"
+                />
+                <i *ngIf="usernameField.valid && user.username" class="fa fa-check-circle text-success" 
+                   style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                <i *ngIf="usernameField.invalid && (usernameField.touched || usernameField.dirty)" class="fas fa-exclamation-circle text-danger" 
+                   style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+              </div>
+          
+              <!-- Barra de Progreso para el Nombre de Usuario -->
+              <div class="progress" style="height: 5px; margin-top: 5px;">
+                <div
+                  class="progress-bar"
+                  role="progressbar"
+                  [style.width.%]="usernameStrength * 100"
+                  [style.backgroundColor]="usernameField.invalid ? 'red' : '#44E32A'"
+                ></div>
+              </div>
+          
+              <div *ngIf="usernameField.invalid && (usernameField.touched || usernameField.dirty)" class="text-danger">
+                <div *ngIf="usernameField.errors?.['required']">El nombre de usuario es obligatorio.</div>
+                <div *ngIf="usernameField.errors?.['minlength']">Debe tener al menos 4 caracteres.</div>
+                <div *ngIf="usernameField.errors?.['maxlength']">No puede tener más de 15 caracteres.</div>
+                <div *ngIf="usernameField.errors?.['pattern']">Debe incluir al menos una letra mayúscula y una letra minúscula, sin números ni caracteres especiales.</div>
+              </div>
+              
+              <div *ngIf="usernameField.valid && (usernameField.touched || usernameField.dirty)" class="text-success">
+                <div>¡El nombre de usuario es válido!</div>
+              </div>
+          
+              <div *ngIf="usernameStrengthMessage" class="text-info">{{ usernameStrengthMessage }}</div>
+            </div>
+          
+          
+          
 
-            <div class="row">
-                <div class="col">
-                    <label for="Username">Nombre del usuario:</label>
-                    <input type="text" class="form-control input-field" id="Username" name="Username"
-                        [(ngModel)]="user.username" required>
-                </div>
-
-                <div class="col">
-                    <label for="Password">Contraseña:</label>
-                    <input type="text" class="form-control input-field" id="Password" name="Password"
-                        [(ngModel)]="user.password" required>
-                </div>
+           
+            <div class="col">
+              <!-- Contraseña -->
+              <label for="Password">Contraseña:</label>
+              <div class="input-group position-relative">
+                <input
+                  type="password"
+                  class="form-control input-field"
+                  id="Password"
+                  name="Password"
+                  [(ngModel)]="user.password"
+                  required
+                  minlength="8"
+                  pattern="^(?=.*[A-Z])(?=.*[0-9]).{8,}$"  
+                  #passwordField="ngModel"
+                  [ngClass]="{
+                    'is-invalid': passwordField.invalid && (passwordField.touched || passwordField.dirty),
+                    'is-valid': passwordField.valid && (passwordField.touched || passwordField.dirty)
+                  }"
+                  (input)="updatePasswordStrength(passwordField)"
+                />
+                <i *ngIf="passwordField.valid && user.password" class="fa fa-check-circle text-success" 
+                   style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                <i *ngIf="passwordField.invalid && (passwordField.touched || passwordField.dirty)" class="fas fa-exclamation-circle text-danger" 
+                   style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+              </div>
+            
+              <!-- Barra de Progreso para la Contraseña -->
+              <div class="progress" style="height: 5px; margin-top: 5px;">
+                <div
+                  class="progress-bar"
+                  role="progressbar"
+                  [style.width.%]="user.password ? passwordStrength * 100 / 3 : 0" 
+                  [style.backgroundColor]="passwordField.invalid ? 'red' : '#44E32A'"
+                ></div>
+              </div>
+            
+              <div *ngIf="passwordField.invalid && (passwordField.touched || passwordField.dirty)" class="text-danger">
+                <div *ngIf="passwordField.errors?.['required']">La contraseña es obligatoria.</div>
+                <div *ngIf="passwordField.errors?.['minlength']">Debe tener al menos 8 caracteres.</div>
+                <div *ngIf="passwordField.errors?.['pattern']">La contraseña debe incluir al menos una letra mayúscula y un número.</div>
+              </div>
+            
+              <div *ngIf="passwordField.valid && (passwordField.touched || passwordField.dirty)" class="text-success">
+                <div>¡La contraseña es válida!</div>
+              </div>
+            
+              <div *ngIf="passwordStrengthMessage" class="text-info">{{ passwordStrengthMessage }}</div>
+            </div>
             </div>
 
-            <div class="row">
+       
+              <div class="row">
                 <div class="col">
-                    <label for="personFirstName">Persona:</label>
-                    <input type="text" class="form-control input-field" matInput [matAutocomplete]="auto" 
-                           [(ngModel)]="user.personFirst_name" 
-                           name="personFirst_name" 
-                           (input)="searchpersons($event)" 
-                           required>
+                  <!-- Persona -->
+                  <label for="personFirstName">Persona:</label>
+                  <div class="input-group position-relative">
+                    <input
+                      type="text"
+                      class="form-control input-field"
+                      matInput
+                      [matAutocomplete]="auto"
+                      id="personFirstName"
+                      name="personFirstName"
+                      [(ngModel)]="user.personFirst_name"
+                      (input)="searchpersons($event)"
+                      required
+                      #personFirstName="ngModel"
+                      [ngClass]="{
+                        'is-invalid': personFirstName.invalid && (personFirstName.dirty || personFirstName.touched),
+                        'is-valid': personFirstName.valid && (personFirstName.dirty || personFirstName.touched)
+                      }"
+                    />
                     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onpersonSelect($event)">
-                        <mat-option *ngFor="let person of filteredPersons" [value]="person.first_name">
-                            {{ person.first_name }}
-                        </mat-option>
+                      <mat-option *ngFor="let person of filteredPersons" [value]="person.first_name">
+                        {{ person.first_name }}
+                      </mat-option>
                     </mat-autocomplete>
+                    <i *ngIf="personFirstName.valid && user.personFirst_name" class="fa fa-check-circle text-success" 
+                       style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                    <i *ngIf="personFirstName.invalid && (personFirstName.dirty || personFirstName.touched)" class="fas fa-exclamation-circle text-danger" 
+                       style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                  </div>
+                  <!-- Mensajes de error -->
+                  <div *ngIf="personFirstName.invalid && (personFirstName.dirty || personFirstName.touched)" class="text-danger">
+                    <div *ngIf="personFirstName.errors?.['required']">El nombre de la persona es obligatorio.</div>
+                  </div>
+                  <div *ngIf="personFirstName.valid && (personFirstName.dirty || personFirstName.touched)" class="text-success">
+                  </div>
                 </div>
+              
+        
+
 
                 <div class="col">
-                    <label for="roles">Roles asociadas:</label>
-                    <p-multiSelect id="roles" name="name" [options]="roles" [(ngModel)]="user.roles" optionLabel="name"
-                      placeholder="Selecciona roles" scrollHeight="250px" display="chip">
+                  <!-- Roles Asociadas -->
+                  <label for="roles">Roles asociadas:</label>
+                  <div class="input-group position-relative">
+                    <p-multiSelect 
+                      id="roles" 
+                      name="roles" 
+                      [options]="roles" 
+                      [(ngModel)]="user.roles" 
+                      required 
+                      #rolesField="ngModel"
+                      optionLabel="name" 
+                      placeholder="Selecciona roles" 
+                      scrollHeight="250px" 
+                      display="chip"
+                      [ngClass]="{
+                        'is-invalid': rolesField.invalid && rolesField.touched,
+                        'is-valid': rolesField.valid && rolesField.touched
+                      }">
                     </p-multiSelect>
+                    <i *ngIf="rolesField.valid && user.roles?.length" class="fa fa-check-circle text-success"
+                       style="position: absolute; left: 45%; top: 125%; transform: translateY(-50%);"></i>
+                    <i *ngIf="rolesField.invalid && rolesField.touched" class="fas fa-exclamation-circle text-danger"
+                       style="position: absolute; left: 40%; top: 128%; transform: translateY(-50%);"></i>
+                  </div>
+                  <!-- Mensajes de error para Roles -->
+                  <div *ngIf="rolesField.invalid && rolesField.touched" class="text-danger">
+                    Debes asignar al menos un rol.
+                  </div>
+                  <div *ngIf="rolesField.valid && rolesField.touched" class="text-success">
+                    <div>¡Roles Asignados Correctamente!</div>
+                  </div>
                 </div>
-            </div>
+              </div>
+                      
+                    
+    
+          <div class="col" *ngIf="user.id !== 0">
+              <label for="State">Estado:</label>
+              <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="State" name="State" [(ngModel)]="user.state">
+              </div>
+          </div>
+          <br>
 
-            <div class="col" *ngIf="user.id !== 0">
-                <label for="State">Estado:</label>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="State" name="State" [(ngModel)]="user.state">
-                </div>
-            </div>
-            <br>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
-                <button type="submit" class="btn btn-primary">Guardar</button>
-            </div>
-        </form>
-    </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="!moduloForm.valid">Guardar</button>
+          </div>
+ 
+      </form>
+  </div>
 </div>
+
+
 
 <!-- Tabla de usuarios -->
 <table *ngIf="filteredUsers.length > 0" class="table">

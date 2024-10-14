@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, OnInit, ElementRef, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormBuilder, FormsModule, NgForm, FormGroup, } from '@angular/forms';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import SignaturePad from 'signature_pad';
 import Swal from 'sweetalert2';
@@ -37,7 +37,7 @@ export class ReviewTechnicalComponent implements OnInit, AfterViewInit {
     checklists: {
       code: '',
       calification_total: 0,
-      qualifications: [{ observation: '', qualification_criteria: 0, assessmentCriteriaId: 0 }]
+      qualifications: [{ observation: '', qualification_criteria: '', assessmentCriteriaId: 0 }]
     }
   };
   reviews: any[] = [];
@@ -56,7 +56,9 @@ export class ReviewTechnicalComponent implements OnInit, AfterViewInit {
   itemsPerPageOptions = [5, 10, 20, 50];
   isDropdownOpen = false;
   isModalOpen = false;
-  
+  reviewTechnicalForm!: FormGroup;
+  fileTechSelected = false;  // Para verificar si se ha seleccionado una imagen
+  fileProdSelected = false;
 
 
   @ViewChild('signaturePadTech') signaturePadTechRef!: ElementRef<HTMLCanvasElement>;
@@ -76,13 +78,40 @@ export class ReviewTechnicalComponent implements OnInit, AfterViewInit {
 
   signatureTechDrawn = false;
   signatureProdDrawn = false;
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) { }
+  constructor(private http: HttpClient, private fb: FormBuilder, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.getReviews();
     this.getUsers();
     this.getFarms();
     this.getAssessmentCriterias();
+  }
+
+    // Método para validar si la fecha está en el mes actual
+    isDateInCurrentMonth(): boolean {
+      if (!this.review.date_review) {
+        return false; 
+      }
+  
+      const selectedDate = new Date(this.review.date_review);
+      const currentDate = new Date();
+      
+      return (
+        selectedDate.getFullYear() === currentDate.getFullYear() &&
+        selectedDate.getMonth() === currentDate.getMonth()
+      );
+    }
+  
+    // Método para verificar el estado de validación y mostrar mensajes de error
+    isFormValid(): boolean {
+      return this.isDateInCurrentMonth() && !!this.review.date_review;
+    }
+
+  onlyAlphanumeric(event: KeyboardEvent) {
+    const regex = /^[a-zA-Z0-9]*$/; 
+    if (!regex.test(event.key)) {
+      event.preventDefault(); 
+    }
   }
 
   ngAfterViewInit(): void {
@@ -294,7 +323,7 @@ deleteSelected(): void {
 
         this.califications = this.assessmentCriterias.map(criterion => ({
           observation: '',
-          qualification_criteria: 0,
+          qualification_criteria: '',
           assessmentCriteriaId: criterion.id,
           name: criterion.name
         }));
@@ -336,6 +365,7 @@ deleteSelected(): void {
       const selectedLot = selectedFarm.lots[0];
       this.review.lotId = selectedLot.id;
       this.review.lot = `${selectedFarm.name}: ${selectedLot.cultivo}`;
+
       this.filteredFarms = [];
     }
   }
@@ -447,6 +477,12 @@ deleteSelected(): void {
         const context = canvas.getContext('2d');
         context?.clearRect(0, 0, canvas.width, canvas.height);
 
+         // Opcional: Resetear el input file
+         const fileInput = document.querySelector(`input[name="${type}"]`) as HTMLInputElement;
+         if (fileInput) {
+             fileInput.value = ''; // Limpiar el input file
+         }
+
         Swal.fire({
           title: '¡Limpiado!',
           text: 'La firma ha sido limpiada.',
@@ -469,18 +505,16 @@ deleteSelected(): void {
     const producerDataURL = producerCanvas.toDataURL();
 
     const blankImageDataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAABGJJREFUeF7t1AEJAAAMAsHZv/RyPNwSyDncOQIECEQEFskpJgECBM5geQICBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAgQdWMQCX4yW9owAAAABJRU5ErkJggg==";
-
     if (metodo == 0) {
-      if (technicianDataURL !== blankImageDataURL) {
-        this.review.signature_technician = technicianDataURL;
+      if (technicianDataURL !== blankImageDataURL || this.review.signature_technician) {
+        this.review.signature_technician = this.review.signature_technician || technicianDataURL;
         this.review.evidences.push({ code: this.review.code, document: technicianDataURL });
       }
 
-      if (producerDataURL !== blankImageDataURL) {
-        this.review.signature_producer = producerDataURL;
+      if (producerDataURL !== blankImageDataURL || this.review.signature_producer) {
+        this.review.signature_producer = this.review.signature_producer || producerDataURL;
         this.review.evidences.push({ code: this.review.code, document: producerDataURL });
       }
-
     } else if (metodo == 1) {
       const isTechnicianSignatureDifferent = this.review.signature_technician !== technicianDataURL && technicianDataURL !== blankImageDataURL;
       const isProducerSignatureDifferent = this.review.signature_producer !== producerDataURL && producerDataURL !== blankImageDataURL;
@@ -495,20 +529,28 @@ deleteSelected(): void {
         this.review.evidences[2].document = producerDataURL;
       }
     }
-  }
-
-
-
+}
 
   onSubmit(form: NgForm): void {
-    if (!this.review.tecnicoId) {
-      Swal.fire('Error', 'Debe seleccionar un usuario válido.', 'error');
+
+    const blankImageDataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAABGJJREFUeF7t1AEJAAAMAsHZv/RyPNwSyDncOQIECEQEFskpJgECBM5geQICBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAAYPlBwgQyAgYrExVghIgYLD8AAECGQGDlalKUAIEDJYfIEAgI2CwMlUJSoCAwfIDBAhkBAxWpipBCRAwWH6AAIGMgMHKVCUoAQIGyw8QIJARMFiZqgQlQMBg+QECBDICBitTlaAECBgsP0CAQEbAYGWqEpQAgQdWMQCX4yW9owAAAABJRU5ErkJggg==";
+
+    const isTechnicianSignatureValid = this.review.signature_technician || this.signaturePadTechRef.nativeElement.toDataURL() !== blankImageDataURL;
+    const isProducerSignatureValid = this.review.signature_producer || this.signaturePadProdRef.nativeElement.toDataURL() !== blankImageDataURL;
+  
+    if (!isTechnicianSignatureValid) {
+      Swal.fire('Error', 'Por favor, firma como técnico o subir una imagen de la firma.', 'error');
       return;
     }
 
-    if (!this.review.checklists.code || this.review.checklists.code === '') {
-      Swal.fire('Error', 'Debe asignar un código válido al checklist.', 'error');
+    if (!isProducerSignatureValid) {
+      Swal.fire('Error', 'Por favor, firma como productor o subir una imagen de la firma.', 'error');
       return;
+    }
+
+    if (!this.review.evidences[0]?.document) {
+        Swal.fire('Error', 'Por favor, carga una imagen de evidencia del cultivo.', 'error');
+        return;
     }
 
     this.review.checklists.calification_total = this.calculateTotalQualification(this.review.checklists.qualifications);
@@ -560,8 +602,6 @@ deleteSelected(): void {
           };
         });
 
-
-
         this.review.signature_technician = evidences[1]?.document
         this.review.signature_producer = evidences[2]?.document
         this.review.date_review = new Date(review.date_review).toISOString().slice(0, 10);
@@ -578,6 +618,7 @@ deleteSelected(): void {
         });
 
         this.review.checklists.qualifications = this.califications;
+        //delete this.review.checklists.id
 
         const selectedUser = this.users.find(user => user.id === this.review.tecnicoId);
         if (selectedUser) {
@@ -609,6 +650,7 @@ deleteSelected(): void {
       cancelButtonText: 'No, cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
+
         this.http.delete(`${this.apiUrl}/${id}`).subscribe(() => {
           this.getReviews();
           Swal.fire('¡Eliminado!', 'La revision tecnica ha sido eliminada.', 'success');
@@ -632,7 +674,7 @@ deleteSelected(): void {
         id: 0,
         code: '',
         calification_total: 0,
-        qualifications: [{ observation: '', qualification_criteria: 0, assessmentCriteriaId: 0 }]
+        qualifications: [{ observation: '', qualification_criteria: '', assessmentCriteriaId: 0 }]
       }
     };
     const technicianFileInput = document.querySelector('input[name="technician"]') as HTMLInputElement;

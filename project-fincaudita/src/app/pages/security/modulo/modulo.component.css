@@ -33,14 +33,14 @@
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
-    z-index: 1100;   
+   
 }
 
 .show-modal {
@@ -49,7 +49,7 @@
 
 .modal-content {
     background-color: #fefefe;
-    margin: 5% auto;
+    margin: 15% auto;
     padding: 20px;
     width: 70%;
     border-radius: 8px;
@@ -103,7 +103,7 @@
 .close:hover {
     text-decoration: none;
     cursor: pointer;
-    color: #000000;
+    color: #44E32A;
 }
 
 /* Botones del modal de cerrar y agregar */
@@ -400,3 +400,25 @@
     flex-direction: row;
     gap: 20px;
 }
+::ng-deep .tooltip-inner {
+    background-color: #44E32A; /* Fondo verde */
+    color: white; /* Texto blanco */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 10px; /* Espaciado */
+    font-size: 14px; /* Tamaño de fuente */
+    text-align: center; /* Centrado */
+  }
+  
+  ::ng-deep .tooltip-arrow {
+    border-top-color: white !important; /* Color de la flecha */
+  }
+  
+  ::ng-deep .bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: #44E32A !important; /* Color de la flecha en la parte superior */
+  }
+  
+  ::ng-deep .tooltip.show {
+    opacity: 1; /* Asegura visibilidad completa */
+  }
+  
+  

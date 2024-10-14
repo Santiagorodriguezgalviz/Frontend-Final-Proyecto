@@ -37,6 +37,13 @@ export class DepartamentComponent {
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
+  onlyAlphanumeric(event: KeyboardEvent) {
+    const regex = /^[a-zA-Z0-9]*$/; // Solo permite letras y números
+    if (!regex.test(event.key)) {
+      event.preventDefault(); // Previene la entrada si no es válida
+    }
+  }
+  
   searchcountrys(event: any): void {
     const term = event.target.value.toLowerCase();
     this.filteredCountrys = this.countrys.filter(country => 

@@ -1,172 +1,273 @@
-<!-- Título con estilo -->
-<h2 class="title">Lista de Ciudades</h2>
+  <!-- Título con estilo -->
+  <h2 class="title">Lista de Ciudades</h2>
 
-<div class="top-container">
-  <!-- Campo de búsqueda -->
-  <div class="search-container">
-    <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
-      class="form-control input-field" />
-  </div>  
-  
-  <div class="export-container">
-    <!-- Selector de ítems por página -->
-    <div class="items-per-page">
-      <label for="itemsPerPage">Mostrar:</label>
-      <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
-        <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
-      </select>
+  <div class="top-container">
+    <!-- Campo de búsqueda -->
+    <div class="search-container">
+      <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+        class="form-control input-field" />
     </div>
+
+    <div class="export-container">
+      <!-- Selector de ítems por página -->
+      <div class="items-per-page">
+        <label for="itemsPerPage">Mostrar:</label>
+        <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
+          <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+        </select>
+      </div>
+
+      <!-- Select para exportar -->
+      <div class="export-select">
+        <ng-select (change)="handleExport($event)" [placeholder]="'Exportar Como'" [clearable]="true"
+          [searchable]="false">
+          <ng-option value="pdf" class="custom-option">
+            <div class="option-container">
+              <i class="fas fa-file-pdf"></i>
+              <span class="custom-option-text">PDF</span>
+            </div>
+          </ng-option>
+          <ng-option value="excel" class="custom-option">
+            <div class="option-container">
+              <i class="fas fa-file-excel"></i>
+              <span class="custom-option-text">Excel</span>
+            </div>
+          </ng-option>
+        </ng-select>
+      </div>
+    </div>
+
+    <!-- Botón para agregar un nuevo módulo -->
+    <button class="btn btn-success add-btn" (click)="openModal()">Agregar nuevo <i class="fas fa-plus"></i></button>
+  </div>
+
+  <div id="cityModal" class="modal" [ngClass]="{'show-modal': isModalOpen}">
+    <div class="modal-content">
+      <span class="close" (click)="closeModal()">&times;</span>
+      <h2>{{ city.id === 0 ? 'Agregar Ciudad' : 'Editar Ciudad' }}</h2>
+      <hr class="modal-border">
+
+      <form #cityForm="ngForm" (ngSubmit)="onSubmit(cityForm)">
+        <input type="hidden" name="id" [(ngModel)]="city.id">
+
+        <div class="row">
+          <div class="col">
+            <label for="Name">Nombre de la ciudad:</label>
+            <div class="input-group position-relative">
+              <input 
+                type="text" 
+                class="form-control input-field" 
+                id="Name" 
+                name="Name" 
+                [(ngModel)]="city.name" 
+                required 
+                minlength="4" 
+                maxlength="9" 
+                #nameField="ngModel"
+                [ngClass]="{
+                  'is-invalid': nameField.invalid && (nameField.touched || nameField.dirty),
+                  'is-valid': nameField.valid && (nameField.touched || nameField.dirty)
+                }"
+              />
+              <i *ngIf="nameField.valid && city.name" class="fa fa-check-circle text-success"
+                 style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+              <i *ngIf="nameField.invalid && (nameField.touched || nameField.dirty)" class="fas fa-exclamation-circle text-danger"
+                 style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            </div>
+        
+            <!-- Mensajes de error para Nombre de la ciudad -->
+            <div *ngIf="nameField.invalid && (nameField.touched || nameField.dirty)" class="invalid-feedback">
+              <div *ngIf="nameField.errors?.['required']">El nombre es obligatorio.</div>
+              <div *ngIf="nameField.errors?.['minlength']">El nombre debe tener al menos 4 caracteres.</div>
+              <div *ngIf="nameField.errors?.['maxlength']">El nombre no puede exceder los 9 caracteres.</div>
+            </div>
+          </div>
+        
   
-    <!-- Select para exportar -->
-    <div class="export-select">
-      <ng-select (change)="handleExport($event)" [placeholder]="'Exportar Como'" [clearable]="true" [searchable]="false">
-        <ng-option value="pdf" class="custom-option">
-          <div class="option-container">
-            <i class="fas fa-file-pdf"></i>
-            <span class="custom-option-text">PDF</span>
+          <div class="col">
+            <label for="Description">Descripción:</label>
+            <div class="input-group position-relative">
+              <input 
+                type="text" 
+                class="form-control input-field" 
+                id="Description" 
+                name="Description" 
+                [(ngModel)]="city.description" 
+                required 
+                minlength="4" 
+                maxlength="15" 
+                #descriptionField="ngModel"
+                [ngClass]="{
+                  'is-invalid': descriptionField.invalid && (descriptionField.touched || descriptionField.dirty),
+                  'is-valid': descriptionField.valid && (descriptionField.touched || descriptionField.dirty)
+                }"
+              />
+              <i *ngIf="descriptionField.valid && city.description" class="fa fa-check-circle text-success"
+                 style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+              <i *ngIf="descriptionField.invalid && (descriptionField.touched || descriptionField.dirty)" class="fas fa-exclamation-circle text-danger"
+                 style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            </div>
+        
+            <!-- Mensajes de error para Descripción -->
+            <div *ngIf="descriptionField.invalid && (descriptionField.touched || descriptionField.dirty)" class="invalid-feedback">
+              <div *ngIf="descriptionField.errors?.['required']">La descripción es obligatoria.</div>
+              <div *ngIf="descriptionField.errors?.['minlength']">La descripción debe tener al menos 4 caracteres.</div>
+              <div *ngIf="descriptionField.errors?.['maxlength']">La descripción no puede exceder los 15 caracteres.</div>
+            </div>
           </div>
-        </ng-option>
-        <ng-option value="excel" class="custom-option">
-          <div class="option-container">
-            <i class="fas fa-file-excel"></i>
-            <span class="custom-option-text">Excel</span>
+        </div>
+        <br>
+  
+        <div class="row">
+          <div class="col">
+            <label for="departamentName">Departamento:</label>
+            <div class="input-group position-relative">
+              <input 
+                type="text" 
+                class="form-control input-field" 
+                matInput 
+                [matAutocomplete]="auto" 
+                [(ngModel)]="city.departamentName" 
+                name="departamentName" 
+                (input)="searchdepartaments($event)" 
+                required
+                #departamentField="ngModel"
+                [ngClass]="{
+                  'is-invalid': departamentField.invalid && (departamentField.touched || departamentField.dirty),
+                  'is-valid': departamentField.valid && (departamentField.touched || departamentField.dirty)
+                }"
+              />
+              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="ondepartamentSelect($event)">
+                <mat-option *ngFor="let departament of filteredDepartaments" [value]="departament.name">
+                  {{ departament.name }}
+                </mat-option>
+              </mat-autocomplete>
+              <i *ngIf="departamentField.valid && city.departamentName" class="fa fa-check-circle text-success"
+                 style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+              <i *ngIf="departamentField.invalid && (departamentField.touched || departamentField.dirty)" class="fas fa-exclamation-circle text-danger"
+                 style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            </div>
+        
+            <!-- Mensajes de error para Departamento -->
+            <div *ngIf="departamentField.invalid && (departamentField.touched || departamentField.dirty)" class="invalid-feedback">
+              <div *ngIf="departamentField.errors?.['required']">El departamento es obligatorio.</div>
+            </div>
           </div>
-        </ng-option>
-      </ng-select>
+        
+  
+          <div class="col">
+            <label for="Code">Código:</label>
+            <div class="input-group position-relative">
+              <input 
+                type="text" 
+                class="form-control input-field" 
+                id="Code" 
+                name="Code" 
+                [(ngModel)]="city.code" 
+                required 
+                pattern="^[a-zA-Z0-9]*$" 
+                #codeField="ngModel"
+                [ngClass]="{
+                  'is-invalid': codeField.invalid && (codeField.touched || codeField.dirty),
+                  'is-valid': codeField.valid && (codeField.touched || codeField.dirty)
+                }"
+                (keypress)="onlyAlphanumeric($event)" 
+              />
+              <i *ngIf="codeField.valid && city.code" class="fa fa-check-circle text-success"
+                 style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+              <i *ngIf="codeField.invalid && (codeField.touched || codeField.dirty)" class="fas fa-exclamation-circle text-danger"
+                 style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            </div>
+          
+            <!-- Mensajes de error para Código -->
+            <div *ngIf="codeField.invalid && (codeField.touched || codeField.dirty)" class="invalid-feedback">
+              <div *ngIf="codeField.errors?.['required']">El código es obligatorio.</div>
+              <div *ngIf="codeField.errors?.['pattern']">El código solo puede contener letras y números.</div>
+            </div>
+          </div>          
+        </div>
+        <br>
+
+
+            <div class="row">
+              <div class="col" *ngIf="city.id !== 0">
+                <label for="State">Estado:</label>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="State" name="State" [(ngModel)]="city.state">
+                </div>
+              </div>
+            </div>
+            <br>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
+              <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+      </form>
     </div>
   </div>
 
-  <!-- Botón para agregar un nuevo módulo -->
-  <button class="btn btn-success add-btn" (click)="openModal()">Agregar nuevo <i class="fas fa-plus"></i></button>
-</div>
-
-<div id="cityModal" class="modal" [ngClass]="{'show-modal': isModalOpen}">
-  <div class="modal-content">
-    <span class="close" (click)="closeModal()">&times;</span>
-    <h2>{{ city.id === 0 ? 'Agregar City' : 'Editar City' }}</h2>
-
-    <hr class="modal-border">
-
-    <form #cityForm="ngForm" (ngSubmit)="onSubmit(cityForm)">
-      <input type="hidden" name="id" [(ngModel)]="city.id">
-
-      <div class="row">
-        <div class="col">
-          <label for="Name">Nombre de la ciudad:</label>
-          <input type="text" class="form-control" id="Name" name="Name" [(ngModel)]="city.name" required>
-        </div>
-
-        <div class="col">
-          <label for="Description">Descripción:</label>
-          <input type="text" class="form-control" id="Description" name="Description" [(ngModel)]="city.description">
-        </div>
-      </div>
-      <br>
-
-      <div class="row">
-        <div class="col">
-          <label for="departamentName">Departamento:</label>
-          <input type="text" class="form-control input-field" matInput [matAutocomplete]="auto"
-            [(ngModel)]="city.departamentName" name="departamentName" (input)="searchdepartaments($event)" required>
-          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="ondepartamentSelect($event)">
-            <mat-option *ngFor="let departament of filteredDepartaments" [value]="departament.name">
-              {{ departament.name }}
-            </mat-option>
-          </mat-autocomplete>
-        </div>
-
-
-
-        <div class="col">
-          <label for="Code">Código:</label>
-          <input type="text" class="form-control" id="Code" name="Code" [(ngModel)]="city.code" required>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col" *ngIf="city.id !== 0">
-          <label for="State">Estado:</label>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="State" name="State" [(ngModel)]="city.state">
-          </div>
-        </div>
-      </div>
-      <br>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
-        <button type="submit" class="btn btn-primary">Guardar</button>
-      </div>
-
-    </form>
-  </div>
-</div>
-
-<!-- Table of cities -->
-<table *ngIf="filteredCity.length > 0" class="table">
-  <thead>
-    <tr>
-      <th>
-        <input 
-          type="checkbox" 
-          (change)="selectAll($event)" 
-          [checked]="areAllSelected()" 
-        />
-      </th>
-      <th>Nombre</th>
-      <th>Descripción</th>
-      <th>Departamento</th>
-      <th>Código</th>
-      <th>Estado</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let city of paginatedCity()">
-      <td>
-        <label class="checkbox-container">
-          <input type="checkbox" [(ngModel)]="city.selected" />
-          <div class="checkbox-custom"></div>
-        </label>
-      </td>
-      <td>{{ city.name }}</td>
-      <td>{{ city.description }}</td>
-      <td>{{ getdepartamentName(city.departamentId) }}</td>
-      <td>{{ city.code }}</td>
-      <td>{{ city.state ? 'Activo' : 'Inactivo' }}</td>
-      <td>
-        <button class="btn-icon edit" (click)="editCity(city)" title="Editar">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="btn-icon delete" (click)="deleteCity(city.id)" title="Eliminar">
-          <i class="fas fa-trash"></i>
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<p *ngIf="filteredCity.length === 0">No se encontraron cities.</p>
-<div class="data-table-footer">
-  <div class="pagination">
-    <button (click)="previousPage()" [disabled]="currentPage === 1" class="arrow">
-      &laquo; <!-- Flecha izquierda -->
-    </button>
-
-    <ng-container *ngFor="let page of getPageNumbers()">
-      <button (click)="goToPage(page)" [class.active]="currentPage === page">
-        {{ page }}
+  <!-- Table of cities -->
+  <table *ngIf="filteredCity.length > 0" class="table">
+    <thead>
+      <tr>
+        <th>
+          <input type="checkbox" (change)="selectAll($event)" [checked]="areAllSelected()" />
+        </th>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Departamento</th>
+        <th>Código</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let city of paginatedCity()">
+        <td>
+          <label class="checkbox-container">
+            <input type="checkbox" [(ngModel)]="city.selected" />
+            <div class="checkbox-custom"></div>
+          </label>
+        </td>
+        <td>{{ city.name }}</td>
+        <td>{{ city.description }}</td>
+        <td>{{ getdepartamentName(city.departamentId) }}</td>
+        <td>{{ city.code }}</td>
+        <td>{{ city.state ? 'Activo' : 'Inactivo' }}</td>
+        <td>
+          <button class="btn-icon edit" (click)="editCity(city)" title="Editar">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn-icon delete" (click)="deleteCity(city.id)" title="Eliminar">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p *ngIf="filteredCity.length === 0">No se encontraron Ciudades.</p>
+  <div class="data-table-footer">
+    <div class="pagination">
+      <button (click)="previousPage()" [disabled]="currentPage === 1" class="arrow">
+        &laquo; <!-- Flecha izquierda -->
       </button>
-    </ng-container>
 
-    <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="arrow">
-      &raquo; <!-- Flecha derecha -->
-    </button>
-  </div>
+      <ng-container *ngFor="let page of getPageNumbers()">
+        <button (click)="goToPage(page)" [class.active]="currentPage === page">
+          {{ page }}
+        </button>
+      </ng-container>
 
-  <!-- Eliminar seleccionados -->
-  <div class="delete-selected-container">
-    <button class="btn btn-danger" (click)="deleteSelected()" [disabled]="!hasSelected()">
-      <i class="fas fa-trash"></i> Eliminar seleccionados
-    </button>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="arrow">
+        &raquo; <!-- Flecha derecha -->
+      </button>
+    </div>
+
+    <!-- Eliminar seleccionados -->
+    <div class="delete-selected-container">
+      <button class="btn btn-danger" (click)="deleteSelected()" [disabled]="!hasSelected()">
+        <i class="fas fa-trash"></i> Eliminar seleccionados
+      </button>
+    </div>
   </div>
-</div>

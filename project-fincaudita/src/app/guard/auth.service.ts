@@ -16,8 +16,10 @@ export class AuthService {
   }
 
   private loadInitialAuthState(): void {
-    const isAuthenticated = localStorage.getItem(this.authKey) === 'true';
-    this.authState.next(isAuthenticated); 
+    if (typeof localStorage !== 'undefined') {
+      const isAuthenticated = localStorage.getItem(this.authKey) === 'true';
+      this.authState.next(isAuthenticated); 
+    }
   }
 
   isAuthenticated(): Observable<boolean> {
@@ -25,12 +27,16 @@ export class AuthService {
   }
 
   login(): void {
-    localStorage.setItem(this.authKey, 'true');
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(this.authKey, 'true');
+    }
     this.authState.next(true);
   }
 
   logout(): void {
-    localStorage.setItem(this.authKey, 'false');
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(this.authKey, 'false');
+    }
     this.authState.next(false);
     this.router.navigate(['/login']);
   }
@@ -49,14 +55,16 @@ export class AuthService {
     });
 
     interval(1000).subscribe(() => {
-      const isAuthenticated = localStorage.getItem(this.authKey) === 'true';
-      if (this.authState.getValue() !== isAuthenticated) {
-        this.ngZone.run(() => {
-          this.authState.next(isAuthenticated);
-          if (!isAuthenticated) {
-            this.router.navigate(['/login']);
-          }
-        });
+      if (typeof localStorage !== 'undefined') {
+        const isAuthenticated = localStorage.getItem(this.authKey) === 'true';
+        if (this.authState.getValue() !== isAuthenticated) {
+          this.ngZone.run(() => {
+            this.authState.next(isAuthenticated);
+            if (!isAuthenticated) {
+              this.router.navigate(['/login']);
+            }
+          });
+        }
       }
     });
   }

@@ -4,8 +4,9 @@
 <div class="top-container">
   <!-- Campo de búsqueda -->
   <div class="search-container">
-    <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" class="form-control input-field" />
-  </div>  
+    <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+      class="form-control input-field" />
+  </div>
 
   <!-- Selector de ítems por página y exportación -->
   <div class="export-container">
@@ -17,7 +18,8 @@
     </div>
 
     <div class="export-select">
-      <ng-select (change)="handleExport($event)" [placeholder]="'Exportar Como'" [clearable]="true" [searchable]="false">
+      <ng-select (change)="handleExport($event)" [placeholder]="'Exportar Como'" [clearable]="true"
+        [searchable]="false">
         <ng-option value="pdf" class="custom-option">
           <div class="option-container">
             <i class="fas fa-file-pdf"></i>
@@ -40,106 +42,228 @@
 
 <!-- Modal para agregar/editar vista -->
 <div id="moduloModal" class="modal" [ngClass]="{'show-modal': isModalOpen}">
-    <div class="modal-content">
-        <span class="close" (click)="closeModal()">&times;</span>
-        <h2>{{ view.id === 0 ? 'Agregar Vista' : 'Editar Vista' }}</h2>
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h2>{{ view.id === 0 ? 'Agregar Vista' : 'Editar Vista' }}</h2>
 
-        <hr class="modal-border">
+    <hr class="modal-border">
 
-        <form #moduloForm="ngForm" (ngSubmit)="onSubmit(moduloForm)">
-            <input type="hidden" name="id" [(ngModel)]="view.id">
+    <form #moduloForm="ngForm" (ngSubmit)="onSubmit(moduloForm)">
+      <input type="hidden" name="id" [(ngModel)]="view.id">
 
-            <div class="row">
-                <div class="col">
-                    <label for="Name">Nombre del view:</label>
-                    <input type="text" class="form-control input-field" id="Name" name="Name" [(ngModel)]="view.name" required>
-                </div>
+      <div class="row">
+        <div class="col">
+          <label for="Name">Nombre del Vista:</label>
+          <div class="input-group position-relative">
+            <input
+              type="text"
+              class="form-control input-field"
+              id="Name"
+              name="Name"
+              [(ngModel)]="view.name"
+              required
+              minlength="3"
+              maxlength="15"
+              #nameField="ngModel"
+              [ngClass]="{
+                'is-invalid': nameField.invalid && (nameField.touched || nameField.dirty),
+                'is-valid': nameField.valid && (nameField.touched || nameField.dirty)
+              }"
+              (input)="onInputChange(nameField)"
+            />
+            <i *ngIf="nameField.valid && view.name" class="fa fa-check-circle text-success" 
+               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="nameField.invalid && (nameField.touched || nameField.dirty)" class="fas fa-exclamation-circle text-danger" 
+               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
+      
+          <div *ngIf="nameField.invalid && (nameField.touched || nameField.dirty)" class="text-danger">
+            <div *ngIf="nameField.errors?.['required']">El nombre es obligatorio.</div>
+            <div *ngIf="nameField.errors?.['minlength']">El nombre debe tener al menos 3 caracteres.</div>
+            <div *ngIf="nameField.errors?.['maxlength']">El nombre no puede exceder los 15 caracteres.</div>
+          </div>
+      
+          <div *ngIf="nameField.valid && (nameField.touched || nameField.dirty)" class="text-success">
+          </div>
+        </div>
+      
 
-                <div class="col">
-                    <label for="Description">Descripción:</label>
-                    <input type="text" class="form-control input-field" id="Description" name="Description" [(ngModel)]="view.description" required>
-                </div>
-            </div>
-            <br>
+        <!-- Validación para Descripción -->
+        <div class="col">
+          <label for="Description">Descripción:</label>
+          <div class="input-group position-relative">
+            <input
+              type="text"
+              class="form-control input-field"
+              id="Description"
+              name="Description"
+              [(ngModel)]="view.description"
+              required
+              minlength="5"
+              maxlength="20"
+              #descriptionField="ngModel"
+              [ngClass]="{
+                'is-invalid': descriptionField.invalid && (descriptionField.touched || descriptionField.dirty),
+                'is-valid': descriptionField.valid && (descriptionField.touched || descriptionField.dirty)
+              }"
+              (input)="onInputChange(descriptionField)"
+            />
+            <i *ngIf="descriptionField.valid && view.description" class="fa fa-check-circle text-success" 
+               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="descriptionField.invalid && (descriptionField.touched || descriptionField.dirty)" class="fas fa-exclamation-circle text-danger" 
+               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          </div>
+        
+          <div *ngIf="descriptionField.invalid && (descriptionField.touched || descriptionField.dirty)" class="text-danger">
+            <div *ngIf="descriptionField.errors?.['required']">La descripción es obligatoria.</div>
+            <div *ngIf="descriptionField.errors?.['minlength']">La descripción debe tener al menos 5 caracteres.</div>
+            <div *ngIf="descriptionField.errors?.['maxlength']">La descripción no puede exceder los 20 caracteres.</div>
+          </div>
+        
+          <div *ngIf="descriptionField.valid && (descriptionField.touched || descriptionField.dirty)" class="text-success">
+          </div>
+        </div>
+        <br>
+        
 
-            <div class="row">
-                <div class="col">
-                    <label for="Route">Route:</label>
-                    <input type="text" class="form-control input-field" id="Route" name="Route" [(ngModel)]="view.route" required>
-                </div>
+    <div class="row">
+      <!-- Validación para Route -->
+      <div class="col">
+        <label for="Route">Route:</label>
+        <div class="input-group position-relative">
+          <input
+            type="text"
+            class="form-control input-field"
+            id="Route"
+            name="Route"
+            [(ngModel)]="view.route"
+            required
+            minlength="5"
+            maxlength="25"
+            #routeField="ngModel"
+            [ngClass]="{
+              'is-invalid': (routeField.invalid || !view.route.startsWith('/')) && (routeField.touched || routeField.dirty),
+              'is-valid': routeField.valid && view.route.startsWith('/') && (routeField.touched || routeField.dirty)
+            }"
+            (input)="onInputChange(routeField)"
+          />
+          <i *ngIf="routeField.valid && view.route.startsWith('/')" class="fa fa-check-circle text-success" 
+             style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+          <i *ngIf="(routeField.invalid || !view.route.startsWith('/')) && (routeField.touched || routeField.dirty)" class="fas fa-exclamation-circle text-danger" 
+             style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+        </div>
+      
+        <div *ngIf="(routeField.invalid || !view.route.startsWith('/')) && (routeField.touched || routeField.dirty)" class="text-danger">
+          <div *ngIf="routeField.errors?.['required']">La ruta es obligatoria.</div>
+          <div *ngIf="routeField.errors?.['minlength']">La ruta debe tener al menos 5 caracteres.</div>
+          <div *ngIf="routeField.errors?.['maxlength']">La ruta no puede exceder los 25 caracteres.</div>
+          <div *ngIf="!view.route.startsWith('/')">La ruta debe comenzar con "/".</div>
+        </div>
+      
+        <div *ngIf="routeField.valid && view.route.startsWith('/') && (routeField.touched || routeField.dirty)" class="text-success">
+        </div>
+      </div>
+      </div>
+      
+        <!-- Validación para Módulo -->
+        <div class="col">
+          <label for="moduloName">Módulo:</label>
+          <div class="input-group position-relative">
+            <input
+              type="text"
+              class="form-control input-field"
+              matInput
+              [matAutocomplete]="auto"
+              [(ngModel)]="view.moduloName"
+              name="moduloName"
+              (input)="searchmodulos($event)"
+              required
+              #moduloField="ngModel"
+              [ngClass]="{
+                'is-invalid': moduloField.invalid && (moduloField.touched || moduloField.dirty),
+                'is-valid': moduloField.valid && (moduloField.touched || moduloField.dirty)
+              }"
+            />
+            <i *ngIf="moduloField.valid && view.moduloName" class="fa fa-check-circle text-success" 
+               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            <i *ngIf="moduloField.invalid && (moduloField.touched || moduloField.dirty)" class="fas fa-exclamation-circle text-danger" 
+               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+        
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onmoduloSelect($event)">
+              <mat-option *ngFor="let modulo of filteredModulos" [value]="modulo.name">
+                {{ modulo.name }}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+        
+          <!-- Mensajes de error para Módulo -->
+          <div *ngIf="moduloField.invalid && (moduloField.touched || moduloField.dirty)" class="text-danger">
+            Debes asignar un módulo.
+          </div>
+        
+          <div *ngIf="moduloField.valid && (moduloField.touched || moduloField.dirty)" class="text-success">
+          </div>
+        </div>
+        <br>
+        
 
-                <div class="col">
-                    <label for="moduloName">Módulo:</label>
-                    <input type="text" class="form-control input-field" matInput [matAutocomplete]="auto" 
-                           [(ngModel)]="view.moduloName" 
-                           name="moduloName" 
-                           (input)="searchmodulos($event)" 
-                           required>
-                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onmoduloSelect($event)">
-                        <mat-option *ngFor="let modulo of filteredModulos" [value]="modulo.name">
-                            {{ modulo.name }}
-                        </mat-option>
-                    </mat-autocomplete>
-                </div>
-            </div>
-            <br>
+      <div class="row" *ngIf="view.id !== 0">
+        <div class="col">
+          <label for="State">Estado:</label>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="State" name="State" [(ngModel)]="view.state">
+          </div>
+        </div>
+      </div>
+      <br>
 
-            <div class="row" *ngIf="view.id !== 0">
-                <div class="col">
-                    <label for="State">Estado:</label>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="State" name="State" [(ngModel)]="view.state">
-                    </div>
-                </div>
-            </div>
-            <br>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
-                <button type="submit" class="btn btn-primary">Guardar</button>
-            </div>
-        </form>
-    </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+      </div>
+    </form>
+  </div>
 </div>
 
 <!-- Tabla de vistas -->
 <table *ngIf="filteredViews.length > 0" class="table">
-    <thead>
-        <tr>
-            <th>
-                <input type="checkbox" (change)="selectAll($event)" [checked]="areAllSelected()" />
-            </th>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Route</th>
-            <th>Módulo</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let view of paginatedViews()">
-            <td>
-                <label class="checkbox-container">
-                    <input type="checkbox" [(ngModel)]="view.selected" />
-                    <div class="checkbox-custom"></div>
-                </label>
-            </td>
-            <td>{{ view.name }}</td>
-            <td>{{ view.description }}</td>
-            <td>{{ view.route }}</td>
-            <td>{{ getModuloName(view.moduloId) }}</td>
-            <td>{{ view.state ? 'Activo' : 'Inactivo' }}</td>
-            <td>
-                <button class="btn-icon edit" (click)="editView(view)" title="Editar">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon delete" (click)="deleteView(view.id)" title="Eliminar">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </td>
-        </tr>
-    </tbody>
+  <thead>
+    <tr>
+      <th>
+        <input type="checkbox" (change)="selectAll($event)" [checked]="areAllSelected()" />
+      </th>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Route</th>
+      <th>Módulo</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let view of paginatedViews()">
+      <td>
+        <label class="checkbox-container">
+          <input type="checkbox" [(ngModel)]="view.selected" />
+          <div class="checkbox-custom"></div>
+        </label>
+      </td>
+      <td>{{ view.name }}</td>
+      <td>{{ view.description }}</td>
+      <td>{{ view.route }}</td>
+      <td>{{ getModuloName(view.moduloId) }}</td>
+      <td>{{ view.state ? 'Activo' : 'Inactivo' }}</td>
+      <td>
+        <button class="btn-icon edit" (click)="editView(view)" title="Editar">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn-icon delete" (click)="deleteView(view.id)" title="Eliminar">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+  </tbody>
 </table>
 
 <!-- Mensaje si no hay vistas -->
@@ -148,22 +272,22 @@
 <!-- Footer de la tabla de datos -->
 <div class="data-table-footer">
   <div class="pagination">
-      <button (click)="previousPage()" [disabled]="currentPage === 1" class="arrow">
-        &laquo; <!-- Flecha izquierda -->
-      </button>
+    <button (click)="previousPage()" [disabled]="currentPage === 1" class="arrow">
+      &laquo; <!-- Flecha izquierda -->
+    </button>
 
-      <ng-container *ngFor="let page of getPageNumbers()">
-        <button (click)="goToPage(page)" [class.active]="currentPage === page">{{ page }}</button>
-      </ng-container>
+    <ng-container *ngFor="let page of getPageNumbers()">
+      <button (click)="goToPage(page)" [class.active]="currentPage === page">{{ page }}</button>
+    </ng-container>
 
-      <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="arrow">
-        &raquo; <!-- Flecha derecha -->
-      </button>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="arrow">
+      &raquo; <!-- Flecha derecha -->
+    </button>
   </div>
 
   <div class="delete-selected-container">
-      <button class="btn btn-danger" (click)="deleteSelected()" [disabled]="!hasSelected()">
-          <i class="fas fa-trash"></i> Eliminar seleccionados
-      </button>
+    <button class="btn btn-danger" (click)="deleteSelected()" [disabled]="!hasSelected()">
+      <i class="fas fa-trash"></i> Eliminar seleccionados
+    </button>
   </div>
 </div>

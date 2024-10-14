@@ -54,8 +54,11 @@ export class RoleComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     
   ) {
-  
   }
+  onInputChange(field: any) {
+    field.control.updateValueAndValidity();
+  }
+  
   ngOnInit(): void {
     this.getRoles();
     this.getViews();
@@ -88,12 +91,12 @@ export class RoleComponent implements OnInit {
     );
   }
 
-  // Procesar roles para concatenar las vistas en una cadena
-  processRoles(): void {
-    this.roles.forEach(role => {
-      role.viewString = (role.views || []).map(view => view.textoMostrar || view.name).join(', ');
-    });
-  }
+// Procesar roles para concatenar las vistas en una cadena
+processRoles(): void {
+  this.roles.forEach(role => {
+    role.viewString = (role.views || []).map(view => view.textoMostrar || view.name).join(', ');
+  });
+}
 
   // Filtrar roles según el término de búsqueda
 // Filtrar roles según el término de búsqueda

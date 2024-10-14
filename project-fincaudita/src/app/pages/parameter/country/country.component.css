@@ -78,7 +78,7 @@
 .close:hover {
     text-decoration: none;
     cursor: pointer;
-    color: #000000;
+    color: #44E32A;
 }
 
 /* Botones del modal */
@@ -368,3 +368,8 @@
     flex-direction: row;
     gap: 20px;
 }
+
+.small-input {
+    width: 2%; /* Cambia este valor según lo que necesites */
+  }
+  

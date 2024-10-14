@@ -17,7 +17,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 })
 export class AssessmentCriteriaComponent implements OnInit {
   assesments: any[] = [];
-  assesment: any = { id: 0, name: '', type_criterian: '', rating_range: 0, state: false };
+  assesment: any = { id: 0, name: '', type_criterian: '', rating_range: '', state: false };
   isModalOpen = false;
   filteredCriteria: any[] = [];
   currentPage = 1;
@@ -29,6 +29,14 @@ export class AssessmentCriteriaComponent implements OnInit {
   private apiUrl = 'http://localhost:9191/api/AssesmentCriteria';
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+
+  onlyPositiveNumbers(event: KeyboardEvent) {
+    // Permitir solo números (0-9) y el punto (.) si es necesario
+    const char = String.fromCharCode(event.keyCode);
+    if (!/[0-9]/.test(char)) {
+      event.preventDefault(); // Previene la entrada si no es válida
+    }
+  }
 
   ngOnInit(): void {
     this.getassesments();

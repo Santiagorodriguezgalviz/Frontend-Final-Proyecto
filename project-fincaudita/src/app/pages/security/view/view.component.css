@@ -48,7 +48,7 @@
 
 .modal-content {
     background-color: #fefefe;
-    margin: 5% auto;
+    margin: 15% auto;
     padding: 20px;
     width: 70%;
     border-radius: 8px;
@@ -101,7 +101,7 @@
 .close:hover {
     text-decoration: none;
     cursor: pointer;
-    color: #000000;
+    color: #44E32A;
 }
 
 /* Botones del modal de cerrar y agregar */

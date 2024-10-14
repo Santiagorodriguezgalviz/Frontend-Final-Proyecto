@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule, NgForm } from '@angular/forms';
-import {  ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
@@ -9,12 +9,14 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
-import { ValidationService } from './validate.service';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
+
 interface Modulo {
   id: number;
   name: string;
   description: string;
-  position: number;
+  position: number | null;
   state: boolean;
   selected: boolean;
 }
@@ -22,13 +24,13 @@ interface Modulo {
 @Component({
   selector: 'app-modulo',
   standalone: true,
-  imports: [HttpClientModule,CommonModule, FormsModule, NgSelectModule, FontAwesomeModule],
+  imports: [HttpClientModule, CommonModule, FormsModule, NgSelectModule, FontAwesomeModule, NgbModule],
   templateUrl: './modulo.component.html',
   styleUrls: ['./modulo.component.css']
 })
 export class ModuloComponent implements OnInit {
   modulos: Modulo[] = [];
-  modulo: Modulo = { id: 0, name: '', description: '', position: 0, state: true, selected: false };
+  modulo: Modulo = { id: 0, name: '', description: '', position: null, state: true, selected: false };
   isModalOpen = false;
   filteredModulos: Modulo[] = [];
   currentPage = 1;
@@ -37,30 +39,33 @@ export class ModuloComponent implements OnInit {
   itemsPerPageOptions = [5, 10, 20, 50];
   isDropdownOpen = false;
   moduloForm!: FormGroup;
-  
+
   private apiUrl = 'http://localhost:9191/api/Modulo';
 
   constructor(
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
-    private fb: FormBuilder,  // FormBuilder para manejar formularios
-    private validationService: ValidationService
-  ) {}
+    private fb: FormBuilder,
+  ) { }
 
+
+
+  onInputChange(field: any) {
+    field.control.updateValueAndValidity();
+  }
 
   ngOnInit(): void {
     this.getModulos();
-    this.createForm();
+
   }
 
-  createForm(): void {
-    this.moduloForm = this.fb.group({
-      id: [0],
-      name: ['', [this.validationService.validateName.bind(this.validationService), Validators.required]],
-      description: ['', [this.validationService.validateDescription.bind(this.validationService), Validators.required]],
-      position: ['', [this.validationService.validatePosition.bind(this.validationService), Validators.required]],
-      state: [true]
-    });
+
+  onlyPositiveNumbers(event: KeyboardEvent) {
+    // Permitir solo números (0-9) y el punto (.) si es necesario
+    const char = String.fromCharCode(event.keyCode);
+    if (!/[0-9]/.test(char)) {
+      event.preventDefault(); // Previene la entrada si no es válida
+    }
   }
   // Obtener la lista de módulos desde la API
   getModulos(): void {
@@ -82,7 +87,7 @@ export class ModuloComponent implements OnInit {
     this.filteredModulos = this.modulos.filter(modulo =>
       modulo.name.toLowerCase().includes(search) ||
       modulo.description.toLowerCase().includes(search) ||
-      modulo.position.toString().includes(search) ||
+      modulo.position?.toString().includes(search) ||
       (modulo.state ? 'activo' : 'inactivo').includes(search)
     );
     this.currentPage = 1; // Resetear a la primera página
@@ -114,7 +119,7 @@ export class ModuloComponent implements OnInit {
 
   // Reiniciar el formulario
   resetForm(): void {
-    this.modulo = { id: 0, name: '', description: '', position: 0, state: false, selected: false };
+    this.modulo = { id: 0, name: '', description: '', position: null, state: false, selected: false };
   }
 
   // Manejar el envío del formulario para agregar o editar un módulo
@@ -140,7 +145,7 @@ export class ModuloComponent implements OnInit {
       );
     } else {
       // Actualizar módulo existente
-      this.http.put(`${this.apiUrl}/${this.modulo.id}`, this.modulo).subscribe(
+      this.http.put(this.apiUrl, this.modulo).subscribe(
         () => {
           const index = this.modulos.findIndex(m => m.id === this.modulo.id);
           if (index !== -1) {
@@ -251,14 +256,14 @@ export class ModuloComponent implements OnInit {
 
   // Exportar la lista de módulos a PDF
 
-  
+
   exportToPDF(): void {
     const doc = new jsPDF();
-  
+
     // Agregar un título
     doc.setFontSize(20);
     doc.text('Listado de Módulos', 14, 20); // Título del PDF
-  
+
     // Configurar la tabla con estilos
     autoTable(doc, {
       head: [['ID', 'Nombre', 'Descripción', 'Posición', 'Estado']],
@@ -290,22 +295,22 @@ export class ModuloComponent implements OnInit {
         overflow: 'linebreak', // Manejo de desbordamiento de texto
       },
     });
-  
+
     // Guardar el PDF
     doc.save('listado_de_modulos.pdf');
   }
-  
+
 
   // Manejar la selección de exportación
- handleExport(event: any): void {
+  handleExport(event: any): void {
     const value = event;
-  
+
     if (value === 'pdf') {
       this.exportToPDF();
     } else if (value === 'excel') {
       this.exportToExcel();
     }
-  
+
     // Resetear el select después de la exportación
     this.searchTerm = ''; // Esto restablece el valor
   }

@@ -1,320 +1,434 @@
+/* Imagen de fondo */
+.bg-image {
+  background-image: url('../../assets/sveta-fedarava-tI_Odb7ZU6M-unsplash.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 20px;
+}
+
 /* Contenedor de fondo y modal */
 .background-container {
-    position: relative;
-    width: 100%;
-    height: 100vh; /* Ocupa toda la altura de la ventana */
-  }
-  
-  .background-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Cubre el área del contenedor sin distorsionar la imagen */
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1; /* Envía la imagen detrás del modal */
-  }
-  
-  /* Modal con efecto de desenfoque */
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(242, 240, 240, 0.007); /* Fondo oscuro semi-transparente */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10; /* Asegura que el modal esté encima de la imagen de fondo */
-  }
-  
-  .modal-content {
-    background: rgba(255, 255, 255, 0.1); /* Fondo transparente */
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    width: 100%;
-    max-width: 900px;
-  }
-  
-  /* Progreso de los pasos */
-  .progress-indicator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  
-  .step {
-    display: flex;
-    align-items: center;
-  }
-  
-  .step-number {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(255, 255, 255, 0.1); /* Fondo transparente */
-    color: #00FF2A; /* Verde para los números */
-    font-weight: bold;
-    font-size: 16px;
-  }
-  
-  .step-number.completed {
-    background-color: #00FF2A; /* Verde para pasos completados */
-    color: white;
-  }
-  
-  .step-number.active {
-    background-color: rgba(0, 255, 42, 0.4); /* Verde transparente para el paso actual */
-  }
-  
-  .line {
-    height: 2px;
-    flex: 1;
-    background-color: #00FF2A; /* Verde debajo de los números */
-    margin: 0 10px;
-  }
-  
-  .line.completed {
-    background-color: #00FF2A; /* Verde para líneas completadas */
-  }
-  
-  /* Estilos del formulario */
-  .container.forgot-password-form {
-    padding: 20px;
-    border-radius: 8px;
-  }
-  
-  .form-container {
-    padding: 20px;
-    
-  }
-  
-  .row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-  }
-  
-  .col {
-    flex: 1;
-    margin-right: 10px;
-  }
-  
-  .col:last-child {
-    margin-right: 0;
-  }
-  
-  input.form-control, select.form-control {
-    width: 100%;
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-  }
-  
-  label {
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  /* Estilos de los botones */
-  .button-group {
-    display: flex;
-    justify-content: space-between;
-   
-  
-  }
-  
-  .btn {
-    padding: 10px 20px;
-    border-radius: 4px;
-    font-weight: bold;
-    cursor: pointer;
-    
-  }
-  
-  .btn-secondary {
-    background-color: #ff0000;
-    color: white;
-    border: none;
-    
-  }
-  
-  .btn-success {
-    background-color: #00FF2A; /* Verde para el botón */
-    color: white;
-    border: none;
-  }
-  
-  .btn-secondary1 {
-    background-color: #ff0000;
-    color: white;
-    border: none;
-    position: relative;
-    top: 100px;
-  }
-  
-  .btn-success1 {
-    background-color: #00FF2A; /* Verde para el botón */
-    color: white;
-    border: none;
-    position: relative;
-    top: 100px;
-  }
+  position: relative;
+  width: 100%;
+  height: 120vh;
+  /* Ocupa toda la altura de la ventana */
+  display: flex;
+  /* Añadir display flex */
+  justify-content: center;
+  /* Centra horizontalmente */
+  align-items: center;
+  /* Centra verticalmente */
+}
 
-  .btn:hover {
-    opacity: 0.9;
-  }
-  
-  /* Imagen de fondo */
-  .bg-image {
-    background-image: url('../../assets/sveta-fedarava-tI_Odb7ZU6M-unsplash.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    padding: 20px;
-  }
-  
-  /* Botón "Atrás" */
-  .btn-back {
-    background-color: #00FF2A; /* Verde */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .btn-back:hover {
-    background-color: #006a28; /* Verde más oscuro */
-  }
-  /* Contenedor de progreso con línea verde */
-  .progress-indicator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative; /* Necesario para posicionar la línea estática */
-    margin-bottom: 20px;
-  }
-  
-  .step {
-    display: flex;
-    align-items: center;
-  }
-  
-  .step-number {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(255, 255, 255, 0.1); /* Fondo transparente */
-    color: #00FF2A; /* Verde para los números */
-    font-weight: bold;
-    font-size: 16px;
-  }
-  
-  /* Línea estática verde debajo de los números */
-  .progress-indicator::after {
-    content: "";
-    position: absolute;
-    width: 100%; /* Ocupa todo el ancho del contenedor */
-    height: 3px;
-    background-color: #00FF2A; /* Mismo verde que los números */
-    bottom: -8px; /* Ajuste la distancia según la necesidad */
-    left: 0;
-  }
-  
-  /* Botones */
-  .button-group {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px; /* Espacio adicional entre inputs y botones */
-  }
-  
-  .btn {
-    padding: 10px 20px;
-    border-radius: 4px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .btn-back, .btn-success {
-    background-color: #00FF2A; /* Verde para ambos botones */
-    color: white;
-    border: none;
-  }
-  
-  .btn:hover {
-    opacity: 0.9;
-  }
-  
-  .btn-back:hover {
-    background-color: #006a28; /* Verde más oscuro */
-  }
-  .form-container {
-    padding: 20px;
-    margin-bottom: 10px; /* Más espacio debajo del formulario */
-  }
-  
-  .button-group {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 60px; /* Más espacio entre los campos del formulario y los botones */
-    
-  }
+.error-message {
+  color: red; /* Color rojo para el mensaje de error */
+  margin-top: 10px; /* Espaciado arriba */
+}
 
-  .swal-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #721c24; /* Color rojo oscuro */
-    text-align: center; /* Centrar el texto */
-  }
-  
-  .swal-popup {
-    border-radius: 12px; /* Bordes redondeados */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Sombra suave */
-  }
-  /* Estilo para el input válido */
+
+.background-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Cubre el área del contenedor sin distorsionar la imagen */
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  /* Envía la imagen detrás del modal */
+}
+
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  width: 70%;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+
+.modal-content {
+  color: witch;
+  /* Fondo transparente */
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 900px;
+
+
+}
+
+.show-modal {
+  display: block;
+  /* Muestra el modal cuando está activo */
+}
+
+.modal-footer {
+  display: flex; /* Usar flexbox para alinear los botones */
+  justify-content: space-between; /* Distribuir los botones en los extremos */
+  align-items: center; /* Centrar los elementos verticalmente */
+}
+
+
+.close {
+  position: absolute;
+  top: 10px;
+  /* Adjust top padding as needed */
+  transform: translateX(-50%);
+  /* Center horizontally */
+  right: 15px;
+  /* Adjust right padding if needed */
+  text-align: left;
+  /* Center text horizontally */
+  font-size: 24px;
+  /* Adjust font size if needed */
+}
+
+.close:hover {
+  text-decoration: none;
+  cursor: pointer;
+  color: #000000;
+}
+
+/* Botones del modal de cerrar y agregar */
+.btn-secondary {
+  background-color: #ff0000;
+  /* Secondary grayish color */
+  color: rgb(255, 255, 255);
+  border: none;
+  margin-right: 10px;
+}
+
+.btn-primary {
+  background-color: #00FF2A;
+  /* Secondary grayish color */
+  color: rgb(255, 255, 255);
+  border: none;
+  margin-left: 10px;
+}
+
+/* Progreso de los pasos */
+.progress-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+}
+
+.step-number {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  /* Fondo transparente */
+  color: #00FF2A;
+  /* Verde para los números */
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.step-number.completed {
+  background-color: #00FF2A;
+  /* Verde para pasos completados */
+  color: white;
+}
+
+.step-number.active {
+  background-color: rgba(0, 255, 42, 0.4);
+  /* Verde transparente para el paso actual */
+}
+
+.line {
+  height: 2px;
+  flex: 1;
+  background-color: #00FF2A;
+  /* Verde debajo de los números */
+  margin: 0 10px;
+}
+
+.line.completed {
+  background-color: #00FF2A;
+  /* Verde para líneas completadas */
+}
+
+/* Estilos del formulario */
+.container.forgot-password-form {
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.form-container {
+  background: rgba(255, 255, 255, 0.1);
+  /* Fondo transparente */
+  margin: 5% auto;
+  padding: 20px;
+  width: 70%;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  max-width: 900px;
+  top: 60px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.col {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.col:last-child {
+  margin-right: 0;
+}
+
+input.form-control,
+select.form-control {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-label {
+  color: white;
+  font-size: 18px;
+
+}
+
+.form-label2 {
+  color: white;
+  font-size: 30px;
+
+}
+
+/* Estilos de los botones */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+
+
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+
+}
+
+.btn-success {
+  background-color: #00FF2A;
+  /* Verde para el botón */
+  color: white;
+  border: none;
+}
+
+.btn-secondary1 {
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  position: relative;
+  top: 5px;
+}
+
+.btn-success1 {
+  background-color: #00FF2A;
+  /* Verde para el botón */
+  color: white;
+  border: none;
+  position: relative;
+  top: 5px;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn-success3 {
+  background-color: #00FF2A;
+  /* Verde para el botón */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  /* Espaciado interno para hacerlo más corto */
+  margin: 20px auto;
+  /* Centra el botón horizontalmente */
+  display: block;
+  /* Cambia a bloque para el centrado */
+  border-radius: 8px;
+  /* Ajusta el borde */
+  max-width: 200px;
+  /* Ancho máximo para el botón */
+}
+
+.terms-acceptance {
+  display: flex;
+  justify-content: center;
+  /* Centra horizontalmente */
+  align-items: center;
+  /* Centra verticalmente */
+  margin-top: 20px;
+  /* Espaciado superior si es necesario */
+}
+
+/* Botón "Atrás" */
+.btn-back {
+  background-color: #00FF2A;
+  /* Verde */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-back:hover {
+  background-color: #006a28;
+  /* Verde más oscuro */
+}
+
+/* Contenedor de progreso con línea verde */
+.progress-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  /* Necesario para posicionar la línea estática */
+  margin-bottom: 20px;
+}
+
+/* Línea estática verde debajo de los números */
+.progress-indicator::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  /* Ocupa todo el ancho del contenedor */
+  height: 3px;
+  background-color: #00FF2A;
+  /* Mismo verde que los números */
+  bottom: -8px;
+  /* Ajuste la distancia según la necesidad */
+  left: 0;
+}
+
+/* Botones */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  /* Espacio adicional entre inputs y botones */
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-back,
+.btn-success {
+  background-color: #00FF2A;
+  /* Verde para ambos botones */
+  color: white;
+  border: none;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn-back:hover {
+  background-color: #006a28;
+  /* Verde más oscuro */
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 60px;
+  /* Más espacio entre los campos del formulario y los botones */
+
+}
+
+.swal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #721c24;
+  /* Color rojo oscuro */
+  text-align: center;
+  /* Centrar el texto */
+}
+
+.swal-popup {
+  border-radius: 12px;
+  /* Bordes redondeados */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  /* Sombra suave */
+}
+
+/* Estilo para el input válido */
 .form-control:valid {
-  border-color: #008f39; /* Cambia el color del borde a verde */
+  border-color: #008f39;
+  /* Cambia el color del borde a verde */
 }
 
 /* Estilo para el mensaje de feedback cuando el input es válido */
-.form-control:valid + .invalid-feedback {
-  display: none; /* Oculta el mensaje de error si es válido */
+.form-control:valid+.invalid-feedback {
+  display: none;
+  /* Oculta el mensaje de error si es válido */
 }
 
 /* Estilo para el mensaje de feedback cuando el input es inválido */
-.form-control:invalid + .invalid-feedback {
-  display: block; /* Muestra el mensaje de error si es inválido */
+.form-control:invalid+.invalid-feedback {
+  display: block;
+  /* Muestra el mensaje de error si es inválido */
 }
+
 .is-valid {
-  border-color: #28a745; /* Verde */
+  border-color: #28a745;
+  /* Verde */
 }
 
 .is-invalid {
-  border-color: #dc3545; /* Rojo */
+  border-color: #dc3545;
+  /* Rojo */
 }
 
-.valid-feedback, .invalid-feedback {
+.valid-feedback,
+.invalid-feedback {
   position: absolute;
   right: 10px;
   top: 10px;
@@ -324,8 +438,10 @@
 .toggle-password {
   position: absolute;
   right: 40px;
-  top: 52px; /* Ajuste la posición más abajo */
-  transform: translateY(-55%); /* Centrar el ojo */
+  top: 52%;
+  /* Ajuste la posición más abajo */
+  transform: translateY(-55%);
+  /* Centrar el ojo */
   cursor: pointer;
   color: #27282a;
 }
@@ -333,6 +449,7 @@
 .toggle-password:hover {
   color: #44E32A;
 }
+
 .position-relative {
   position: relative;
 }
@@ -343,24 +460,35 @@
 
 .input-group-text {
   position: absolute;
-  top: 45%; /* Ajusta según sea necesario */
-  right: 30px; /* Ajusta este valor para moverlo más a la izquierda */
+  top: 45%;
+  /* Ajusta según sea necesario */
+  right: 30px;
+  /* Ajusta este valor para moverlo más a la izquierda */
   transform: translateY(-50%);
-  background: transparent; /* Fondo transparente */
-  border: none; /* Sin borde */
-  pointer-events: none; /* Evita que interfiera con el clic */
+  background: transparent;
+  /* Fondo transparente */
+  border: none;
+  /* Sin borde */
+  pointer-events: none;
+  /* Evita que interfiera con el clic */
 }
+
 /* Estilo personalizado para el popup */
 .custom-popup {
-  background: #f5f7fa; /* Fondo más suave y elegante */
-  border-radius: 15px; /* Bordes redondeados */
+  background: #f5f7fa;
+  /* Fondo más suave y elegante */
+  border-radius: 15px;
+  /* Bordes redondeados */
   padding: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Sombra más suave */
-  transition: transform 0.4s ease-in-out; /* Transición suave en la animación */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  /* Sombra más suave */
+  transition: transform 0.4s ease-in-out;
+  /* Transición suave en la animación */
 }
 
 .custom-popup:hover {
-  transform: scale(1.03); /* Ligero zoom al pasar el cursor */
+  transform: scale(1.03);
+  /* Ligero zoom al pasar el cursor */
 }
 
 /* Estilo personalizado para el título */
@@ -368,7 +496,8 @@
   color: #333;
   font-weight: bold;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Sombra sutil en el texto */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  /* Sombra sutil en el texto */
 }
 
 /* Estilo personalizado para el contenido HTML */
@@ -385,14 +514,18 @@
   border: none;
   font-weight: bold;
   padding: 10px 20px;
-  border-radius: 50px; /* Bordes completamente redondeados */
+  border-radius: 50px;
+  /* Bordes completamente redondeados */
   transition: background-color 0.3s, transform 0.3s;
-  box-shadow: 0 8px 20px rgba(85, 213, 115, 0.5); /* Sombra verde suave */
+  box-shadow: 0 8px 20px rgba(85, 213, 115, 0.5);
+  /* Sombra verde suave */
 }
 
 .custom-confirm-btn:hover {
-  background-color: #49c267 !important; /* Color más oscuro al hacer hover */
-  transform: scale(1.1); /* Efecto de aumento */
+  background-color: #49c267 !important;
+  /* Color más oscuro al hacer hover */
+  transform: scale(1.1);
+  /* Efecto de aumento */
 }
 
 /* Estilo para el botón de cancelar */
@@ -402,74 +535,142 @@
   border: none;
   font-weight: bold;
   padding: 10px 20px;
-  border-radius: 50px; /* Bordes completamente redondeados */
+  border-radius: 50px;
+  /* Bordes completamente redondeados */
   transition: background-color 0.3s, transform 0.3s;
-  box-shadow: 0 8px 20px rgba(255, 0, 0, 0.5); /* Sombra roja suave */
+  box-shadow: 0 8px 20px rgba(255, 0, 0, 0.5);
+  /* Sombra roja suave */
 }
 
 .custom-cancel-btn:hover {
-  background-color: #e60000 !important; /* Color más oscuro en hover */
-  transform: scale(1.1); /* Efecto de aumento */
+  background-color: #e60000 !important;
+  /* Color más oscuro en hover */
+  transform: scale(1.1);
+  /* Efecto de aumento */
 }
+
 .move-down {
-  margin-top: 1.5rem; /* Ajusta este valor para mover hacia abajo */
+  margin-top: 1.5rem;
+  /* Ajusta este valor para mover hacia abajo */
 }
+
 .position-relative1 {
-  position: relative; /* Habilita el posicionamiento relativo */
-  top: 20px; /* Ajusta el valor según lo necesario para bajar el elemento */
+  position: relative;
+  /* Habilita el posicionamiento relativo */
+  top: 20px;
+  /* Ajusta el valor según lo necesario para bajar el elemento */
 }
+
 .position-relative2 {
-  position: relative; /* Habilita el posicionamiento relativo */
-  top: 20px; /* Ajusta el valor según lo necesario para bajar el elemento */
+  position: relative;
+  /* Habilita el posicionamiento relativo */
+  top: 20px;
+  /* Ajusta el valor según lo necesario para bajar el elemento */
 }
+
 .position-relative3 {
-  position: relative; /* Habilita el posicionamiento relativo */
-  top: 40px; /* Ajusta el valor según lo necesario para bajar el elemento */
+  position: relative;
+  /* Habilita el posicionamiento relativo */
+  top: 40px;
+  /* Ajusta el valor según lo necesario para bajar el elemento */
 }
+
 .position-relative4 {
-  position: relative; /* Habilita el posicionamiento relativo */
-  top: 40px; /* Ajusta el valor según lo necesario para bajar el elemento */
+  position: relative;
+  /* Habilita el posicionamiento relativo */
+  top: 40px;
+  /* Ajusta el valor según lo necesario para bajar el elemento */
 }
 
 /* Estilo del checkbox y la etiqueta */
 .form-check {
-  margin-left: 280px; 
+  margin-left: 280px;
   top: -40px;
   position: relative;
 }
 
-.login-text {
-  color: #f8f9fa; 
-  margin-left: 290px; 
-  top: -60px;
-  position: relative;
-}
-
 .form-check-input {
-  width: 20px; /* Tamaño del checkbox */
-  height: 20px; /* Tamaño del checkbox */
-  border: 2px solid #44e328; /* Borde verde */
-  border-radius: 4px; /* Esquinas redondeadas */
-  transition: border-color 0.3s ease; /* Transición suave para el borde */
+  width: 20px;
+  /* Tamaño del checkbox */
+  height: 20px;
+  /* Tamaño del checkbox */
+  border: 2px solid #44e328;
+  /* Borde verde */
+  border-radius: 4px;
+  /* Esquinas redondeadas */
+  transition: border-color 0.3s ease;
+  /* Transición suave para el borde */
   margin-right: 30px;
 }
 
 .form-check-input:checked {
-  background-color: #44e328; /* Fondo verde al seleccionar */
-  border-color: #44e328; /* Borde verde al seleccionar */
+  background-color: #44e328;
+  /* Fondo verde al seleccionar */
+  border-color: #44e328;
+  /* Borde verde al seleccionar */
 }
 
+.login-text {
+  color: #f8f9fa;
+  margin: 0 auto;
+  /* Asegura que el margen superior e inferior sean automáticos */
+  padding: 5px;
+  text-align: center;
+  /* Centra el texto horizontalmente */
+  position: relative;
+  /* Para utilizar 'top' */
+  display: flex;
+  justify-content: center;
+  /* Centra horizontalmente */
+  align-items: center;
+  /* Centra verticalmente */
+  font-size: 18px;
+}
+
+
+
 .login-link {
-  color: #f8f9fa; /* Color blanco */
-  text-decoration: underline; /* Subrayado */
-  cursor: pointer; /* Cursor de mano */
+  color: #f8f9fa;
+  /* Color blanco */
+  text-decoration: underline;
+  /* Subrayado */
+  cursor: pointer;
+  /* Cursor de mano */
+  font-weight: bold;
+  font-size: 18px;
+
 }
 
 .login-link:hover {
-  text-decoration: none; /* Sin subrayado al pasar el mouse */
+  text-decoration: none;
+  /* Sin subrayado al pasar el mouse */
 }
 
+.underline-text {
+  color: #f8f9fa;
+  margin: 0 auto;
+  /* Asegura que el margen superior e inferior sean automáticos */
+  padding: 5px;
+  text-align: center;
+  /* Centra el texto horizontalmente */
+  position: relative;
+  /* Para utilizar 'top' */
+  display: flex;
+  justify-content: center;
+  /* Centra horizontalmente */
+  align-items: center;
+  /* Centra verticalmente */
+  text-decoration: underline;
+  /* Subrayado */
+  font-weight: bold;
+  font-size: 18px;
+}
 
-
-
-  
+.underline-text:hover {
+  color: #f8f9fa;
+  /* Color blanco */
+  text-decoration: none;
+  /* Sin subrayado al pasar el mouse */
+  cursor: pointer;
+  /* Cursor de mano */
+}

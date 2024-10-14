@@ -37,6 +37,13 @@ export class CityComponent implements OnInit {
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
+  onlyAlphanumeric(event: KeyboardEvent) {
+    const regex = /^[a-zA-Z0-9]*$/; // Solo permite letras y números
+    if (!regex.test(event.key)) {
+      event.preventDefault(); // Previene la entrada si no es válida
+    }
+  }
+  
   searchdepartaments(event: any): void {
     const term = event.target.value.toLowerCase();
     this.filteredDepartaments = this.departaments.filter(departament => 

@@ -35,7 +35,7 @@
     background-color: #fefefe;
     margin: 15% auto;
     padding: 20px;
-    width: 70%;
+    width: 60%;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
@@ -88,7 +88,7 @@
 .close:hover {
     text-decoration: none;
     cursor: pointer;
-    color: #000000;
+    color: #44E32A;
 }
 
 /* Botones del modal de cerrar y agregar */
