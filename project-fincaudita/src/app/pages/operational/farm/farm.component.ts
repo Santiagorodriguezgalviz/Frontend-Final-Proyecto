@@ -49,6 +49,7 @@ export class FarmComponent implements OnInit {
   searchTerm = '';
   itemsPerPageOptions = [5, 10, 20, 50];
   isDropdownOpen = false;
+  userRoleID: number = 0; 
 
   private apiUrl = 'http://localhost:9191/api/Farm';
   private citiesUrl = 'http://localhost:9191/api/City';
@@ -63,12 +64,22 @@ export class FarmComponent implements OnInit {
     if (!/[0-9]/.test(char)) {
       event.preventDefault(); // Previene la entrada si no es válida
     }
-  }
+  } 
   ngOnInit(): void {
+    this.getUserRole();
+    console.log('User Role ID:', this.userRoleID);
     this.getFarms();
     this.getCities();
     this.getUsers();
     this.getCrops();
+  }
+
+  getUserRole(): void {
+    const user = JSON.parse(localStorage.getItem('menu') || '{}');
+    if (user && user.menu && user.menu.length > 0) {
+      this.userRoleID = user.menu[0].roleID; // Accediendo correctamente a roleID
+      console.log('User Role ID from localStorage:', this.userRoleID); // Para depuración
+    }
   }
 
   searchCitys(event: any): void {

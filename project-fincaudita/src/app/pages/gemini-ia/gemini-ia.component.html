@@ -1,0 +1,21 @@
+<div class="row center-xs">
+    <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6"> <!-- Ajusta el tamaño -->
+        <h1 class="title">¿En qué puedo ayudarte?</h1>
+        
+        <div class="wrapper chatbot-container"> <!-- Nueva clase añadida -->
+            <header class="header"></header>
+            <article class="main" #scrollframe>
+                <ng-container *ngFor="let result of questions">
+                    <h3>{{ result.prompt }}</h3>
+                    <span>{{ result.result }}</span>
+                </ng-container>
+            </article>
+            <footer class="footer">
+                <textarea [(ngModel)]="prompt" matInput placeholder=" Envía un mensaje a Chat-Fincaudita..."></textarea>
+                <button color="primary" aria-label="send" (click)="generate()" [disabled]="writing">
+                    <i class="fas fa-paper-plane"></i> Enviar
+                </button>
+            </footer>
+        </div>
+    </div>
+</div>

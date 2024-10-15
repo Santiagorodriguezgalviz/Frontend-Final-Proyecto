@@ -1,0 +1,132 @@
+*{
+    font-family: monospace;
+    background-color: rgb(5, 5, 5);
+}
+
+.small-svg {
+    width: 32px; /* Ajusta este valor para cambiar el tamaño */
+    height: 32px; /* Ajusta este valor para cambiar el tamaño */
+    display: block; /* Opcional: para centrar el SVG */
+}
+.card {
+    padding: 1.2em;
+    border-radius: 20px;
+    border: 2px solid #3d68c4;
+}
+.title {
+    margin-top: 1em;
+    text-align: left;
+    background: #5182EE; /* Fallback color */
+    background: linear-gradient(to right, #5182EE 0%, #D96570 100%);
+    -webkit-background-clip: text; /* For Safari and older Chrome */
+    -moz-background-clip: text; /* For Firefox (not fully supported) */
+    background-clip: text; /* Standard property */
+    -webkit-text-fill-color: transparent; /* For Safari and older Chrome */
+    color: #5182EE; /* Fallback text color */
+}
+
+
+.message-user {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.message-user-text {
+    background: #525a53;
+    color: white;
+    text-align: right;
+    border-radius: 20px;
+    padding: 8px;
+    width: auto;
+}
+
+/* Contenedor de los mensajes de Open AI */
+.message-gpt {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+}
+
+/* Contenedor del icono de GPT */
+.icon-message-gpt {
+    width: 40px;
+    height: 40px;
+}
+
+/* Icono redondeado GPT */
+.icon {
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+}
+
+/* Contenido del mensaje Open Ai */
+.content-message-gpt {
+    max-width: 90%;
+}
+
+/* Respuesta de Open Ai */
+.message-gpt-text {
+    background: transparent;
+    /* Uso de palabra clave */
+    color: white;
+    text-align: left;
+    border-radius: 20px;
+    padding: 8px;
+    width: auto;
+}
+
+.vh-100 { 
+    height: 70vh;
+    overflow-y: auto;
+}
+
+/* Estilos input */
+.input {
+    margin-top: 1em;
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #5182EE;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    background-color: #1e1e1e;
+    color: #ffffff;
+    box-sizing: border-box;
+}
+
+.input:focus {
+    border-color: #5182EE;
+    box-shadow: 0 0 15px rgba(52, 96, 219, 0.5);
+}
+
+/* Placeholder Estilo */
+.input::placeholder {
+    color: #aaa;
+}
+
+/*  Efecto Hover  */
+.input:hover {
+    background-color: #000000;
+}
+
+/* Estilos del scroll */
+::-webkit-scrollbar {
+    width: 7px; /* Ancho del scroll */
+  }
+  
+  .content::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Color de fondo del track del scroll */
+    border-radius: 10px;
+  }
+  
+  .content::-webkit-scrollbar-thumb {
+    background: #888; /* Color del scroll */
+    border-radius: 10px;
+  }
+  
+  .content::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Color del scroll cuando se pasa el mouse */
+  }
+  

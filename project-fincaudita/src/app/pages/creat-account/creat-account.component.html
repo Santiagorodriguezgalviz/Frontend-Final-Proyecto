@@ -1,7 +1,6 @@
 <div class="background-container bg-image">
   <div class="container forgot-password-form">
     <div class="form-container">
-      <!-- Indicador de progreso con 3 pasos -->
       <div class="progress-indicator">
         <div class="step">
           <div [ngClass]="{'step-number': true, 'completed': currentStep > 1, 'active': currentStep === 1}">1</div>
@@ -13,7 +12,7 @@
         <div class="static-line"></div>
       </div>
 
-      <!-- Primer Paso -->
+
       <div *ngIf="currentStep === 1">
         <form class="row g-3 needs-validation" novalidate>
           <div class="col-md-6">
@@ -62,7 +61,6 @@
               especiales y debe tener un máximo de 50 caracteres.</div>
           </div>
 
-
           <div class="col-md-6 position-relative">
             <label for="type_document" class="form-label input-field">Tipo de documento</label>
             <div class="input-group">
@@ -71,7 +69,6 @@
                 [ngClass]="{'is-valid': person.type_document !== '', 'is-invalid': person.type_document === ''}">
                 <option value="">Seleccione</option>
                 <option value="CC">Cédula de ciudadanía</option>
-                <option value="TI">Tarjeta de identidad</option>
                 <option value="CE">Cédula de extranjería</option>
                 <option value="PS">Pasaporte</option>
               </select>
@@ -86,7 +83,6 @@
             </div>
             <div class="invalid-feedback">Seleccione un tipo de documento.</div>
           </div>
-
 
           <div class="col-md-6">
             <label for="document" class="form-label">Número del documento</label>
@@ -108,7 +104,6 @@
             </div>
           </div>
 
-
           <div class="col-md-6">
             <label for="phone" class="form-label input-field">Teléfono</label>
             <div class="input-group">
@@ -127,8 +122,6 @@
             </div>
             <div class="invalid-feedback">Teléfono es obligatorio y debe tener exactamente 10 dígitos.</div>
           </div>
-
-
 
           <div class="col">
             <label for="Birth_of_date">Fecha de nacimiento:</label>
@@ -154,15 +147,13 @@
                     </span>
                 </div>
             </div>
-            <!-- Mensajes de error -->
             <div *ngIf="birthDate.invalid && (birthDate.dirty || birthDate.touched)" class="invalid-feedback">
                 <div *ngIf="birthDate.errors?.['required']">La fecha de nacimiento es obligatoria.</div>
                 <div *ngIf="birthDate.errors?.['max']">Debes tener menos de 70 años.</div>
                 <div *ngIf="birthDate.errors?.['min']">Debes tener al menos 18 años.</div>
             </div>
         </div>
-        
-        <!-- Botones para navegar entre pasos -->
+      
         <div class="button-group d-flex justify-content-between mt-3">
             <button type="button" class="btn btn-secondary1" (click)="confirmExit()">Anterior</button>
             <button type="button" class="btn btn-success1" (click)="nextStep()">Siguiente</button>
@@ -172,36 +163,58 @@
 
       <!-- Segundo Paso -->
       <div *ngIf="currentStep === 2">
-        <form> <!-- Asegúrate de abrir la etiqueta <form> -->
+        <form>
           <div class="row">
             <div class="col">
-              <label for="City" class="form-label input-field">Ciudad:</label>
-              <input type="text" class="form-control input-field" matInput [matAutocomplete]="cityAuto"
-                [(ngModel)]="person.cityName" name="cityName" (input)="searchCitys($event)" required
-                #cityField="ngModel"
-                [ngClass]="{'is-invalid': cityField.invalid && cityField.touched, 'is-valid': cityField.valid && cityField.touched}">
-
-              <mat-autocomplete #cityAuto="matAutocomplete" (optionSelected)="onCitySelect($event)">
-                <mat-option *ngFor="let city of filteredCitys" [value]="city.name">
-                  {{ city.name }}
-                </mat-option>
-              </mat-autocomplete>
-
-              <!-- Mensajes de error para Ciudad -->
-              <div *ngIf="cityField.invalid && cityField.touched" class="invalid-feedback">
-                <div *ngIf="cityField.errors?.['required']">Debes seleccionar una ciudad.</div>
-              </div>
+                <label for="City" class="form-label input-field">Ciudad:</label>
+                <div class="input-group position-relative">
+                    <input 
+                        type="text" 
+                        class="form-control input-field" 
+                        matInput 
+                        [matAutocomplete]="cityAuto"
+                        [(ngModel)]="person.cityName" 
+                        name="cityName" 
+                        (input)="searchCitys($event)" 
+                        required
+                        #cityField="ngModel"
+                        [ngClass]="{
+                            'is-invalid': cityField.invalid && cityField.touched, 
+                            'is-valid': cityField.valid && cityField.touched
+                        }">
+                    
+                    <!-- Íconos de validación -->
+                    <i *ngIf="cityField.valid && person.cityName" 
+                       class="fa fa-check-circle text-success"
+                       style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                    <i *ngIf="cityField.invalid && cityField.touched" 
+                       class="fas fa-exclamation-circle text-danger"
+                       style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                </div>
+                
+                <!-- Autocompletar de ciudades -->
+                <mat-autocomplete #cityAuto="matAutocomplete" (optionSelected)="onCitySelect($event)">
+                    <mat-option *ngFor="let city of filteredCitys" [value]="city.name">
+                        {{ city.name }}
+                    </mat-option>
+                </mat-autocomplete>
+        
+                <!-- Mensaje de error -->
+                <div *ngIf="cityField.invalid && cityField.touched" class="text-danger">
+                    <div *ngIf="cityField.errors?.['required']">Debes seleccionar una ciudad.</div>
+                </div>
             </div>
+        
 
-            <div class="col-md-6 mb-3">
+            <div class="col">
               <label for="address" class="form-label input-field">Dirección</label>
               <div class="input-group">
                 <input type="text" id="address" class="form-control" placeholder="Ej: Calle 123 #45-67"
                   [(ngModel)]="person.addres" name="address" required (input)="validateAddress(person.addres)"
                   [ngClass]="{
-              'is-valid': isValidAddress,
-              'is-invalid': !isValidAddress && person.addres && person.addres.length > 0
-            }" />
+                    'is-valid': isValidAddress,
+                    'is-invalid': !isValidAddress && person.addres && person.addres.length > 0
+                  }" />
                 <span class="input-group-text" *ngIf="isValidAddress">
                   <i class="fas fa-check text-success"></i>
                 </span>
@@ -210,12 +223,12 @@
                   <i class="fas fa-exclamation-circle text-danger"></i>
                 </span>
               </div>
-              <div class="invalid-feedback">La dirección debe comenzar con Calle, Carrera o Transversal, y seguir el
-                formato adecuado.</div>
+              <div class="invalid-feedback">La dirección debe comenzar con Calle, Carrera o Transversal, y seguir el formato adecuado.</div>
             </div>
+            </div>            
 
-            <!-- Input de Correo Electrónico (sin validaciones) -->
-            <div class="col-md-6 mb-3 position-relative3">
+          <div class="row">
+            <div class="col">
               <label for="email" class="form-label input-field">Correo electrónico</label>
               <div class="input-group">
                 <input type="email" id="email" class="form-control" placeholder="Correo electrónico"
@@ -228,15 +241,9 @@
                   <i class="fas fa-exclamation-circle text-danger"></i>
                 </span>
               </div>
-              <div class="invalid-feedback">{{ emailError }}</div>
-              <div class="email-guidelines" style="color: #ffffff; font-size: 0.9em; margin-top: 0.5rem;">
-                El correo debe ser de Gmail o Hotmail y contener el símbolo "&#64;".
-              </div>
             </div>
-
-            <!-- Input de Usuario (sin validaciones) -->
             
-              <div class="col-md-6 mb-3 position-relative">
+              <div class="col">
                 <label for="Username" class="form-label input-field">Nombre de usuario</label>
                 <div class="input-group position-relative">
                   <input
@@ -249,7 +256,7 @@
                     required
                     minlength="4"
                     maxlength="15"
-                    pattern="^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{4,15}$"
+                    pattern="^(?=.[a-z])(?=.[A-Z])[a-zA-Z]{4,15}$"
                     #usernameField="ngModel"
                     [ngClass]="{
                       'is-invalid': usernameField.invalid && (usernameField.touched || usernameField.dirty),
@@ -283,19 +290,11 @@
                 <div *ngIf="usernameField.valid && (usernameField.touched || usernameField.dirty)" class="text-success">
                   <div>¡El nombre de usuario es válido!</div>
                 </div>
-            
-                <div *ngIf="usernameStrengthMessage" class="text-info">{{ usernameStrengthMessage }}</div>
-            
-                <div class="username-guidelines" style="color: #ffffff; font-size: 0.9em; margin-top: 0.5rem;">
-                  El nombre de usuario debe tener entre 4 y 15 caracteres, contener al menos una letra mayúscula, una
-                  letra minúscula, y no debe contener números ni caracteres especiales.
-                </div>
               </div>
-          
-            
+            </div>
 
-            <!-- Input de Contraseña (sin validaciones) -->
-            <div class="col-md-6 mb-3 position-relative">
+            <div class="row">
+              <div class="col">
               <label for="Password" class="form-label input-field">Contraseña</label>
               <div class="input-group position-relative">
                 <input
@@ -307,7 +306,7 @@
                   name="Password"
                   required
                   minlength="8"
-                  pattern="^(?=.*[A-Z])(?=.*[0-9]).{8,}$"
+                  pattern="^(?=.[A-Z])(?=.[0-9]).{8,}$"
                   #passwordField="ngModel"
                   [ngClass]="{
                     'is-invalid': passwordField.invalid && (passwordField.touched || passwordField.dirty),
@@ -331,24 +330,15 @@
                   [style.backgroundColor]="passwordField.invalid ? 'red' : '#44E32A'"
                 ></div>
               </div>
-            
               <div *ngIf="passwordField.invalid && (passwordField.touched || passwordField.dirty)" class="text-danger">
                 <div *ngIf="passwordField.errors?.['required']">La contraseña es obligatoria.</div>
                 <div *ngIf="passwordField.errors?.['minlength']">Debe tener al menos 8 caracteres.</div>
                 <div *ngIf="passwordField.errors?.['pattern']">La contraseña debe incluir al menos una letra mayúscula y un número.</div>
               </div>
-              
               <div *ngIf="passwordField.valid && (passwordField.touched || passwordField.dirty)" class="text-success">
                 <div>¡La contraseña es válida!</div>
               </div>
-              
-              <div *ngIf="passwordStrengthMessage" class="text-info">{{ passwordStrengthMessage }}</div>
-              
-              <div class="password-guidelines" style="color: #ffffff; font-size: 0.9em; margin-top: 0.5rem;">
-                La contraseña debe tener al menos 8 caracteres, incluir al menos una mayúscula y un número.
               </div>
-            </div>
-
 
             <div class="mt-3">
               <span class="login-text">
@@ -356,8 +346,6 @@
               </span>
             </div>
 
-
-            <!-- Checkbox para activar el modal -->
             <label class="underline-text hover-underline" (click)="openModal()">
               <input type="checkbox" [(ngModel)]="isCheckboxChecked" name="termsCheckbox"
                 (change)="onCheckboxChange()" />
@@ -375,12 +363,43 @@
                 <div class="modal-body">
                   <div class="terms-text">
                     <p>
-                      Bienvenido a FincaAudita, la plataforma especializada en el monitoreo y gestión de fincas.
-                      Antes de utilizar nuestros servicios, te pedimos que leas detenidamente los siguientes
-                      términos y condiciones. Al acceder o utilizar FincaAudita, aceptas estar legalmente vinculado
-                      por estos términos.
+                      Bienvenido a FincaAudita, la plataforma especializada en el monitoreo y gestión de fincas. Antes de utilizar nuestros servicios, te pedimos que leas detenidamente los siguientes términos y condiciones. Al acceder o utilizar FincaAudita, aceptas estar legalmente vinculado por estos términos.
                     </p>
-
+              
+                    <h3>1. Uso del Servicio</h3>
+                    <p>
+                      FincaAudita proporciona herramientas tecnológicas avanzadas para el monitoreo y gestión eficiente de fincas. Los administradores y técnicos que operan la aplicación son responsables de la precisión y veracidad de la información registrada durante el monitoreo. Al usar nuestro servicio, te comprometes a cumplir con todas las leyes, regulaciones locales y normativas aplicables.
+                    </p>
+              
+                    <h3>2. Edad Mínima</h3>
+                    <p>
+                      El uso de FincaAudita está estrictamente reservado para usuarios que sean mayores de 18 años. Al registrarte y utilizar nuestros servicios, declaras y garantizas que tienes al menos 18 años de edad. Si se determina que un usuario es menor de edad, FincaAudita se reserva el derecho de suspender o eliminar su cuenta sin previo aviso.
+                    </p>
+              
+                    <h3>3. Privacidad</h3>
+                    <p>
+                      En FincaAudita valoramos tu privacidad y manejamos tus datos con estricta confidencialidad. La información recopilada durante el monitoreo de las fincas se utilizará exclusivamente con fines de análisis, mejora del servicio y optimización de las funcionalidades. Nunca compartiremos tus datos personales con terceros sin tu consentimiento explícito, salvo en los casos en que lo exija la ley.
+                    </p>
+              
+                    <h3>4. Responsabilidades del Usuario</h3>
+                    <p>
+                      Es responsabilidad de los administradores y técnicos de FincaAudita asegurar que toda la información registrada durante el monitoreo sea completa y precisa. FincaAudita no será responsable de pérdidas, daños o perjuicios derivados de información incorrecta, incompleta o malinterpretada proporcionada por los usuarios.
+                    </p>
+              
+                    <h3>5. Seguridad</h3>
+                    <p>
+                      Hemos implementado robustas medidas de seguridad para proteger tus datos y garantizar la integridad de la información almacenada. No obstante, debido a la naturaleza de las comunicaciones por internet, no podemos garantizar la seguridad absoluta de los datos transmitidos a través de la red. El uso del servicio es bajo tu propio riesgo.
+                    </p>
+              
+                    <h3>6. Modificaciones</h3>
+                    <p>
+                      Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. Las modificaciones serán efectivas una vez publicadas en nuestro sitio web. Se recomienda a los usuarios revisar regularmente los términos para estar al tanto de cualquier cambio. El uso continuo de FincaAudita después de la publicación de los cambios implica la aceptación de los mismos.
+                    </p>
+              
+                    <h3>7. Contacto</h3>
+                    <p>
+                      Si tienes alguna duda o inquietud respecto a estos términos y condiciones, o si necesitas más información sobre el uso de FincaAudita, no dudes en ponerte en contacto con nosotros a través de nuestros canales oficiales.
+                    </p>
                   </div>
                 </div>
 
@@ -392,13 +411,12 @@
               </div>
             </div>
 
-
             <div class="button-group d-flex justify-content-between">
               <button type="button" class="btn btn-secondary" (click)="prevStep()">Anterior</button>
               <button type="button" class="btn btn-success" (click)="nextStep()">Siguiente</button>
             </div>
-          </div> <!-- Cierre del div row -->
-        </form> <!-- Cierre del formulario -->
+          </div>
+        </form> 
       </div>
 
       <!-- Tercer Paso -->
@@ -414,7 +432,6 @@
         <p class="form-label"><strong>Dirección:</strong> {{ person.addres }}</p>
         <p class="form-label"><strong>Correo electrónico:</strong> {{ person.email }}</p>
         <p class="form-label"><strong>Nombre de usuario:</strong> {{ user.username }}</p>
-
 
         <div class="button-group d-flex justify-content-between">
           <button type="button" class="btn btn-secondary" (click)="prevStep()">Anterior</button>

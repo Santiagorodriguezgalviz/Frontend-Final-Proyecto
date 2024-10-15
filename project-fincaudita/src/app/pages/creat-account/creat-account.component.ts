@@ -44,6 +44,10 @@ export class CreatAccountComponent implements OnInit {
   isModalOpen = false;
   termsAccepted: boolean = false;
   isCheckboxChecked = false;
+  usernameStrength: number = 0; 
+  usernameStrengthMessage: string = '';
+  passwordStrength: number = 0;
+  passwordStrengthMessage: string | null = null;
 
   private personApiUrl = 'http://localhost:9191/api/Person';
   private userApiUrl = 'http://localhost:9191/api/User';
@@ -51,13 +55,12 @@ export class CreatAccountComponent implements OnInit {
   
   private personId: number | null = null;
   minDate?: string; 
-  maxDate?: string;  
+  maxDate?: string;
+  password: string = '';
   
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private router: Router) {
     this.setDateLimits();
   }
-  usernameStrength: number = 0; // Valor entre 0 y 1
-  usernameStrengthMessage: string = '';
 
   updateUsernameStrength(usernameField: any): void {
     const username = usernameField.value;
@@ -67,18 +70,15 @@ export class CreatAccountComponent implements OnInit {
     this.usernameStrengthMessage = '';
 
     // Evaluar fuerza del nombre de usuario
-    const lengthCriteria = username.length >= 4 && username.length <= 15; // Mínimo 4 y máximo 15 caracteres
-    const uppercaseCriteria = /[A-Z]/.test(username); // Al menos una mayúscula
-    const lowercaseCriteria = /[a-z]/.test(username); // Al menos una minúscula
+    const lengthCriteria = username.length >= 4 && username.length <= 15; 
+    const uppercaseCriteria = /[A-Z]/.test(username); 
+    const lowercaseCriteria = /[a-z]/.test(username); 
 
     const criteriaMet = [lengthCriteria, uppercaseCriteria, lowercaseCriteria].filter(Boolean).length;
 
-    // Calcular fuerza
-    this.usernameStrength = criteriaMet / 3; // Normalizado entre 0 y 1
+    this.usernameStrength = criteriaMet / 3; 
 
   }
-  passwordStrength: number = 0;
-passwordStrengthMessage: string | null = null;
 
 updatePasswordStrength(passwordField: any): void {
   if (passwordField.value) {
@@ -91,32 +91,37 @@ updatePasswordStrength(passwordField: any): void {
   }
 }
 
+  onInputChange(field: any) {
+    field.control.updateValueAndValidity();
+  }
+
   setDateLimits() {
     const today = new Date();
 
     // Calcular la fecha máxima (70 años atrás)
-    const maxYear = today.getFullYear() - 18; // Persona debe tener al menos 18 años
-    const maxMonth = today.getMonth() + 1; // Se suma 1 porque los meses son 0-indexados
+    const maxYear = today.getFullYear() - 18; 
+    const maxMonth = today.getMonth() + 1; 
     const maxDay = today.getDate();
 
     // Establecer el formato YYYY-MM-DD
     this.maxDate = `${maxYear}-${this.pad(maxMonth)}-${this.pad(maxDay)}`;
 
+
     // Calcular la fecha mínima (70 años atrás)
-    const minYear = today.getFullYear() - 70; // Persona no debe tener más de 70 años
+    const minYear = today.getFullYear() - 70; 
     this.minDate = `${minYear}-${this.pad(maxMonth)}-${this.pad(maxDay)}`;
+
   }
 
   pad(num: number): string {
-    return num < 10 ? '0' + num : '' + num; // Añade un 0 a los números menores de 10
+    return num < 10 ? '0' + num : '' + num; 
   }
-
 
   onCheckboxChange(): void {
     if (this.isCheckboxChecked) {
-      this.openModal(); // Abrir el modal si el checkbox es marcado
+      this.openModal(); 
     } else {
-      this.closeModal(); // Cerrar el modal si el checkbox es desmarcado
+      this.closeModal(); 
     }
   }
 
@@ -133,12 +138,10 @@ updatePasswordStrength(passwordField: any): void {
     );
     if (selectedcity) {
         this.person.cityId = selectedcity.id;
-        this.person.cityName = selectedcity.name; // Agregar esto
-        // Cierra el autocompletar
+        this.person.cityName = selectedcity.name; 
         this.filteredCitys = [];
     }
 }
-
 
   ngOnInit(): void {
     this.getCitys();
@@ -153,12 +156,10 @@ updatePasswordStrength(passwordField: any): void {
     }
   }
 
-    // Abrir el modal para agregar o editar un módulo
     openModal(): void {
       this.isModalOpen = true;
     }
   
-    // Cerrar el modal y reiniciar el formulario
     closeModal(): void {
       this.isModalOpen = false;
     }
@@ -167,14 +168,11 @@ updatePasswordStrength(passwordField: any): void {
       this.termsAccepted = event.target.checked; 
     }
 
-  // Método para aceptar los términos
   acceptTerms(): void {
     this.termsAccepted = true;
     this.showAlert()
     this.closeModal();
   }
-
-  
 
   getCitys(): void {
     this.http.get<any[]>(this.citysUrl).subscribe(
@@ -194,15 +192,12 @@ updatePasswordStrength(passwordField: any): void {
   }
 
   nextStep(): void {
-    // Guardar el estado actual del formulario en sessionStorage antes de avanzar
     sessionStorage.setItem('person', JSON.stringify(this.person));
     sessionStorage.setItem('termsAccepted', JSON.stringify(this.termsAccepted));
 
     if (this.currentStep === 1 && this.validateStep1()) {
-        // Avanzar al paso 2
         this.currentStep++;
     } else if (this.currentStep === 2) {
-        // Validar si aceptó los términos y condiciones en el paso 2
         if (!this.termsAccepted) {
             Swal.fire({
                 title: 'Debe aceptar los términos y condiciones',
@@ -224,11 +219,9 @@ updatePasswordStrength(passwordField: any): void {
                 }
             });
         } else if (this.validateStep2()) {
-            // Avanzar al paso 3 si se aceptaron los términos y se validó el paso 2
             this.currentStep++;
         }
     } else if (this.currentStep === 3) {
-        // Llamar a la función de envío y limpieza
         this.onSubmit();
     }
 }
@@ -283,9 +276,7 @@ showAlert(): void {
     return true;
   }
   
-  
   validateStep2(): boolean {
-    // Validar campos obligatorios del segundo paso y correo válido
     if (!this.person.cityId || !this.person.addres || !this.person.email || !this.validateEmail(this.person.email)) {
         Swal.fire({
             title: '¡Error!',
@@ -318,17 +309,19 @@ showAlert(): void {
   }
 
   togglePasswordVisibility() {
-    const passwordInput = document.getElementById('password') as HTMLInputElement;
+    const passwordInput = document.getElementById('Password') as HTMLInputElement; // Cambié 'password' a 'Password'
     const icon = document.getElementById('togglePassword');
-    
-    if (passwordInput.type === 'password') {
-      passwordInput.type = 'text';
-      icon?.classList.remove('fa-eye');
-      icon?.classList.add('fa-eye-slash');
-    } else {
-      passwordInput.type = 'password';
-      icon?.classList.remove('fa-eye-slash');
-      icon?.classList.add('fa-eye');
+  
+    if (passwordInput) { // Verifica que el input no sea nulo
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon?.classList.remove('fa-eye');
+        icon?.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        icon?.classList.remove('fa-eye-slash');
+        icon?.classList.add('fa-eye');
+      }
     }
   }
   
@@ -344,14 +337,17 @@ showAlert(): void {
     }
   }
 
+  // Método para validar el formato de la dirección
   isValidAddress: boolean = false;
 
-  // Método para validar el formato de la dirección
-  validateAddress(address: string) {
-    const addressPattern = /^(Calle|Carrera|Transversal)\s\d{1,3}\s?(\#\d{1,3}-\d{1,3})?$/i;
+  validateAddress(address: string): void {
+    // Patrón que acepta "Calle", "Carrera" o "Transversal", seguido de un número, el símbolo #, otro número y un guion con más números
+    const addressPattern = /^(Calle|Carrera|Transversal)\s\d+\s#\s\d+-\d+$/i;
     this.isValidAddress = addressPattern.test(address);
   }
-
+  
+  
+  
   validateNumber(event: KeyboardEvent) {
     const allowedKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete', 'Enter'];
     if (allowedKeys.indexOf(event.key) !== -1) {
@@ -392,7 +388,6 @@ showAlert(): void {
 usernameError: string = '';
 
 isValidUsername(username: string): boolean {
-  // Check if username is required and has the right length
   if (!username || username.length < 4 || username.length > 15) {
     this.usernameError = 'El nombre de usuario debe tener entre 4 y 15 caracteres.';
     return false;
@@ -485,15 +480,15 @@ isValidPassword(password: string): boolean {
       return;
     }
 
-    this.clearSessionData();
   
-    this.person.birth_of_date = new Date(this.person.birth_of_date).toISOString();
+    this.person.birth_of_date = this.person.birth_of_date;
     this.person.document = this.person.document.toString();
   
     this.http.post<any>(this.personApiUrl, this.person).subscribe({
       next: (response) => {
         this.personId = response.id;
-        console.log('Datos de la persona enviados con éxito, ID:', this.personId);
+
+
         
         sessionStorage.clear();
   
@@ -512,12 +507,10 @@ isValidPassword(password: string): boolean {
     };
     this.user = { username: '', password: '', roles: [] };
     this.termsAccepted = false;
-    // Eliminar los datos guardados en sessionStorage
     sessionStorage.removeItem('person');
     sessionStorage.removeItem('termsAccepted');
 }
 
-  
   private submitUserData(): void {
     if (this.personId === null) {
       Swal.fire('Error', 'No se pudo obtener el ID de la persona.', 'error');
@@ -527,7 +520,7 @@ isValidPassword(password: string): boolean {
     const userData = {
       username: this.user.username,
       password: this.user.password,
-      roles: [{ id: 1 }],
+      roles: [{ id: 7 }],
       personId: this.personId
     };
 

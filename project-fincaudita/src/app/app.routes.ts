@@ -32,6 +32,9 @@ import { TreatmentComponent } from './pages/operational/treatment/treatment.comp
 import { TermsConditionsComponent } from './pages/terms-conditions/terms-conditions.component';
 import { LandigPageComponent } from './pages/landig-page/landig-page.component';
 import { TermsConditionsLandingComponent } from './pages/terms-conditions-landing/terms-conditions-landing.component';
+import { IAComponent } from './pages/ia/ia.component';
+import { GeminiIAComponent } from './pages/gemini-ia/gemini-ia.component';
+
 
 
 
@@ -78,6 +81,8 @@ export const routes: Routes = [
             { path: 'view', component: ViewComponent, },
             { path: 'person', component: PersonComponent, },
             { path: 'calendar', component: CalendarComponent, },
+            { path: 'ia', component: IAComponent, },
+            { path: 'gemini', component: GeminiIAComponent, },
             { path: 'assesment-criteria', component: AssessmentCriteriaComponent, },
             { path: 'city', component: CityComponent, },
             { path: 'country', component: CountryComponent, },
