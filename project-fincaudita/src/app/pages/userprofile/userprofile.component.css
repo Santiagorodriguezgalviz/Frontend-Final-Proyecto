@@ -146,3 +146,48 @@
   background-color: #39c12a;
   transform: translateY(-3px);
 }
+/* Estilo para el acordeón */
+.user-profile-accordion .mat-expansion-panel {
+  border: 2px solid #44E32A;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Cambia el color del borde al expandir el panel */
+.user-profile-accordion .mat-expansion-panel.mat-expanded {
+  border-color: #44E32A;
+  background-color: #f9fff5; /* Un fondo suave */
+}
+
+/* Estilo para el encabezado del panel */
+.user-profile-accordion .mat-expansion-panel-header {
+  color: #333;
+  font-weight: bold;
+  background-color: #f4f6f9;
+  padding: 15px;
+  border-bottom: 1px solid #44E32A;
+  border-radius: 8px 8px 0 0;
+  transition: background-color 0.3s ease;
+}
+
+/* Efecto hover en el encabezado */
+.user-profile-accordion .mat-expansion-panel-header:hover {
+  background-color: #eaffdb;
+}
+
+/* Estilo para los botones de guardado */
+.save-btn {
+  background-color: #44E32A;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save-btn:hover {
+  background-color: #3ac026;
+}

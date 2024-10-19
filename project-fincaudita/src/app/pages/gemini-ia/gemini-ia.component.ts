@@ -5,23 +5,16 @@ import { FormsModule } from '@angular/forms';
 import { key } from '../../../key';
 import { GoogleGeminiProService } from './google-gemini-pro.service';
 
-
-
 @Component({
   selector: 'app-gemini',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterOutlet],
   templateUrl: './gemini-ia.component.html',
-  styleUrl: './gemini-ia.component.css'
+  styleUrls: ['./gemini-ia.component.css'] // Asegúrate de que este sea el nombre correcto
 })
-
 export class GeminiIAComponent {
-  title = 'ng-gemini-test'; // Aquí se define la propiedad 'title'
+  title = 'ng-gemini-test';
   @ViewChild('scrollframe') scrollframe?: ElementRef;
-  scroll() {
-    const maxScroll = this.scrollframe?.nativeElement.scrollHeight;
-    this.scrollframe?.nativeElement.scrollTo({ top: maxScroll, behavior: 'smooth' });
-  }
 
   result = '';
   prompt = '';
@@ -34,29 +27,36 @@ export class GeminiIAComponent {
   }
 
   async generate() {
-    this.writing = true;
+    if (!this.prompt.trim()) return; // Evitar enviar si el campo está vacío
+    this.writing = true; // Activar el estado de escritura
+    const newQuestion = { prompt: this.prompt, result: '' }; // Crear una nueva pregunta
+    this.questions.push(newQuestion); // Agregarla a la lista de preguntas
     const result = await this.googleGeminiPro.generateText(this.prompt);
-    this.questions.push({ prompt: this.prompt, result: '' });
-    this.write(result, 0);
-  }
+    this.write(result, 0); // Llamar a la función de escritura para mostrar la respuesta
+    this.prompt = ''; // Limpiar el campo de entrada aquí también
+}
+
 
   write(result: string, index: number) {
     this.questions[this.questions.length - 1].result = result.slice(0, index);
+    
     if (index < result.length) {
       setTimeout(() => {
         this.scroll();
-        this.write(result, index + 1);        
+        this.write(result, index + 1);
       }, this.randomVelocity());
+    } else {
+      this.writing = false; // Dejar de escribir cuando termine
     }
-    else {
-      this.writing = false;
-      this.prompt = '';
-    }
+  }
+
+  scroll() {
+    const maxScroll = this.scrollframe?.nativeElement.scrollHeight;
+    this.scrollframe?.nativeElement.scrollTo({ top: maxScroll, behavior: 'smooth' });
   }
 
   randomVelocity(): number {
     const velocity = Math.floor(Math.random() * 25 + 1);
     return velocity;
   }
-
 }

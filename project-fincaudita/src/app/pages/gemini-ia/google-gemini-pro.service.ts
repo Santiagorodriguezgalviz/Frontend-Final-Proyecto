@@ -1,35 +1,38 @@
 import { Injectable } from '@angular/core';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-
 @Injectable({
   providedIn: 'root'
 })
 export class GoogleGeminiProService {
 
-  genIA: any;
-  model: any;
+  private genIA: any;
+  private model: any;
 
-
+  // Inicializa el servicio con la clave de API y un modelo opcional
   initialize(key: string, config?: any) {
-
-    this.genIA = new GoogleGenerativeAI(key);
-    let model = config ? config : { model: 'gemini-pro' };
-    this.model = this.genIA.getGenerativeModel(model);
-
+    try {
+      this.genIA = new GoogleGenerativeAI(key);
+      const defaultModel = { model: 'gemini-pro' };
+      this.model = this.genIA.getGenerativeModel(config || defaultModel);
+    } catch (error) {
+      console.error('Error al inicializar el modelo:', error);
+    }
   }
 
-  async generateText(prompt: string) {
-
+  // Método para generar texto basado en un prompt
+  async generateText(prompt: string): Promise<string> {
     if (!this.model) {
-      return;
+      throw new Error('El modelo no está inicializado');
     }
 
-    const result = await this.model.generateContent(prompt);
-    const response = await result.response;
-
-    return response.text();
-
+    try {
+      const result = await this.model.generateContent(prompt);
+      const response = await result.response;
+      return response.text();
+    } catch (error) {
+      console.error('Error al generar texto:', error);
+      throw new Error('No se pudo generar la respuesta. Intente nuevamente.');
+    }
   }
-
 }

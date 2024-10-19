@@ -178,6 +178,40 @@
   background-color: #44E32A;
   transform: scale(1.1); /* Agranda ligeramente el icono al pasar el mouse */
 }
+.tooltip {
+  visibility: hidden;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px 10px;
+  position: absolute;
+  z-index: 1;
+  top: 125%; /* Coloca el tooltip debajo del ítem */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: 100%; /* Flecha hacia arriba */
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #333 transparent;
+}
+
+/* Mostrar el tooltip cuando el usuario pasa el cursor por encima del ítem */
+.nav-item:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
 
 .content {
   padding-top: 60px;
@@ -239,5 +273,10 @@
 }
 .nav-item.calendar a:hover svg {
   fill: #008f39; /* Cambia el color del ícono a verde al hacer hover */
+}
+
+.gemini-icon {
+  width: 43px;  /* Ajusta el ancho de la imagen */
+  height: 43px; /* Ajusta la altura de la imagen */
 }
 

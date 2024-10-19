@@ -15,6 +15,9 @@ export class LandigPageComponent {
 
   constructor(private viewportScroller: ViewportScroller) {}
 
+  isMenuActive: boolean = false;
+
+
   scrollToSection(section: string): void {
     this.viewportScroller.scrollToAnchor(section);
     this.currentSection = section;

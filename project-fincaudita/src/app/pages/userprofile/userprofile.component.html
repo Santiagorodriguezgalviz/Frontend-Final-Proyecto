@@ -1,36 +1,126 @@
-<div class="profile-container">
-  <!-- Botón para regresar con icono SVG -->
-  <div class="back-button" routerLink="/dashboard/home" routerLinkActive="active">
-    <button class="back-btn">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-      </svg>
-    </button>
-    <h2>Editar perfil</h2>
-  </div>
-
-  <!-- Imagen de Perfil -->
-  <div class="profile-image">
-    <img [src]="profileImageUrl || '../../assets/Avatar.png'" alt="Foto de perfil" class="profile-pic">
-    <p class="change-photo-text" (click)="triggerFileInput()">Cambiar foto de perfil</p>
-    <input type="file" (change)="onFileSelected($event)" id="fileInput" hidden>
-  </div>
-
-  <!-- Datos del Usuario -->
-  <div class="user-data">
-    <h3>Datos de Usuario</h3>
-    <div class="mb-3">
-      <label for="user" class="form-label">Usuario</label>
-      <input type="text" id="user" class="form-control input-field" placeholder="Ingresar usuario" [(ngModel)]="username" name="username" required>
+  <div class="profile-container">
+    <!-- Botón para regresar con icono SVG -->
+    <div class="back-button" routerLink="/dashboard/home" routerLinkActive="active">
+      <button class="back-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      </button>
+      <h2>Editar perfil</h2>
     </div>
-    <div class="mb-3 position-relative">
-      <label for="newPassword" class="form-label">Nueva Contraseña</label>
-      <input type="password" id="password" class="form-control input-field" placeholder="Nueva Contraseña" [(ngModel)]="password" name="password" required>
-      <i class="fas fa-eye position-absolute toggle-password" (click)="togglePasswordVisibility()" id="togglePassword"></i>
+
+    <!-- Imagen de Perfil -->
+    <div class="profile-image">
+      <img [src]="profileImageUrl || '../../assets/Avatar.png'" alt="Foto de perfil" class="profile-pic">
+      <p class="change-photo-text" (click)="triggerFileInput()">Cambiar foto de perfil</p>
+      <input type="file" (change)="onFileSelected($event)" id="fileInput" hidden>
     </div>
+
+    <!-- Acordeón con secciones de datos -->
+    <mat-accordion class="user-profile-accordion">
+      <!-- Sección para Actualizar Usuario y Contraseña -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Actualizar usuario y contraseña
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="user-data">
+          <div class="mb-3">
+            <label for="user" class="form-label">Usuario</label>
+            <input type="text" id="user" class="form-control input-field" placeholder="Ingresar usuario" [(ngModel)]="username" name="username" required>
+          </div>
+          <div class="mb-3 position-relative">
+            <label for="newPassword" class="form-label">Contraseña</label>
+            <input type="password" id="password" class="form-control input-field" placeholder="Nueva Contraseña" [(ngModel)]="password" name="password" required>
+            <i class="fas fa-eye position-absolute toggle-password" (click)="togglePasswordVisibility()" id="togglePassword"></i>
+          </div>
+        </div>
+        <button (click)="saveChanges()" class="save-btn">Guardar cambios</button>
+      </mat-expansion-panel>
+
+      <!-- Sección para Actualizar otros datos del usuario -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Actualizar datos del usuario
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="user-data">
+          <div class="mb-3">
+            <label for="firstName" class="form-label">Nombre</label>
+            <input type="text" id="firstName" class="form-control input-field" [(ngModel)]="person.firstName" placeholder="Ingresar nombre">
+          </div>
+          <div class="mb-3">
+            <label for="lastName" class="form-label">Apellido</label>
+            <input type="text" id="lastName" class="form-control input-field" [(ngModel)]="person.lastName" placeholder="Ingresar apellido">
+          </div>
+          <div class="mb-3">
+            <label for="documentType" class="form-label">Documento</label>
+            <input type="text" id="documentType" class="form-control input-field" [(ngModel)]="person.documentType" placeholder="Ingresar tipo de documento">
+          </div>
+          <div class="mb-3">
+            <label for="documentNumber" class="form-label">Número de documento</label>
+            <input type="text" id="documentNumber" class="form-control input-field" [(ngModel)]="person.documentNumber" placeholder="Ingresar número de documento">
+          </div>
+          <div class="mb-3">
+            <label for="birthDate" class="form-label">Fecha de nacimiento</label>
+            <input type="date" id="birthDate" class="form-control input-field" [(ngModel)]="person.birthDate">
+          </div>
+          <div class="mb-3">
+            <label for="phone" class="form-label">Teléfono</label>
+            <input type="text" id="phone" class="form-control input-field" [(ngModel)]="person.phone" placeholder="Ingresar teléfono">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input type="email" id="email" class="form-control input-field" [(ngModel)]="person.email" placeholder="Ingresar correo electrónico">
+          </div>
+          <div class="mb-3">
+            <label for="address" class="form-label">Dirección</label>
+            <input type="text" id="address" class="form-control input-field" [(ngModel)]="person.addres" placeholder="Ingresar dirección">
+          </div>
+          <div class="mb-3">
+            <label for="city" class="form-label">Ciudad</label>
+            <div class="input-group position-relative">
+                <input 
+                    type="text" 
+                    id="city" 
+                    class="form-control input-field" 
+                    matInput 
+                    [matAutocomplete]="cityAuto" 
+                    [(ngModel)]="person.cityName" 
+                    placeholder="Ingresar ciudad"
+                    (input)="searchCitys($event)" 
+                    required 
+                    #cityField="ngModel"
+                    [ngClass]="{
+                        'is-invalid': cityField.invalid && cityField.touched, 
+                        'is-valid': cityField.valid && cityField.touched
+                    }"
+                />
+                <!-- Íconos de validación -->
+                <i *ngIf="cityField.valid && person.city" class="fa fa-check-circle text-success" 
+                  style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                <i *ngIf="cityField.invalid && cityField.touched" class="fas fa-exclamation-circle text-danger" 
+                  style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            </div>
+        
+            <mat-autocomplete #cityAuto="matAutocomplete" (optionSelected)="onCitySelect($event)">
+                <mat-option *ngFor="let city of filteredCitys" [value]="city.name">
+                    {{ city.name }}
+                </mat-option>
+            </mat-autocomplete>
+        
+            <!-- Mensaje de error -->
+            <div *ngIf="cityField.invalid && cityField.touched" class="invalid-feedback">
+                <div *ngIf="cityField.errors?.['required']">Debes seleccionar una ciudad.</div>
+            </div>
+        </div>      
+        </div>
+        <button (click)="saveChanges()" class="save-btn">Actualizar datos</button>
+      </mat-expansion-panel>
+    </mat-accordion>
   </div>
-  
-  <!-- Botón para guardar cambios -->
-  <button (click)="saveChanges()" class="save-btn">Guardar cambios</button>
-</div>

@@ -5,14 +5,17 @@
         <div class="wrapper chatbot-container"> <!-- Nueva clase añadida -->
             <header class="header"></header>
             <article class="main" #scrollframe>
-                <ng-container *ngFor="let result of questions">
-                    <h3>{{ result.prompt }}</h3>
-                    <span>{{ result.result }}</span>
+                <ng-container *ngFor="let question of questions">
+                    <h3>{{ question.prompt }}</h3>
+                    <!-- Mostrar "Generando respuesta..." mientras se espera la respuesta -->
+                    <div *ngIf="question.result === '' && writing" class="loading-indicator">Generando respuesta...</div>
+                    <span *ngIf="question.result !== ''">{{ question.result }}</span>
                 </ng-container>
-            </article>
+            </article>            
             <footer class="footer">
-                <textarea [(ngModel)]="prompt" matInput placeholder=" Envía un mensaje a Chat-Fincaudita..."></textarea>
-                <button color="primary" aria-label="send" (click)="generate()" [disabled]="writing">
+                <textarea [(ngModel)]="prompt" matInput placeholder=" Envía un mensaje a Chat-Fincaudita..."
+                    (keyup.enter)="generate(); $event.preventDefault();"></textarea>
+                <button color="primary" aria-label="send" (click)="generate()" [disabled]="writing || !prompt">
                     <i class="fas fa-paper-plane"></i> Enviar
                 </button>
             </footer>
